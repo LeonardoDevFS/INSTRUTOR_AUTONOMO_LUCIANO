@@ -8,6 +8,7 @@ export const siteConfig = {
     "Aulas práticas de carro e moto, preparação para habilitação, treinamento para habilitados e mentoria teórica com Luciano Oliveira em Itajubá, Minas Gerais.",
 
   experienceYears: 27,
+  categories: ["A", "B"],
 
   location: {
     city: "Itajubá",

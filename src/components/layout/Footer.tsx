@@ -2,16 +2,20 @@ import Link from "next/link";
 import { AtSign, MessageCircle } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
+import { formatScheduleRange } from "@/lib/utils";
 import { createWhatsAppUrl } from "@/lib/whatsapp";
 
 export function Footer() {
+  const [brandLead, ...brandTail] = siteConfig.brand.split(" ");
+
   return (
     <footer className="border-t border-white/10 bg-black">
       <div className="mx-auto max-w-7xl px-5 py-14 lg:px-8">
         <div className="grid gap-10 md:grid-cols-3">
           <div>
             <div className="font-display text-2xl font-extrabold text-white">
-              DIREÇÃO <span className="text-gold">SEGURA</span>
+              {brandLead}{" "}
+              <span className="text-gold">{brandTail.join(" ")}</span>
             </div>
 
             <p className="mt-2 text-sm text-white/45">
@@ -19,8 +23,8 @@ export function Footer() {
             </p>
 
             <p className="mt-5 max-w-sm text-sm leading-6 text-white/55">
-              Luciano Oliveira, instrutor autônomo de carro e moto em
-              Itajubá/MG e região.
+              {siteConfig.name}, {siteConfig.profession.toLowerCase()} de carro e
+              moto em {siteConfig.location.serviceArea}.
             </p>
           </div>
 
@@ -56,10 +60,22 @@ export function Footer() {
             <p className="font-bold text-white">Atendimento</p>
 
             <div className="mt-5 space-y-2 text-sm text-white/55">
-              <p>Segunda a sexta: 07h às 20h</p>
-              <p>Sábado: 07h às 13h</p>
-              <p>Domingo: sob consulta</p>
-              <p className="pt-2">Itajubá/MG e região</p>
+              <p>
+                {siteConfig.schedule.weekdays.label}:{" "}
+                {formatScheduleRange(
+                  siteConfig.schedule.weekdays.opening,
+                  siteConfig.schedule.weekdays.closing,
+                )}
+              </p>
+              <p>
+                {siteConfig.schedule.saturday.label}:{" "}
+                {formatScheduleRange(
+                  siteConfig.schedule.saturday.opening,
+                  siteConfig.schedule.saturday.closing,
+                )}
+              </p>
+              <p>{siteConfig.schedule.sunday.label}: sob consulta</p>
+              <p className="pt-2">{siteConfig.location.serviceArea}</p>
             </div>
           </div>
         </div>
@@ -73,7 +89,7 @@ export function Footer() {
           "
         >
           <p>
-            © {new Date().getFullYear()} Luciano Oliveira — Direção Segura.
+            © {new Date().getFullYear()} {siteConfig.name} — {siteConfig.brand}.
           </p>
 
           <Link

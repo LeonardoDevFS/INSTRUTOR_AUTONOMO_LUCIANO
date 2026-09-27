@@ -4,11 +4,12 @@ import Link from "next/link";
 import { CalendarDays, Menu, X } from "lucide-react";
 import { useState } from "react";
 
+import { siteConfig } from "@/config/site";
 import { mainNavigation } from "@/data/navigation";
-import { cn } from "@/lib/utils";
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [brandLead, ...brandTail] = siteConfig.brand.split(" ");
 
   return (
     <header
@@ -25,16 +26,19 @@ export function Header() {
           onClick={() => setMenuOpen(false)}
         >
           <span className="font-display text-xl font-extrabold tracking-[0.08em] text-white">
-            DIREÇÃO
-            <span className="text-gold"> SEGURA</span>
+            {brandLead}
+            <span className="text-gold"> {brandTail.join(" ")}</span>
           </span>
 
           <span className="mt-1 text-[10px] uppercase tracking-[0.28em] text-white/45">
-            Luciano Oliveira
+            {siteConfig.name}
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-8 lg:flex">
+        <nav
+          aria-label="Navegação principal"
+          className="hidden items-center gap-8 lg:flex"
+        >
           {mainNavigation.map((item) => (
             <Link
               key={item.href}
@@ -68,7 +72,9 @@ export function Header() {
 
         <button
           type="button"
-          aria-label="Abrir menu"
+          aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+          aria-controls="mobile-navigation"
+          aria-expanded={menuOpen}
           onClick={() => setMenuOpen((current) => !current)}
           className="
             flex h-11 w-11 items-center justify-center
@@ -81,12 +87,11 @@ export function Header() {
       </div>
 
       <div
-        className={cn(
-          "overflow-hidden border-t border-white/10 bg-black transition-all duration-300 lg:hidden",
-          menuOpen ? "max-h-[600px]" : "max-h-0 border-transparent",
-        )}
+        id="mobile-navigation"
+        hidden={!menuOpen}
+        className="border-t border-white/10 bg-black lg:hidden"
       >
-        <nav className="flex flex-col p-5">
+        <nav aria-label="Navegação mobile" className="flex flex-col p-5">
           {mainNavigation.map((item) => (
             <Link
               key={item.href}

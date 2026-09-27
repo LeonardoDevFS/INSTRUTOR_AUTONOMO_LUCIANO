@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     locale: "pt_BR",
     type: "website",
-    siteName: "Luciano Oliveira - Direção Segura",
+    siteName: `${siteConfig.name} - ${siteConfig.brand}`,
   },
 
   robots: {

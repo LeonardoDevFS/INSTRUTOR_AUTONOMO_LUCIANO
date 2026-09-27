@@ -11,9 +11,18 @@ type SiteLayoutProps = {
 export default function SiteLayout({ children }: SiteLayoutProps) {
   return (
     <>
+      <a
+        href="#conteudo-principal"
+        className="skip-link"
+      >
+        Ir para o conteúdo principal
+      </a>
+
       <Header />
 
-      <main>{children}</main>
+      <main id="conteudo-principal" tabIndex={-1}>
+        {children}
+      </main>
 
       <Footer />
 
