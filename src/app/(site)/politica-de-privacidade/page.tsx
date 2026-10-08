@@ -24,7 +24,7 @@ export default function PrivacyPolicyPage() {
             Política de Privacidade
           </h1>
           <p className="mt-6 text-sm text-white/40">
-            Última atualização: 4 de outubro de 2026.
+            Última atualização: 8 de outubro de 2026.
           </p>
         </div>
       </header>
@@ -41,14 +41,15 @@ export default function PrivacyPolicyPage() {
 
         <PolicySection title="2. Quais informações podem ser utilizadas">
           <p>
-            Ao solicitar um horário, você pode informar nome, telefone, serviço
-            desejado, dia e horário de preferência. Na versão atual, esses dados
-            são organizados no seu navegador e enviados ao WhatsApp somente
-            quando você decide abrir a conversa.
+            Ao utilizar a página oficial de agendamento do Google, você pode
+            informar nome, sobrenome, e-mail, telefone, serviço desejado, data e
+            horário. Esses dados são enviados diretamente ao Google e usados
+            para registrar a reserva na agenda de Luciano.
           </p>
           <p>
-            A consulta de disponibilidade demonstrativa envia à API apenas a
-            data inicial da pesquisa, sem nome, telefone ou conteúdo de eventos.
+            Quando você opta pelo contato via WhatsApp, as informações são
+            enviadas somente depois que decide abrir a conversa nessa
+            plataforma.
           </p>
         </PolicySection>
 
@@ -62,9 +63,28 @@ export default function PrivacyPolicyPage() {
 
         <PolicySection title="4. Serviços de terceiros">
           <p>
-            Links para WhatsApp e Instagram direcionam você a plataformas
-            externas, que possuem políticas próprias. Este site ainda não usa
-            Google Calendar, Google Analytics ou sistema próprio de pagamento.
+            A página de agendamento pode incorporar o serviço oficial de
+            Agendamento de Horários do Google Agenda. O Google processa os dados
+            necessários para exibir disponibilidade, concluir a reserva e enviar
+            as comunicações relacionadas ao compromisso, conforme suas próprias
+            políticas.
+          </p>
+          <p>
+            Links para WhatsApp e Instagram também direcionam você a plataformas
+            externas, que possuem políticas próprias. Este site não utiliza
+            sistema próprio de pagamento para as reservas.
+          </p>
+          <p>
+            Consulte a{" "}
+            <a
+              href="https://policies.google.com/privacy?hl=pt-BR"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold text-gold hover:text-gold-light"
+            >
+              Política de Privacidade do Google
+            </a>
+            .
           </p>
         </PolicySection>
 

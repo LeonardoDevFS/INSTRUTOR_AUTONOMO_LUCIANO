@@ -1,4 +1,4 @@
-import { CalendarClock, MessageCircle } from "lucide-react";
+import { CalendarClock, CalendarDays } from "lucide-react";
 
 import { bookingSteps } from "@/data/home";
 
@@ -21,21 +21,21 @@ export function BookingTeaser() {
             <SectionHeading
               id="booking-title"
               eyebrow="Agendamento"
-              title="Seu próximo horário começa com uma conversa simples."
-              description="Escolha serviço, dia e horário de preferência. A solicitação é organizada pelo site e confirmada diretamente com Luciano pelo WhatsApp."
+              title="Uma agenda. Todos os treinamentos."
+              description="Escolha um horário disponível e conclua a reserva na página oficial do Google Agenda. Carro, moto e os demais serviços compartilham a mesma disponibilidade."
               align="center"
             />
             <ActionLink
               href="/agendar"
-              icon={<MessageCircle size={18} aria-hidden="true" />}
+              icon={<CalendarDays size={18} aria-hidden="true" />}
               className="mt-8"
             >
-              Solicitar um horário
+              Agendar minha aula
             </ActionLink>
           </div>
           <p className="mx-auto mt-8 max-w-2xl border-t border-gold/40 pt-5 text-sm leading-7 text-white/55">
-            O fluxo planejado será direto, pensado para funcionar bem no
-            celular e sem expor informações privadas da agenda.
+            O aluno visualiza apenas os horários disponíveis. Compromissos e
+            informações privadas da agenda não são exibidos.
           </p>
         </div>
 

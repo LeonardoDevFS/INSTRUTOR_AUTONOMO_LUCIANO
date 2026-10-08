@@ -73,11 +73,11 @@ export const licensedTrainingTopics = [
 ] as const;
 
 export const bookingSteps = [
-  "Escolha o serviço",
-  "Escolha o dia",
-  "Escolha o horário",
-  "Informe nome e telefone",
-  "Confirme a solicitação",
+  "Escolha dia e horário",
+  "Informe seus dados",
+  "Indique o serviço",
+  "Confirme no Google",
+  "Reserva na agenda",
 ] as const;
 
 export type HomeFaqItem = {
@@ -126,7 +126,7 @@ export function createHomeFaqItems(config: SiteConfig): HomeFaqItem[] {
     {
       question: "Como faço para agendar?",
       answer:
-        "Use a página de agendamento para escolher serviço, dia e horário de preferência. A solicitação é enviada pelo WhatsApp e só fica confirmada depois da resposta de Luciano.",
+        "Acesse a página de agendamento, escolha um horário disponível e conclua o formulário oficial do Google informando o serviço desejado. O WhatsApp permanece como alternativa para dúvidas, domingos e situações especiais.",
     },
   ];
 }
