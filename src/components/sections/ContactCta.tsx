@@ -42,7 +42,7 @@ export function ContactCta({
                 href={createWhatsAppUrl(whatsappMessage)}
                 external
                 icon={<MessageCircle size={18} aria-hidden="true" />}
-                ariaLabel="Falar com Luciano pelo WhatsApp"
+                ariaLabel="Falar pelo WhatsApp com Luciano"
               >
                 Falar pelo WhatsApp
               </ActionLink>
