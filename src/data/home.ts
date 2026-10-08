@@ -126,7 +126,7 @@ export function createHomeFaqItems(config: SiteConfig): HomeFaqItem[] {
     {
       question: "Como faço para agendar?",
       answer:
-        "A agenda online está em preparação. Enquanto isso, fale diretamente com Luciano pelo WhatsApp para verificar a disponibilidade e solicitar um horário.",
+        "Use a página de agendamento para escolher serviço, dia e horário de preferência. A solicitação é enviada pelo WhatsApp e só fica confirmada depois da resposta de Luciano.",
     },
   ];
 }

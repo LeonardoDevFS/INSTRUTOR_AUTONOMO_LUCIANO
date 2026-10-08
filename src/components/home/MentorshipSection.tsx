@@ -10,8 +10,8 @@ import { siteConfig } from "@/config/site";
 import { mentorshipTopics } from "@/data/home";
 import { createWhatsAppUrl, whatsappMessages } from "@/lib/whatsapp";
 
-import { ActionLink } from "./ActionLink";
-import { SectionHeading } from "./SectionHeading";
+import { ActionLink } from "@/components/ui/ActionLink";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export function MentorshipSection() {
   return (
@@ -49,7 +49,7 @@ export function MentorshipSection() {
               href={createWhatsAppUrl(whatsappMessages.mentorship)}
               external
               icon={<MessageCircle size={18} aria-hidden="true" />}
-              ariaLabel="Conversar com Luciano sobre a mentoria pelo WhatsApp"
+              ariaLabel="Quero saber mais sobre a mentoria pelo WhatsApp"
             >
               Quero saber mais
             </ActionLink>
@@ -65,7 +65,7 @@ export function MentorshipSection() {
 
         <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-black/45 p-6 sm:p-8">
           <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-gold/10 blur-3xl" />
-          <p className="relative text-xs font-extrabold uppercase tracking-[0.24em] text-white/40">
+          <p className="relative text-xs font-extrabold uppercase tracking-[0.24em] text-white/55">
             Temas que podem ser trabalhados
           </p>
           <ul className="relative mt-6 grid gap-3 sm:grid-cols-2">
@@ -74,14 +74,14 @@ export function MentorshipSection() {
                 key={topic}
                 className="flex min-h-20 items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.025] p-4"
               >
-                <span className="font-display text-xl font-extrabold text-gold/55">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gold/25 bg-gold/10 font-display text-sm font-extrabold text-gold">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <span className="font-semibold text-white/75">{topic}</span>
               </li>
             ))}
           </ul>
-          <p className="relative mt-6 text-xs leading-5 text-white/35">
+          <p className="relative mt-6 text-xs leading-5 text-white/55">
             Formato e disponibilidade são confirmados diretamente com{" "}
             {siteConfig.name}.
           </p>

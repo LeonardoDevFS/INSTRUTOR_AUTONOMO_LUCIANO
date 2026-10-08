@@ -1,7 +1,7 @@
 import { ArrowRight, Camera, Quote, ShieldCheck } from "lucide-react";
 
-import { ActionLink } from "./ActionLink";
-import { SectionHeading } from "./SectionHeading";
+import { ActionLink } from "@/components/ui/ActionLink";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const resultCommitments = [
   {
@@ -57,7 +57,7 @@ export function ResultsTeaser() {
                 <h3 className="mt-6 font-display text-xl font-bold uppercase leading-none text-white">
                   {title}
                 </h3>
-                <p className="mt-3 text-xs leading-5 text-white/45">
+                <p className="mt-3 text-xs leading-5 text-white/55">
                   {description}
                 </p>
               </div>

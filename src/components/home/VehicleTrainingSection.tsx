@@ -3,9 +3,9 @@ import { ArrowRight, Car, MessageCircle, Motorbike } from "lucide-react";
 import { services } from "@/data/services";
 import { createWhatsAppUrl, whatsappMessages } from "@/lib/whatsapp";
 
-import { ActionLink } from "./ActionLink";
-import { MediaPlaceholder } from "./MediaPlaceholder";
-import { SectionHeading } from "./SectionHeading";
+import { ActionLink } from "@/components/ui/ActionLink";
+import { MediaPlaceholder } from "@/components/ui/MediaPlaceholder";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const vehicleServices = services.filter(
   (service) => service.id === "carro" || service.id === "moto",
@@ -74,7 +74,7 @@ export function VehicleTrainingSection() {
                       external
                       variant="text"
                       icon={<MessageCircle size={17} aria-hidden="true" />}
-                      ariaLabel={`Falar com Luciano sobre ${service.title.toLowerCase()} pelo WhatsApp`}
+                      ariaLabel={`Tirar uma dúvida sobre ${service.title.toLowerCase()} pelo WhatsApp`}
                     >
                       Tirar uma dúvida
                     </ActionLink>

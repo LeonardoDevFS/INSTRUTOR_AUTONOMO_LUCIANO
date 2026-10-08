@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { guides } from "@/data/guides";
 
-import { SectionHeading } from "./SectionHeading";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export function GuidesSection() {
   return (
@@ -13,14 +13,15 @@ export function GuidesSection() {
       className="py-20 sm:py-24 lg:py-28"
     >
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
-        <div className="flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex flex-col items-center gap-7 text-center">
           <SectionHeading
             id="guides-title"
             eyebrow="Guias Direção Segura"
             title="Informação para tomar o próximo passo com clareza."
             description="Conteúdos diretos para entender processos e encontrar o treinamento adequado ao seu momento."
+            align="center"
           />
-          <div className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-gold/25 bg-gold/10 text-gold lg:flex">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-gold/25 bg-gold/10 text-gold">
             <BookOpenText size={26} aria-hidden="true" />
           </div>
         </div>
@@ -30,21 +31,21 @@ export function GuidesSection() {
             <Link
               key={guide.id}
               href={guide.href}
-              className="group relative flex min-h-80 flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-surface p-7 transition duration-300 hover:-translate-y-1 hover:border-gold/40 sm:p-8"
+              className="group relative flex min-h-80 flex-col items-center overflow-hidden rounded-[2rem] border border-white/10 bg-surface p-7 text-center transition duration-300 hover:-translate-y-1 hover:border-gold/40 sm:p-8"
             >
               <span
                 aria-hidden="true"
-                className="font-display text-6xl font-extrabold leading-none text-white/[0.045]"
+                className="flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] font-display text-xl font-extrabold text-white/65"
               >
                 0{index + 1}
               </span>
-              <h3 className="mt-8 text-balance font-display text-3xl font-extrabold uppercase leading-[0.95] text-white">
+              <h3 className="mt-6 text-balance font-display text-3xl font-extrabold uppercase leading-[0.95] text-white">
                 {guide.title}
               </h3>
               <p className="mt-5 text-sm leading-6 text-white/50">
                 {guide.description}
               </p>
-              <span className="mt-auto flex items-center justify-between pt-8 text-xs font-extrabold uppercase tracking-[0.17em] text-gold">
+              <span className="mt-auto flex items-center justify-center gap-2 pt-8 text-xs font-extrabold uppercase tracking-[0.17em] text-gold">
                 Ler guia
                 <ArrowUpRight
                   size={18}

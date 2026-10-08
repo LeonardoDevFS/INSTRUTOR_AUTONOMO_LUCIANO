@@ -3,7 +3,7 @@ import { ArrowRight, MessageCircle, Route } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { createWhatsAppUrl, whatsappMessages } from "@/lib/whatsapp";
 
-import { ActionLink } from "./ActionLink";
+import { ActionLink } from "@/components/ui/ActionLink";
 
 export function FinalCta() {
   return (
@@ -44,7 +44,7 @@ export function FinalCta() {
             external
             variant="secondary"
             icon={<MessageCircle size={18} aria-hidden="true" />}
-            ariaLabel="Falar com Luciano pelo WhatsApp"
+            ariaLabel="Chamar no WhatsApp e falar com Luciano"
             className="sm:px-8"
           >
             Chamar no WhatsApp

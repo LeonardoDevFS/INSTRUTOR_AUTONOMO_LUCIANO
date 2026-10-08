@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { createHomeFaqItems } from "@/data/home";
 
-import { SectionHeading } from "./SectionHeading";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const faqItems = createHomeFaqItems(siteConfig);
 

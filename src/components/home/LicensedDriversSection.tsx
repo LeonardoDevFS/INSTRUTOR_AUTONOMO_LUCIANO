@@ -3,8 +3,8 @@ import { ArrowRight, Check, HeartHandshake, MessageCircle } from "lucide-react";
 import { licensedTrainingTopics } from "@/data/home";
 import { createWhatsAppUrl, whatsappMessages } from "@/lib/whatsapp";
 
-import { ActionLink } from "./ActionLink";
-import { SectionHeading } from "./SectionHeading";
+import { ActionLink } from "@/components/ui/ActionLink";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export function LicensedDriversSection() {
   return (
@@ -31,7 +31,7 @@ export function LicensedDriversSection() {
               href={createWhatsAppUrl(whatsappMessages.licensed)}
               external
               icon={<MessageCircle size={18} aria-hidden="true" />}
-              ariaLabel="Conversar com Luciano sobre treinamento para habilitados pelo WhatsApp"
+              ariaLabel="Conversar sem compromisso sobre treinamento para habilitados pelo WhatsApp"
             >
               Conversar sem compromisso
             </ActionLink>

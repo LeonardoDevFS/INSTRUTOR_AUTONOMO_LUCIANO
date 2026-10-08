@@ -18,7 +18,7 @@ export function Footer() {
               <span className="text-gold">{brandTail.join(" ")}</span>
             </div>
 
-            <p className="mt-2 text-sm text-white/45">
+            <p className="mt-2 text-sm text-white/55">
               {siteConfig.slogan}
             </p>
 
@@ -84,7 +84,7 @@ export function Footer() {
           className="
             mt-12 flex flex-col gap-4
             border-t border-white/10 pt-7
-            text-xs text-white/35
+            text-xs text-white/55
             sm:flex-row sm:items-center sm:justify-between
           "
         >

@@ -30,7 +30,7 @@ export function Header() {
             <span className="text-gold"> {brandTail.join(" ")}</span>
           </span>
 
-          <span className="mt-1 text-[10px] uppercase tracking-[0.28em] text-white/45">
+          <span className="mt-1 text-[10px] uppercase tracking-[0.28em] text-white/55">
             {siteConfig.name}
           </span>
         </Link>

@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, Inter } from "next/font/google";
 
 import { siteConfig } from "@/config/site";
+import { getSiteUrl } from "@/lib/seo/site-url";
 
 import "./globals.css";
 
@@ -18,8 +19,12 @@ const barlowCondensed = Barlow_Condensed({
   display: "swap",
 });
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const siteUrl = getSiteUrl();
+
+export const viewport: Viewport = {
+  themeColor: "#070707",
+  colorScheme: "dark",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -37,6 +42,12 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     type: "website",
     siteName: `${siteConfig.name} - ${siteConfig.brand}`,
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.seo.defaultTitle,
+    description: siteConfig.description,
   },
 
   robots: {

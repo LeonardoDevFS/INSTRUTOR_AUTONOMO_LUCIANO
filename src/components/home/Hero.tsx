@@ -8,8 +8,8 @@ import {
 import { siteConfig } from "@/config/site";
 import { createWhatsAppUrl, whatsappMessages } from "@/lib/whatsapp";
 
-import { ActionLink } from "./ActionLink";
-import { MediaPlaceholder } from "./MediaPlaceholder";
+import { ActionLink } from "@/components/ui/ActionLink";
+import { MediaPlaceholder } from "@/components/ui/MediaPlaceholder";
 
 const heroStats = [
   {
@@ -84,7 +84,7 @@ export function Hero() {
 
           <a
             href="#objetivos"
-            className="mt-7 inline-flex items-center gap-2 text-sm font-bold text-white/45 transition hover:text-gold"
+            className="mt-7 inline-flex items-center gap-2 text-sm font-bold text-white/55 transition hover:text-gold"
           >
             Encontre o treinamento ideal
             <ArrowRight size={16} aria-hidden="true" />
@@ -92,8 +92,8 @@ export function Hero() {
 
           <dl className="mt-12 grid grid-cols-2 gap-x-5 gap-y-7 border-t border-white/10 pt-7 sm:grid-cols-4">
             {heroStats.map((stat) => (
-              <div key={stat.label}>
-                <dt className="text-xs leading-5 text-white/40">{stat.label}</dt>
+              <div key={stat.label} className="text-center">
+                <dt className="text-xs leading-5 text-white/55">{stat.label}</dt>
                 <dd className="order-first font-display text-2xl font-extrabold uppercase text-white sm:text-3xl">
                   {stat.value}
                 </dd>
