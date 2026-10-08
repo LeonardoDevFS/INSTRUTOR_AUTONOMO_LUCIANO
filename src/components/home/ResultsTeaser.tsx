@@ -1,25 +1,11 @@
-import { ArrowRight, Camera, Quote, ShieldCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 import { ActionLink } from "@/components/ui/ActionLink";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { siteMedia } from "@/data/media";
 
-const resultCommitments = [
-  {
-    icon: Camera,
-    title: "Fotos autorizadas",
-    description: "Registros reais serão publicados somente com autorização.",
-  },
-  {
-    icon: Quote,
-    title: "Depoimentos reais",
-    description: "Relatos serão apresentados sem fabricar histórias ou resultados.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Transparência",
-    description: "Nada de números de aprovação ou promessas sem comprovação.",
-  },
-] as const;
+const featuredResults = siteMedia.results;
 
 export function ResultsTeaser() {
   return (
@@ -35,7 +21,7 @@ export function ResultsTeaser() {
               id="results-title"
               eyebrow="Resultados reais"
               title="Cada conquista merece ser contada do jeito certo."
-              description="Esta área receberá fotos, depoimentos e avaliações reais assim que os materiais autorizados estiverem disponíveis."
+              description="Alguns registros compartilhados pela Direção Segura, sem percentuais inventados ou promessas de resultado."
             />
             <ActionLink
               href="/resultados"
@@ -43,23 +29,23 @@ export function ResultsTeaser() {
               icon={<ArrowRight size={17} aria-hidden="true" />}
               className="mt-7"
             >
-              Conhecer a proposta
+              Ver mais conquistas
             </ActionLink>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
-            {resultCommitments.map(({ icon: Icon, title, description }) => (
+          <div className="grid self-center grid-cols-3 gap-2 sm:gap-3">
+            {featuredResults.map((result) => (
               <div
-                key={title}
-                className="rounded-2xl border border-dashed border-white/15 bg-white/[0.025] p-5"
+                key={result.src}
+                className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 bg-black"
               >
-                <Icon size={22} className="text-gold" aria-hidden="true" />
-                <h3 className="mt-6 font-display text-xl font-bold uppercase leading-none text-white">
-                  {title}
-                </h3>
-                <p className="mt-3 text-xs leading-5 text-white/55">
-                  {description}
-                </p>
+                <Image
+                  src={result.src}
+                  alt={result.alt}
+                  fill
+                  sizes="(min-width: 1280px) 14vw, (min-width: 640px) 30vw, 100vw"
+                  className="object-contain transition duration-500 hover:scale-[1.02]"
+                />
               </div>
             ))}
           </div>

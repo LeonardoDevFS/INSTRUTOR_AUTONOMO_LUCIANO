@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { CalendarDays, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 import { siteConfig } from "@/config/site";
 import { mainNavigation } from "@/data/navigation";
+import { siteMedia } from "@/data/media";
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,16 +24,26 @@ export function Header() {
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
         <Link
           href="/"
-          className="group flex flex-col leading-none"
+          className="group flex items-center gap-3 leading-none"
           onClick={() => setMenuOpen(false)}
         >
-          <span className="font-display text-xl font-extrabold tracking-[0.08em] text-white">
-            {brandLead}
-            <span className="text-gold"> {brandTail.join(" ")}</span>
-          </span>
+          <Image
+            src={siteMedia.branding.logo}
+            alt=""
+            width={44}
+            height={44}
+            sizes="44px"
+            className="h-11 w-11 object-contain"
+          />
+          <span className="flex flex-col">
+            <span className="font-display text-xl font-extrabold tracking-[0.08em] text-white">
+              {brandLead}
+              <span className="text-gold"> {brandTail.join(" ")}</span>
+            </span>
 
-          <span className="mt-1 text-[10px] uppercase tracking-[0.28em] text-white/55">
-            {siteConfig.name}
+            <span className="mt-1 text-[10px] uppercase tracking-[0.28em] text-white/55">
+              {siteConfig.name}
+            </span>
           </span>
         </Link>
 

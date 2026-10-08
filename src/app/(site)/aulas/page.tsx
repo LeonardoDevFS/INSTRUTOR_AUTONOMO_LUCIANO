@@ -7,6 +7,7 @@ import { ContactCta } from "@/components/sections/ContactCta";
 import { PageHero } from "@/components/sections/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { services } from "@/data/services";
+import { siteMedia } from "@/data/media";
 import { whatsappMessages } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -37,8 +38,11 @@ export default function LessonsPage() {
         backHref="/"
         backLabel="Voltar ao início"
         whatsappMessage={whatsappMessages.general}
-        placeholderTitle="Aulas Direção Segura"
-        placeholderDescription="Espaço reservado para uma composição original com Luciano, carro e moto."
+        placeholderTitle="Carro e moto"
+        placeholderDescription="Composição visual das categorias A e B da Direção Segura."
+        imageSrc={siteMedia.vehicles.src}
+        imageAlt={siteMedia.vehicles.alt}
+        imagePosition={siteMedia.vehicles.objectPosition}
       />
 
       <section className="py-20 sm:py-24 lg:py-28">

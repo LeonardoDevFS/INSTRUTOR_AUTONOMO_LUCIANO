@@ -1,6 +1,8 @@
 import { ArrowRight, MessageCircle, Route } from "lucide-react";
+import Image from "next/image";
 
 import { siteConfig } from "@/config/site";
+import { siteMedia } from "@/data/media";
 import { createWhatsAppUrl, whatsappMessages } from "@/lib/whatsapp";
 
 import { ActionLink } from "@/components/ui/ActionLink";
@@ -11,6 +13,14 @@ export function FinalCta() {
       aria-labelledby="final-cta-title"
       className="relative isolate overflow-hidden py-24 sm:py-28 lg:py-36"
     >
+      <Image
+        src={siteMedia.vehicles.src}
+        alt=""
+        fill
+        sizes="100vw"
+        className="-z-30 object-cover opacity-20"
+        style={{ objectPosition: siteMedia.vehicles.objectPosition }}
+      />
       <div className="pointer-events-none absolute inset-0 -z-20 bg-[linear-gradient(to_bottom,#070707,rgba(229,185,63,0.08),#070707)]" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 mx-auto h-64 max-w-5xl [clip-path:polygon(46%_0,54%_0,78%_100%,22%_100%)] bg-gradient-to-b from-gold/20 to-gold/[0.02]" />
       <div className="pointer-events-none absolute bottom-0 left-1/2 -z-10 h-48 w-px -translate-x-1/2 bg-gradient-to-b from-gold/80 to-transparent" />

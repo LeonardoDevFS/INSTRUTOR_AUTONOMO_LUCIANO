@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, Inter } from "next/font/google";
 
 import { siteConfig } from "@/config/site";
+import { siteMedia } from "@/data/media";
 import { getSiteUrl } from "@/lib/seo/site-url";
 
 import "./globals.css";
@@ -48,6 +49,11 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteConfig.seo.defaultTitle,
     description: siteConfig.description,
+  },
+
+  icons: {
+    icon: siteMedia.branding.icon,
+    shortcut: siteMedia.branding.icon,
   },
 
   robots: {

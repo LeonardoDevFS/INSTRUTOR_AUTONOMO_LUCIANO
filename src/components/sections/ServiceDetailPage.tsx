@@ -30,6 +30,9 @@ export function ServiceDetailPage({ content }: ServiceDetailPageProps) {
         whatsappMessage={content.whatsappMessage}
         placeholderTitle={content.placeholderTitle}
         placeholderDescription={content.placeholderDescription}
+        imageSrc={content.imageSrc}
+        imageAlt={content.imageAlt}
+        imagePosition={content.imagePosition}
         badge={content.category ? `Categoria ${content.category}` : undefined}
       />
 

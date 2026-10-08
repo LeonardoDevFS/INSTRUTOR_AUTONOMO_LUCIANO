@@ -6,6 +6,7 @@ import { PageHero } from "@/components/sections/PageHero";
 import { ActionLink } from "@/components/ui/ActionLink";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/config/site";
+import { siteMedia } from "@/data/media";
 import { formatScheduleRange } from "@/lib/utils";
 import { createWhatsAppUrl, whatsappMessages } from "@/lib/whatsapp";
 
@@ -26,8 +27,11 @@ export default function ContactPage() {
         backHref="/"
         backLabel="Voltar ao início"
         whatsappMessage={whatsappMessages.general}
-        placeholderTitle="Atendimento Direção Segura"
-        placeholderDescription="Espaço reservado para uma fotografia original de atendimento ou aula."
+        placeholderTitle="Luciano Oliveira"
+        placeholderDescription="Atendimento direto com o Instrutor Autônomo da Direção Segura."
+        imageSrc={siteMedia.hero.src}
+        imageAlt={siteMedia.hero.alt}
+        imagePosition={siteMedia.hero.objectPosition}
       />
 
       <section className="py-20 sm:py-24 lg:py-28">

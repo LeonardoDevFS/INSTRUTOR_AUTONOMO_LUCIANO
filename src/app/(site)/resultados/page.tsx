@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import { Camera, MessageSquareQuote, ShieldCheck } from "lucide-react";
+import Image from "next/image";
 
 import { ContactCta } from "@/components/sections/ContactCta";
 import { PageHero } from "@/components/sections/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { siteMedia } from "@/data/media";
 import { whatsappMessages } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Resultados Reais",
   description:
-    "Espaço da Direção Segura destinado a fotos autorizadas, depoimentos reais e avaliações verificáveis de alunos.",
+    "Veja registros de conquistas e um depoimento compartilhado pela Direção Segura em Itajubá/MG.",
   alternates: { canonical: "/resultados" },
 };
 
@@ -17,12 +19,12 @@ const resultTypes = [
   {
     icon: Camera,
     title: "Fotos autorizadas",
-    description: "Registros reais de alunos serão publicados somente com autorização apropriada.",
+    description: "A galeria utiliza os registros que foram enviados para publicação no projeto.",
   },
   {
     icon: MessageSquareQuote,
     title: "Depoimentos reais",
-    description: "Relatos serão incluídos quando houver conteúdo confirmado e consentimento para publicação.",
+    description: "Relatos só serão apresentados a partir de materiais reais fornecidos à Direção Segura.",
   },
   {
     icon: ShieldCheck,
@@ -36,21 +38,53 @@ export default function ResultsPage() {
     <>
       <PageHero
         eyebrow="Resultados reais"
-        title="Conquistas apresentadas com autorização e transparência."
-        description="Esta página está preparada para receber histórias, fotos e avaliações reais da Direção Segura."
+        title="Conquistas que fazem parte da história da Direção Segura."
+        description="Registros compartilhados por Luciano para celebrar alunos e mostrar o trabalho sem recorrer a números ou avaliações inventadas."
         backHref="/"
         backLabel="Voltar ao início"
         whatsappMessage={whatsappMessages.general}
-        placeholderTitle="Resultados Direção Segura"
-        placeholderDescription="O material de alunos será inserido somente após seleção e autorização."
+        placeholderTitle="Conquistas reais"
+        placeholderDescription="Registros de alunos compartilhados pela Direção Segura."
+        imageSrc={siteMedia.results[0].src}
+        imageAlt={siteMedia.results[0].alt}
+        imagePosition="center center"
+        imageFit="contain"
       />
 
       <section className="py-20 sm:py-24 lg:py-28">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <SectionHeading
+            eyebrow="Galeria de conquistas"
+            title="Pessoas diferentes. Objetivos conquistados com dedicação."
+            description="Os materiais abaixo foram adicionados ao projeto para apresentar momentos da trajetória da Direção Segura."
+            align="center"
+          />
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3">
+            {siteMedia.results.map((result) => (
+              <figure
+                key={result.src}
+                className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 bg-black"
+              >
+                <Image
+                  src={result.src}
+                  alt={result.alt}
+                  fill
+                  sizes="(min-width: 1024px) 30vw, (min-width: 640px) 48vw, 100vw"
+                  className="object-contain"
+                />
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-white/10 bg-surface py-20 sm:py-24 lg:py-28">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <SectionHeading
             eyebrow="Compromisso editorial"
-            title="Prova social só tem valor quando é verdadeira."
-            description="Enquanto o material autorizado não está disponível, esta página permanece transparente sobre o que ainda será adicionado."
+            title="Resultados apresentados com responsabilidade."
+            description="A página utiliza somente os materiais recebidos e não publica taxas de aprovação ou quantidades sem comprovação."
+            align="center"
           />
           <div className="mt-10 grid gap-5 md:grid-cols-3 lg:mt-14">
             {resultTypes.map(({ icon: Icon, title, description }) => (

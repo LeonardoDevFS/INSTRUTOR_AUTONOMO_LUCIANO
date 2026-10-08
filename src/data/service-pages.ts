@@ -1,3 +1,5 @@
+import { siteMedia } from "@/data/media";
+
 export type ServicePageKey =
   | "carro"
   | "moto"
@@ -11,6 +13,9 @@ export type ServicePageContent = {
   category?: string;
   placeholderTitle: string;
   placeholderDescription: string;
+  imageSrc: string;
+  imageAlt: string;
+  imagePosition?: string;
   introTitle: string;
   introParagraphs: readonly string[];
   idealForTitle: string;
@@ -28,9 +33,12 @@ export const servicePages: Record<ServicePageKey, ServicePageContent> = {
     description:
       "Treinamento prático e individual para desenvolver controle, atenção e confiança ao volante.",
     category: "B",
-    placeholderTitle: "Luciano em uma aula de carro",
+    placeholderTitle: "Treinamento de carro",
     placeholderDescription:
-      "Espaço reservado para uma fotografia original do treinamento da categoria B.",
+      "Composição visual fornecida para representar o treinamento da categoria B.",
+    imageSrc: siteMedia.car.src,
+    imageAlt: siteMedia.car.alt,
+    imagePosition: siteMedia.car.objectPosition,
     introTitle: "Treinamento construído a partir da sua necessidade.",
     introParagraphs: [
       "Cada aluno chega com uma experiência diferente. Por isso, as aulas são organizadas de acordo com o momento, as dificuldades e os objetivos combinados diretamente com Luciano.",
@@ -61,9 +69,12 @@ export const servicePages: Record<ServicePageKey, ServicePageContent> = {
     description:
       "Treinamento para desenvolver domínio, coordenação e mais confiança na categoria A.",
     category: "A",
-    placeholderTitle: "Luciano em uma aula de moto",
+    placeholderTitle: "Treinamento de moto",
     placeholderDescription:
-      "Espaço reservado para uma fotografia original do treinamento da categoria A.",
+      "Composição visual fornecida para representar o treinamento da categoria A.",
+    imageSrc: siteMedia.motorcycle.src,
+    imageAlt: siteMedia.motorcycle.alt,
+    imagePosition: siteMedia.motorcycle.objectPosition,
     introTitle: "Evolução gradual sobre duas rodas.",
     introParagraphs: [
       "O treinamento é adaptado ao nível do aluno, respeitando o tempo necessário para compreender os comandos e desenvolver maior controle da motocicleta.",
@@ -95,7 +106,10 @@ export const servicePages: Record<ServicePageKey, ServicePageContent> = {
       "Aulas personalizadas para quem possui CNH, mas perdeu a prática ou ainda se sente inseguro em determinadas situações.",
     placeholderTitle: "Treinamento para habilitados",
     placeholderDescription:
-      "Espaço reservado para uma fotografia original e autorizada de uma aula prática.",
+      "Luciano Oliveira, instrutor autônomo da Direção Segura.",
+    imageSrc: siteMedia.hero.src,
+    imageAlt: siteMedia.hero.alt,
+    imagePosition: siteMedia.hero.objectPosition,
     introTitle: "Seu ponto de partida é respeitado.",
     introParagraphs: [
       "Ter CNH não significa que todas as situações do trânsito sejam confortáveis. Tempo sem dirigir, pouca prática ou uma dificuldade específica podem tornar a retomada mais desafiadora.",
@@ -127,7 +141,10 @@ export const servicePages: Record<ServicePageKey, ServicePageContent> = {
       "Aulas focadas nos pontos que precisam de mais atenção, sem promessas de aprovação ou atalhos.",
     placeholderTitle: "Preparação para prova prática",
     placeholderDescription:
-      "Espaço reservado para uma fotografia original do treinamento próximo à região de exame.",
+      "Composição visual fornecida para representar o treinamento de carro.",
+    imageSrc: siteMedia.carFront.src,
+    imageAlt: siteMedia.carFront.alt,
+    imagePosition: siteMedia.carFront.objectPosition,
     introTitle: "Foco no que ainda precisa evoluir.",
     introParagraphs: [
       "A preparação é direcionada pelas dificuldades percebidas pelo aluno e observadas durante o treinamento, permitindo trabalhar pontos específicos antes do exame.",

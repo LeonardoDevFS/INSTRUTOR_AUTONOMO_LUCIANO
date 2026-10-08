@@ -15,6 +15,10 @@ type PageHeroProps = {
   placeholderTitle: string;
   placeholderDescription: string;
   badge?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  imagePosition?: string;
+  imageFit?: "cover" | "contain";
 };
 
 export function PageHero({
@@ -27,6 +31,10 @@ export function PageHero({
   placeholderTitle,
   placeholderDescription,
   badge,
+  imageSrc,
+  imageAlt,
+  imagePosition,
+  imageFit,
 }: PageHeroProps) {
   const breadcrumbs: BreadcrumbItem[] = [
     { label: "Início", href: "/" },
@@ -68,6 +76,11 @@ export function PageHero({
         <MediaPlaceholder
           title={placeholderTitle}
           description={placeholderDescription}
+          src={imageSrc}
+          alt={imageAlt}
+          objectPosition={imagePosition}
+          objectFit={imageFit}
+          priority={Boolean(imageSrc)}
           className="min-h-[27rem] lg:min-h-[35rem]"
         />
       </div>

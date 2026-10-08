@@ -1,7 +1,9 @@
 import Link from "next/link";
+import Image from "next/image";
 import { AtSign, MessageCircle } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
+import { siteMedia } from "@/data/media";
 import { formatScheduleRange } from "@/lib/utils";
 import { createWhatsAppUrl } from "@/lib/whatsapp";
 
@@ -13,9 +15,19 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-5 py-14 lg:px-8">
         <div className="grid gap-10 md:grid-cols-3">
           <div>
-            <div className="font-display text-2xl font-extrabold text-white">
-              {brandLead}{" "}
-              <span className="text-gold">{brandTail.join(" ")}</span>
+            <div className="flex items-center gap-3">
+              <Image
+                src={siteMedia.branding.logo}
+                alt=""
+                width={56}
+                height={56}
+                sizes="56px"
+                className="h-14 w-14 object-contain"
+              />
+              <div className="font-display text-2xl font-extrabold text-white">
+                {brandLead}{" "}
+                <span className="text-gold">{brandTail.join(" ")}</span>
+              </div>
             </div>
 
             <p className="mt-2 text-sm text-white/55">

@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
+import { siteMedia } from "@/data/media";
 import { createWhatsAppUrl, whatsappMessages } from "@/lib/whatsapp";
 
 import { ActionLink } from "@/components/ui/ActionLink";
@@ -103,8 +104,12 @@ export function Hero() {
         </div>
 
         <MediaPlaceholder
-          title="Luciano, carro e moto"
-          description="Espaço reservado para a foto principal original da Direção Segura."
+          title="Luciano Oliveira"
+          description="Instrutor Autônomo da Direção Segura em Itajubá/MG."
+          src={siteMedia.hero.src}
+          alt={siteMedia.hero.alt}
+          objectPosition={siteMedia.hero.objectPosition}
+          priority
           className="min-h-[29rem] lg:min-h-[39rem]"
         />
       </div>

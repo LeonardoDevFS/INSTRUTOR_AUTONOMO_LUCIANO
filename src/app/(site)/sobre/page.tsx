@@ -5,6 +5,7 @@ import { ContactCta } from "@/components/sections/ContactCta";
 import { PageHero } from "@/components/sections/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/config/site";
+import { siteMedia } from "@/data/media";
 import { whatsappMessages } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -31,8 +32,11 @@ export default function AboutPage() {
         backHref="/"
         backLabel="Voltar ao início"
         whatsappMessage={whatsappMessages.general}
-        placeholderTitle="Retrato original de Luciano"
-        placeholderDescription="Espaço reservado para uma fotografia profissional e autorizada do instrutor."
+        placeholderTitle="Luciano Oliveira"
+        placeholderDescription="Instrutor Autônomo da Direção Segura em Itajubá/MG."
+        imageSrc={siteMedia.hero.src}
+        imageAlt={siteMedia.hero.alt}
+        imagePosition={siteMedia.hero.objectPosition}
         badge={siteConfig.brand}
       />
 
