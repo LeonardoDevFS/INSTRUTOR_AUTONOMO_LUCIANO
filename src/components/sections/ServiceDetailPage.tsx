@@ -33,6 +33,7 @@ export function ServiceDetailPage({ content }: ServiceDetailPageProps) {
         imageSrc={content.imageSrc}
         imageAlt={content.imageAlt}
         imagePosition={content.imagePosition}
+        imageFit={content.imageFit}
         badge={content.category ? `Categoria ${content.category}` : undefined}
       />
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/sections/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { guides } from "@/data/guides";
+import { siteMedia } from "@/data/media";
 import { whatsappMessages } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -26,6 +27,10 @@ export default function GuidesPage() {
         whatsappMessage={whatsappMessages.general}
         placeholderTitle="Conteúdo Direção Segura"
         placeholderDescription="Espaço reservado para uma imagem original dos guias e materiais educativos."
+        imageSrc={siteMedia.guidesCover.src}
+        imageAlt={siteMedia.guidesCover.alt}
+        imagePosition={siteMedia.guidesCover.objectPosition}
+        imageFit="contain"
       />
 
       <section className="py-20 sm:py-24 lg:py-28">

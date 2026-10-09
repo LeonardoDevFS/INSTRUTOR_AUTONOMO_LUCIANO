@@ -22,9 +22,9 @@ export const guides: Guide[] = [
   },
   {
     id: "medo-dirigir",
-    title: "Tenho medo de dirigir. E agora?",
-    href: "/guias/medo-de-dirigir",
+    title: "Treinamento para habilitados",
+    href: "/aulas/habilitados",
     description:
-      "Entenda como funciona o treinamento para habilitados que ainda não se sentem seguros no trânsito.",
+      "Um caminho progressivo para retomar a prática e trabalhar habilidades específicas depois da CNH.",
   },
 ];

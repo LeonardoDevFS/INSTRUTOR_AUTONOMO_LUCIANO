@@ -56,7 +56,7 @@ export function PageHero({
               {badge}
             </span>
           )}
-          <h1 className="mt-5 text-balance font-display text-5xl font-extrabold uppercase leading-[0.9] text-white sm:text-6xl lg:text-7xl">
+          <h1 className="mt-5 break-words text-balance font-display text-5xl font-extrabold uppercase leading-[0.9] text-white sm:text-6xl lg:text-7xl">
             {title}
           </h1>
           <p className="mt-7 max-w-2xl text-base leading-7 text-white/55 sm:text-lg sm:leading-8">

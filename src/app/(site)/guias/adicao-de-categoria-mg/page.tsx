@@ -1,127 +1,92 @@
 import type { Metadata } from "next";
-import { ArrowRight, Car, Motorbike, ShieldAlert } from "lucide-react";
+import { ArrowRight, BookOpenCheck, Car, Motorbike, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { GuideHero } from "@/components/guides/GuideHero";
-import { GuideSteps } from "@/components/guides/GuideSteps";
-import { OfficialNotice } from "@/components/guides/OfficialNotice";
-import { ContactCta } from "@/components/sections/ContactCta";
+import { JourneyCTA } from "@/components/guides/JourneyCTA";
+import { JourneyFAQ } from "@/components/guides/JourneyFAQ";
+import { JourneyGlossary } from "@/components/guides/JourneyGlossary";
+import { JourneyStepper } from "@/components/guides/JourneyStepper";
+import { OfficialSources } from "@/components/guides/OfficialSources";
 import {
+  categoryAdditionFaq,
   categoryAdditionSteps,
+  categoryAdditionVariants,
+  guideGlossary,
   guideReviewDate,
   officialGuideSources,
 } from "@/data/guide-pages";
 import { whatsappMessages } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
-  title: "Adição de Categoria A ou B em Minas Gerais",
-  description:
-    "Entenda o processo oficial para adicionar categoria A ou B à CNH em Minas Gerais, incluindo exames, LADV, aulas e prova prática.",
+  title: "Adição de Categoria A ou B em Itajubá e MG",
+  description: "Guia atualizado para adicionar categoria A ou B em Minas Gerais: requisitos, exames, licença, aulas práticas e exame de direção.",
   alternates: { canonical: "/guias/adicao-de-categoria-mg" },
+  openGraph: {
+    title: "Adição de Categoria: amplie suas possibilidades",
+    description: "Entenda como adicionar categoria A ou B à habilitação em Minas Gerais.",
+  },
 };
 
 export default function CategoryAdditionGuidePage() {
-  const source = officialGuideSources.categoryAddition;
-
   return (
     <article>
       <GuideHero
         eyebrow="Adição de categoria em Minas Gerais"
-        title="Tenho A e quero B. Tenho B e quero A."
-        description="Veja como funciona o processo administrativo e prático para incluir uma nova categoria na sua CNH."
+        title="Adição de Categoria: amplie suas possibilidades"
+        description="Você já possui habilitação, mas deseja conduzir outro tipo de veículo? Entenda os requisitos, as etapas e como se preparar para a nova experiência."
         reviewedAt={guideReviewDate}
-        source={source}
+        source={officialGuideSources.categoryAddition}
       />
 
       <section className="py-20 sm:py-24">
-        <div className="mx-auto max-w-5xl px-5 lg:px-8">
-          <div className="grid gap-5 sm:grid-cols-2">
-            <PathCard
-              icon={<Motorbike aria-hidden="true" />}
-              current="Já tenho B"
-              destination="Quero adicionar A"
-              description="Processo para incluir a categoria de motocicleta na CNH."
-            />
-            <PathCard
-              icon={<Car aria-hidden="true" />}
-              current="Já tenho A"
-              destination="Quero adicionar B"
-              description="Processo para incluir a categoria de automóvel na CNH."
-            />
-          </div>
-
-          <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.8fr]">
-            <div className="rounded-3xl border border-white/10 bg-surface p-6 sm:p-7">
-              <ShieldAlert size={24} className="text-gold" aria-hidden="true" />
-              <h2 className="mt-6 font-display text-3xl font-extrabold uppercase text-white">
-                Antes de abrir o processo
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-white/55">
-                O Portal MG informa que não pode haver bloqueio no prontuário
-                nem mais de uma infração gravíssima nos últimos 12 meses. A
-                pessoa também deve residir em Minas Gerais e manter seu
-                endereço atualizado.
-              </p>
+        <div className="mx-auto grid max-w-7xl gap-8 px-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)] lg:px-8">
+          <div>
+            <p className="text-xs font-extrabold uppercase tracking-[0.3em] text-gold">Dois caminhos</p>
+            <h2 className="mt-4 text-balance font-display text-4xl font-extrabold uppercase leading-[0.95] text-white sm:text-5xl">A categoria atual define seu ponto de partida.</h2>
+            <p className="mt-6 max-w-3xl text-base leading-8 text-white/60">A adição não apaga a categoria que você já possui. Ela acrescenta uma nova autorização depois das etapas e da aprovação correspondentes ao novo veículo.</p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              <PathCard icon={<Motorbike aria-hidden="true" />} current="Tenho categoria B" destination="Quero adicionar A" description="Nova aprendizagem para condução de motocicleta." />
+              <PathCard icon={<Car aria-hidden="true" />} current="Tenho categoria A" destination="Quero adicionar B" description="Nova aprendizagem para condução de automóvel." />
             </div>
-            <OfficialNotice source={source} />
+            <div className="mt-5 flex items-start gap-4 rounded-2xl border border-white/10 bg-surface p-5">
+              <BookOpenCheck size={22} className="shrink-0 text-gold" aria-hidden="true" />
+              <p className="text-sm leading-7 text-white/60"><strong className="text-white">Adição não é mudança de categoria.</strong> A passagem para C, D ou E usa outro serviço e possui requisitos específicos. Este guia trata somente de A e B.</p>
+            </div>
           </div>
+          <OfficialSources sources={[officialGuideSources.categoryAddition, officialGuideSources.resolution1020, officialGuideSources.autonomousInstructor]} />
         </div>
       </section>
 
-      <GuideSteps
-        title="Etapas atuais para adicionar A ou B."
-        steps={categoryAdditionSteps}
-      />
+      <JourneyStepper journeyKey="adicao-categoria-mg" title="Escolha seu caminho e acompanhe cada etapa." steps={categoryAdditionSteps} variants={categoryAdditionVariants} />
 
       <section className="py-20 sm:py-24">
         <div className="mx-auto max-w-5xl px-5 lg:px-8">
-          <div className="rounded-[2rem] border border-gold/20 bg-gold/[0.06] p-7 sm:p-9">
-            <h2 className="font-display text-4xl font-extrabold uppercase leading-none text-white">
-              Onde Luciano pode orientar
-            </h2>
-            <p className="mt-5 max-w-3xl text-sm leading-7 text-white/60">
-              Luciano pode esclarecer dúvidas sobre a preparação e conversar
-              sobre o treinamento depois da liberação oficial. A página do
-              Portal MG consultada atualmente direciona o cadastro formal da
-              etapa prática por um CFC; por isso, confirme com o Detran-MG e
-              com Luciano qual formato está autorizado para o seu processo
-              antes de contratar as aulas.
-            </p>
+          <div className="grid gap-7 rounded-[2rem] border border-gold/20 bg-gold/[0.06] p-7 md:grid-cols-[auto_1fr] sm:p-9">
+            <ShieldCheck size={30} className="text-gold" aria-hidden="true" />
+            <div>
+              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-gold">Como Luciano pode ajudar</p>
+              <h2 className="mt-3 font-display text-4xl font-extrabold uppercase leading-none text-white">Treinamento para a nova categoria.</h2>
+              <p className="mt-5 text-sm leading-7 text-white/65">Depois da liberação oficial, Luciano pode conversar sobre o planejamento prático, as habilidades da categoria pretendida e a frequência das aulas. A atuação no processo depende da autorização profissional e da possibilidade de registro no fluxo vigente do Detran-MG.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      <ContactCta
-        title="Já iniciou a adição de categoria?"
-        description="Conte qual categoria você possui e qual deseja adicionar. Luciano pode orientar sobre o momento adequado para conversar sobre as aulas."
-        whatsappMessage={whatsappMessages.addition}
-      />
+      <JourneyGlossary items={guideGlossary} />
+      <JourneyFAQ items={categoryAdditionFaq} />
+      <JourneyCTA title="Sua nova categoria pode começar com um plano claro." description="Agende um horário ou conte a Luciano qual categoria você já possui e qual deseja adicionar." whatsappMessage={whatsappMessages.addition} />
     </article>
   );
 }
 
-function PathCard({
-  icon,
-  current,
-  destination,
-  description,
-}: {
-  icon: ReactNode;
-  current: string;
-  destination: string;
-  description: string;
-}) {
+function PathCard({ icon, current, destination, description }: { icon: ReactNode; current: string; destination: string; description: string }) {
   return (
-    <article className="rounded-[2rem] border border-white/10 bg-surface p-7">
+    <div className="rounded-3xl border border-white/10 bg-surface p-6">
       <div className="text-gold">{icon}</div>
-      <p className="mt-8 text-xs font-bold uppercase tracking-[0.2em] text-white/40">
-        {current}
-      </p>
-      <h2 className="mt-3 flex items-center gap-3 font-display text-3xl font-extrabold uppercase text-white">
-        <ArrowRight size={22} className="text-gold" aria-hidden="true" />
-        {destination}
-      </h2>
-      <p className="mt-4 text-sm leading-6 text-white/50">{description}</p>
-    </article>
+      <p className="mt-6 text-xs font-bold uppercase tracking-[0.18em] text-white/40">{current}</p>
+      <h3 className="mt-2 flex items-center gap-2 font-display text-2xl font-extrabold uppercase text-white"><ArrowRight size={18} className="text-gold" aria-hidden="true" />{destination}</h3>
+      <p className="mt-3 text-sm leading-6 text-white/50">{description}</p>
+    </div>
   );
 }

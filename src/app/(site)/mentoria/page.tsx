@@ -6,6 +6,7 @@ import { ContactCta } from "@/components/sections/ContactCta";
 import { PageHero } from "@/components/sections/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { mentorshipTopics } from "@/data/home";
+import { siteMedia } from "@/data/media";
 import { whatsappMessages } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -27,6 +28,9 @@ export default function MentorshipPage() {
         whatsappMessage={whatsappMessages.mentorship}
         placeholderTitle="Mentoria com Luciano"
         placeholderDescription="Espaço reservado para uma fotografia original ou registro autorizado da mentoria."
+        imageSrc={siteMedia.mentorship.src}
+        imageAlt={siteMedia.mentorship.alt}
+        imagePosition={siteMedia.mentorship.objectPosition}
         badge="Atualmente gratuita"
       />
 

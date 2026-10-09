@@ -60,6 +60,31 @@ export const siteMedia = {
     alt: "Luciano Oliveira em frente ao carro da Direção Segura ao pôr do sol",
     objectPosition: "center center",
   },
+  professionalPortrait: {
+    src: "/images/blog/foto profissional do Luciano.png",
+    alt: "Retrato profissional de Luciano Oliveira ao lado de um veículo de treinamento",
+    objectPosition: "center 28%",
+  },
+  mentorship: {
+    src: "/images/mentoria/luciano dando aula.png",
+    alt: "Luciano apresentando conteúdo sobre sinalização de trânsito em sala",
+    objectPosition: "center center",
+  },
+  licensedTraining: {
+    src: "/images/alunos/luciano dano aula no patio.png",
+    alt: "Luciano acompanhando uma aula prática de motocicleta em um pátio de treinamento",
+    objectPosition: "center center",
+  },
+  guidesCover: {
+    src: "/images/guias/guia-cnh-direcao-segura.jpg",
+    alt: "Arte informativa da Direção Segura sobre o guia completo para tirar a CNH",
+    objectPosition: "center center",
+  },
+  practicalTest: {
+    src: "/images/prova-pratica/luciano com pedro APROVADO.webp",
+    alt: "Arte da Direção Segura celebrando a aprovação de Pedro ao lado de Luciano",
+    objectPosition: "center center",
+  },
   car: carGallery[0],
   carFront: carGallery[1],
   carGallery,
@@ -100,6 +125,11 @@ export const siteMedia = {
 } as const satisfies {
   branding: { logo: string; icon: string };
   hero: SiteMediaAsset;
+  professionalPortrait: SiteMediaAsset;
+  mentorship: SiteMediaAsset;
+  licensedTraining: SiteMediaAsset;
+  guidesCover: SiteMediaAsset;
+  practicalTest: SiteMediaAsset;
   car: SiteMediaAsset;
   carFront: SiteMediaAsset;
   carGallery: readonly SiteMediaAsset[];

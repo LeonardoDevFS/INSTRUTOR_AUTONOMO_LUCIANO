@@ -2,9 +2,7 @@ import type { SiteConfig } from "@/config/site";
 
 export type HomeGoalIcon =
   | "first-license"
-  | "motorcycle"
   | "licensed"
-  | "mentorship"
   | "addition";
 
 export type HomeGoal = {
@@ -16,34 +14,22 @@ export type HomeGoal = {
 
 export const homeGoals: HomeGoal[] = [
   {
-    title: "Primeira habilitação",
-    description: "Entenda as etapas e prepare-se para começar com clareza.",
+    title: "Vou tirar minha primeira CNH",
+    description: "Entenda o processo em Minas Gerais, dos requisitos iniciais até a Permissão para Dirigir.",
     href: "/guias/primeira-cnh-minas-gerais",
     icon: "first-license",
   },
   {
-    title: "Aulas de moto",
-    description: "Desenvolva controle e segurança para a categoria A.",
-    href: "/aulas/moto",
-    icon: "motorcycle",
-  },
-  {
-    title: "Já sou habilitado",
-    description: "Retome a prática no seu ritmo e nas situações que precisa.",
-    href: "/aulas/habilitados",
-    icon: "licensed",
-  },
-  {
-    title: "Mentoria teórica",
-    description: "Organize seus estudos e tire dúvidas sobre a etapa teórica.",
-    href: "/mentoria",
-    icon: "mentorship",
-  },
-  {
-    title: "Adição de categoria",
-    description: "Saiba como avançar da categoria A para B ou de B para A.",
+    title: "Quero adicionar uma categoria",
+    description: "Já possui habilitação? Descubra o caminho para adicionar A ou B e se preparar para a nova experiência.",
     href: "/guias/adicao-de-categoria-mg",
     icon: "addition",
+  },
+  {
+    title: "Já tenho CNH, mas quero melhorar",
+    description: "Aprimore sua direção e desenvolva habilidades práticas com acompanhamento personalizado.",
+    href: "/aulas/habilitados",
+    icon: "licensed",
   },
 ];
 

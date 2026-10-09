@@ -6,6 +6,7 @@ import { PageHero } from "@/components/sections/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { blogPosts, getBlogPostReadingTime } from "@/data/blog-posts";
 import { guides } from "@/data/guides";
+import { siteMedia } from "@/data/media";
 import { whatsappMessages } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -27,6 +28,9 @@ export default function BlogPage() {
         whatsappMessage={whatsappMessages.general}
         placeholderTitle="Conteúdo Direção Segura"
         placeholderDescription="Espaço reservado para uma imagem editorial original de Luciano, do carro ou da moto."
+        imageSrc={siteMedia.professionalPortrait.src}
+        imageAlt={siteMedia.professionalPortrait.alt}
+        imagePosition={siteMedia.professionalPortrait.objectPosition}
       />
 
       <section className="py-20 sm:py-24">

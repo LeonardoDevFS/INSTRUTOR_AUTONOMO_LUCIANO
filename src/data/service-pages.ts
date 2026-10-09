@@ -16,6 +16,7 @@ export type ServicePageContent = {
   imageSrc: string;
   imageAlt: string;
   imagePosition?: string;
+  imageFit?: "cover" | "contain";
   introTitle: string;
   introParagraphs: readonly string[];
   idealForTitle: string;
@@ -142,9 +143,10 @@ export const servicePages: Record<ServicePageKey, ServicePageContent> = {
     placeholderTitle: "Preparação para prova prática",
     placeholderDescription:
       "Composição visual fornecida para representar o treinamento de carro.",
-    imageSrc: siteMedia.carFront.src,
-    imageAlt: siteMedia.carFront.alt,
-    imagePosition: siteMedia.carFront.objectPosition,
+    imageSrc: siteMedia.practicalTest.src,
+    imageAlt: siteMedia.practicalTest.alt,
+    imagePosition: siteMedia.practicalTest.objectPosition,
+    imageFit: "contain",
     introTitle: "Foco no que ainda precisa evoluir.",
     introParagraphs: [
       "A preparação é direcionada pelas dificuldades percebidas pelo aluno e observadas durante o treinamento, permitindo trabalhar pontos específicos antes do exame.",
