@@ -34,6 +34,7 @@ export function ServiceDetailPage({ content }: ServiceDetailPageProps) {
         imageAlt={content.imageAlt}
         imagePosition={content.imagePosition}
         imageFit={content.imageFit}
+        photoEffect="card"
         badge={content.category ? `Categoria ${content.category}` : undefined}
       />
 

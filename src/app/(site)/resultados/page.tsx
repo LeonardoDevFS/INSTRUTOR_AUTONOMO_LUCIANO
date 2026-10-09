@@ -4,6 +4,7 @@ import Image from "next/image";
 
 import { ContactCta } from "@/components/sections/ContactCta";
 import { PageHero } from "@/components/sections/PageHero";
+import { PhotoEffects } from "@/components/ui/PhotoEffects";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteMedia } from "@/data/media";
 import { whatsappMessages } from "@/lib/whatsapp";
@@ -60,18 +61,25 @@ export default function ResultsPage() {
             align="center"
           />
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3">
-            {siteMedia.results.map((result) => (
+            {siteMedia.results.map((result, index) => (
               <figure
                 key={result.src}
-                className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 bg-black"
+                className="relative aspect-[4/5] rounded-[2rem]"
               >
-                <Image
-                  src={result.src}
-                  alt={result.alt}
-                  fill
-                  sizes="(min-width: 1024px) 30vw, (min-width: 640px) 48vw, 100vw"
-                  className="object-contain"
-                />
+                <PhotoEffects
+                  variant="card"
+                  reveal
+                  revealDelay={index * 75}
+                  className="h-full rounded-[2rem] bg-black"
+                >
+                  <Image
+                    src={result.src}
+                    alt={result.alt}
+                    fill
+                    sizes="(min-width: 1024px) 30vw, (min-width: 640px) 48vw, 100vw"
+                    className="photo-effects__media object-contain"
+                  />
+                </PhotoEffects>
               </figure>
             ))}
           </div>

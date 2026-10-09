@@ -110,6 +110,7 @@ export function Hero() {
           alt={siteMedia.hero.alt}
           objectPosition={siteMedia.hero.objectPosition}
           priority
+          photoEffect="hero"
           className="min-h-[29rem] lg:min-h-[39rem]"
         />
       </div>

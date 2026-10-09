@@ -43,6 +43,7 @@ export default function LessonsPage() {
         imageSrc={siteMedia.vehicles.src}
         imageAlt={siteMedia.vehicles.alt}
         imagePosition={siteMedia.vehicles.objectPosition}
+        photoEffect="card"
       />
 
       <section className="py-20 sm:py-24 lg:py-28">
@@ -61,7 +62,7 @@ export default function LessonsPage() {
                 <Link
                   key={service.id}
                   href={service.href}
-                  className="group flex min-h-72 flex-col rounded-[2rem] border border-white/10 bg-surface p-7 transition hover:-translate-y-1 hover:border-gold/45 sm:p-8"
+                  className="lesson-card group flex min-h-72 flex-col rounded-[2rem] border border-white/10 bg-surface p-7 transition hover:-translate-y-1 sm:p-8"
                 >
                   <div className="flex items-start justify-between gap-5">
                     <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">

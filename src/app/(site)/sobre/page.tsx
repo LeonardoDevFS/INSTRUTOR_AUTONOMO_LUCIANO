@@ -37,6 +37,8 @@ export default function AboutPage() {
         imageSrc={siteMedia.hero.src}
         imageAlt={siteMedia.hero.alt}
         imagePosition={siteMedia.hero.objectPosition}
+        photoEffect="portrait"
+        photoReveal
         badge={siteConfig.brand}
       />
 

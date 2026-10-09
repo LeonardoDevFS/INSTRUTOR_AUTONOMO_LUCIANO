@@ -19,10 +19,10 @@ export function Footer() {
               <Image
                 src={siteMedia.branding.logo}
                 alt=""
-                width={56}
-                height={56}
-                sizes="56px"
-                className="h-14 w-14 object-contain"
+                width={88}
+                height={69}
+                sizes="88px"
+                className="h-[69px] w-[88px] shrink-0 object-contain"
               />
               <div className="font-display text-2xl font-extrabold text-white">
                 {brandLead}{" "}

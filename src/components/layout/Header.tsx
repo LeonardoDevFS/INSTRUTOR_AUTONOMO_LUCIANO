@@ -30,10 +30,10 @@ export function Header() {
           <Image
             src={siteMedia.branding.logo}
             alt=""
-            width={44}
-            height={44}
-            sizes="44px"
-            className="h-11 w-11 object-contain"
+            width={84}
+            height={66}
+            sizes="(min-width: 640px) 84px, 72px"
+            className="h-14 w-[72px] shrink-0 object-contain sm:h-[66px] sm:w-[84px]"
           />
           <span className="flex flex-col">
             <span className="font-display text-xl font-extrabold tracking-[0.08em] text-white">

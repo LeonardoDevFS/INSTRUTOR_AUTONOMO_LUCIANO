@@ -3,6 +3,7 @@ import { MessageCircle } from "lucide-react";
 import { Breadcrumbs, type BreadcrumbItem } from "@/components/seo/Breadcrumbs";
 import { ActionLink } from "@/components/ui/ActionLink";
 import { MediaPlaceholder } from "@/components/ui/MediaPlaceholder";
+import type { PhotoEffectVariant } from "@/components/ui/PhotoEffects";
 import { createWhatsAppUrl } from "@/lib/whatsapp";
 
 type PageHeroProps = {
@@ -19,6 +20,8 @@ type PageHeroProps = {
   imageAlt?: string;
   imagePosition?: string;
   imageFit?: "cover" | "contain";
+  photoEffect?: PhotoEffectVariant;
+  photoReveal?: boolean;
 };
 
 export function PageHero({
@@ -35,6 +38,8 @@ export function PageHero({
   imageAlt,
   imagePosition,
   imageFit,
+  photoEffect = "portrait",
+  photoReveal = false,
 }: PageHeroProps) {
   const breadcrumbs: BreadcrumbItem[] = [
     { label: "Início", href: "/" },
@@ -80,6 +85,8 @@ export function PageHero({
           alt={imageAlt}
           objectPosition={imagePosition}
           objectFit={imageFit}
+          photoEffect={photoEffect}
+          reveal={photoReveal}
           priority={Boolean(imageSrc)}
           className="min-h-[27rem] lg:min-h-[35rem]"
         />
