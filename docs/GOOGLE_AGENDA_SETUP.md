@@ -89,6 +89,10 @@ Na descrição da pergunta ou da página, apresente as opções:
 - Preparação para prova prática
 - Adição de categoria
 - Mentoria teórica
+- Primeira habilitação
+- Orientação sobre taxas e exames
+- Orientação sobre documentação da CNH
+- Atendimento para quem tem medo de dirigir
 
 Use uma pergunta personalizada de texto e marque-a como obrigatória. O aluno deve digitar uma das opções.
 
@@ -171,6 +175,10 @@ Depois da configuração inicial no computador, Luciano poderá usar o aplicativ
 - compartilhar novamente o link público da página.
 
 A criação e a configuração completa da programação devem ser feitas no computador. A rotina diária pode ser administrada pelo aplicativo.
+
+O site também possui um painel próprio em `/admin`, preparado para consultar essa
+mesma agenda e criar bloqueios identificados. A ativação segura desse painel exige
+OAuth e as variáveis descritas em [`ADMIN_SETUP.md`](../ADMIN_SETUP.md).
 
 ## Limitações da opção gratuita
 

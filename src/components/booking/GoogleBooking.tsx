@@ -3,6 +3,8 @@ import {
   Check,
   Clock3,
   ExternalLink,
+  FileCheck2,
+  Info,
   MessageCircle,
   ShieldCheck,
 } from "lucide-react";
@@ -16,10 +18,12 @@ import { createWhatsAppUrl, whatsappMessages } from "@/lib/whatsapp";
 const bookingServices = [
   "Carro — Categoria B",
   "Moto — Categoria A",
-  "Treinamento para habilitados",
   "Preparação para prova prática",
   "Adição de categoria",
-  "Mentoria teórica",
+  "Primeira habilitação",
+  "Orientação sobre taxas e exames",
+  "Orientação sobre documentação da CNH",
+  "Atendimento para quem tem medo de dirigir",
 ] as const;
 
 export function GoogleBooking({ config }: { config: GoogleBookingConfig }) {
@@ -49,14 +53,14 @@ export function GoogleBooking({ config }: { config: GoogleBookingConfig }) {
         <div className="grid gap-8 border-b border-white/10 p-6 sm:p-8 lg:grid-cols-[0.9fr_1.1fr] lg:p-10">
           <div>
             <p className="text-xs font-extrabold uppercase tracking-[0.28em] text-gold">
-              Antes de reservar
+              Escolha seu atendimento
             </p>
             <h2 className="mt-4 font-display text-4xl font-extrabold uppercase leading-none text-white sm:text-5xl">
-              Informe o serviço no formulário do Google.
+              Escolha seu atendimento com o Luciano.
             </h2>
             <p className="mt-5 max-w-xl text-sm leading-7 text-white/55 sm:text-base">
-              Depois de escolher o horário, use o campo “Qual serviço você
-              deseja agendar?” para indicar a modalidade desejada.
+              Consulte as opções abaixo e, depois de escolher um horário, informe
+              a modalidade no campo correspondente do formulário do Google.
             </p>
           </div>
 
@@ -71,6 +75,54 @@ export function GoogleBooking({ config }: { config: GoogleBookingConfig }) {
               </li>
             ))}
           </ul>
+        </div>
+
+        <div className="grid gap-6 border-b border-white/10 bg-gold/[0.045] p-6 sm:p-8 lg:grid-cols-[auto_1fr_auto] lg:items-center lg:p-10">
+          <div className="grid size-12 place-items-center rounded-2xl border border-gold/25 bg-gold/10 text-gold">
+            <FileCheck2 size={23} aria-hidden="true" />
+          </div>
+          <div>
+            <h2 className="font-display text-2xl font-extrabold uppercase text-white sm:text-3xl">
+              Precisa de ajuda com exames, taxas ou documentação?
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-white/55">
+              Luciano pode orientar sobre as etapas da habilitação, documentação,
+              emissão de taxas pelos canais oficiais e agendamento de exames.
+              Informe sua necessidade durante a reserva para conversar sobre os
+              próximos passos.
+            </p>
+          </div>
+          <ActionLink
+            href={createWhatsAppUrl(whatsappMessages.cnhGuidance)}
+            external
+            variant="secondary"
+            icon={<MessageCircle size={17} aria-hidden="true" />}
+            ariaLabel="Pedir orientação sobre a CNH pelo WhatsApp"
+            className="w-full lg:w-auto"
+          >
+            Preciso de orientação sobre minha CNH
+          </ActionLink>
+        </div>
+
+        <div className="border-b border-white/10 p-6 sm:p-8">
+          <div className="flex items-start gap-3 text-sm leading-6 text-white/45">
+            <Info size={18} className="mt-0.5 shrink-0 text-gold" aria-hidden="true" />
+            <p>
+              Este site agenda atendimento ou aula com o instrutor. Ele não agenda
+              procedimentos governamentais nem confirma datas de exame no órgão de
+              trânsito. Taxas oficiais são emitidas e pagas nos canais públicos, e
+              cada etapa depende das regras vigentes e da situação do aluno. Consulte
+              também os guias de{" "}
+              <Link href="/guias/primeira-cnh-minas-gerais" className="font-bold text-gold hover:text-gold-light">
+                primeira habilitação
+              </Link>{" "}
+              e{" "}
+              <Link href="/guias/adicao-de-categoria-mg" className="font-bold text-gold hover:text-gold-light">
+                adição de categoria
+              </Link>
+              .
+            </p>
+          </div>
         </div>
 
         {config.status === "ready" && config.canEmbed ? (

@@ -31,4 +31,7 @@ export const whatsappMessages = {
 
   booking:
     "Olá, Luciano! Gostaria de verificar um horário disponível para aula.",
+
+  cnhGuidance:
+    "Olá, Luciano! Preciso de orientação sobre etapas, exames, taxas ou documentação da minha CNH.",
 } as const;

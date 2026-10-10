@@ -23,6 +23,8 @@
 # misc
 .DS_Store
 *.pem
+client_secret*.json
+google-oauth*.json
 
 # debug
 npm-debug.log*
