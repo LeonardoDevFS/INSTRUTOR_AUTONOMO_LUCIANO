@@ -21,14 +21,14 @@ export function GoogleBooking({ config }: { config: GoogleBookingConfig }) {
           </span>
           <div>
             <p className="text-xs font-extrabold uppercase tracking-[0.25em] text-gold">
-              Alternativa segura
+              Caso prefira
             </p>
             <h2 className="mt-2 font-display text-3xl font-extrabold uppercase text-white">
-              Agendar pelo Google
+              Agende pelo Google
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-white/55">
               {ready
-                ? "A página oficial de horários continua disponível enquanto o novo fluxo personalizado passa pela validação final."
+                ? "Você também pode consultar os horários e concluir seu agendamento pela página oficial do Google."
                 : "A página oficial do Google ainda não foi configurada. Consulte a disponibilidade diretamente com Luciano."}
             </p>
             <p className="mt-2 text-xs leading-5 text-white/35">
