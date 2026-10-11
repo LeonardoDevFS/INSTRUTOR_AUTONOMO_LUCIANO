@@ -20,7 +20,7 @@ import type { AdminCalendarEvent, CalendarEventKind } from "@/lib/calendar/types
 type Filter = "all" | CalendarEventKind;
 
 const viewLabels: Record<CalendarView, string> = { day: "Dia", week: "Semana", month: "Mês" };
-const filterLabels: Record<Filter, string> = { all: "Todos", participant: "Com participante", block: "Bloqueios", busy: "Ocupados", other: "Outros" };
+const filterLabels: Record<Filter, string> = { all: "Todos", siteBooking: "Reservas do site", participant: "Agenda Google", block: "Bloqueios", busy: "Ocupados", other: "Outros" };
 
 export function AdminAgenda() {
   const [anchor, setAnchor] = useState(() => new Date());
@@ -143,6 +143,7 @@ function CalendarGrid({ view, anchor, days, events, onSelect, onCreate }: { view
 
 function EventCard({ event, onClick, compact = false }: { event: AdminCalendarEvent; onClick: () => void; compact?: boolean }) {
   const colors: Record<CalendarEventKind, string> = {
+    siteBooking: "border-gold/45 bg-gold/[0.13] text-gold-light",
     block: "border-gold/35 bg-gold/[0.1] text-gold-light",
     participant: "border-emerald-400/25 bg-emerald-400/[0.08] text-emerald-100",
     busy: "border-sky-400/20 bg-sky-400/[0.07] text-sky-100",

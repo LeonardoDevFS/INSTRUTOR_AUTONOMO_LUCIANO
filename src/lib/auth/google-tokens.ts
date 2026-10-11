@@ -79,3 +79,17 @@ export async function resolveGoogleAccessToken(token: GoogleTokenState) {
 
   return refreshGoogleAccessToken(token);
 }
+
+export async function getPublicBookingAccessToken() {
+  const refreshToken = process.env.GOOGLE_CALENDAR_REFRESH_TOKEN?.trim();
+  if (!refreshToken) {
+    throw new Error("PUBLIC_GOOGLE_AUTH_NOT_CONFIGURED");
+  }
+
+  const token = await refreshGoogleAccessToken({ refreshToken });
+  if (!token.accessToken || token.tokenError) {
+    throw new Error("PUBLIC_GOOGLE_AUTH_FAILED");
+  }
+
+  return token.accessToken;
+}

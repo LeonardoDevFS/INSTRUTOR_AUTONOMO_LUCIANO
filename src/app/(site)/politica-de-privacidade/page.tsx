@@ -24,7 +24,7 @@ export default function PrivacyPolicyPage() {
             Política de Privacidade
           </h1>
           <p className="mt-6 text-sm text-white/40">
-            Última atualização: 8 de outubro de 2026.
+            Última atualização: 10 de outubro de 2026.
           </p>
         </div>
       </header>
@@ -41,10 +41,10 @@ export default function PrivacyPolicyPage() {
 
         <PolicySection title="2. Quais informações podem ser utilizadas">
           <p>
-            Ao utilizar a página oficial de agendamento do Google, você pode
-            informar nome, sobrenome, e-mail, telefone, serviço desejado, data e
-            horário. Esses dados são enviados diretamente ao Google e usados
-            para registrar a reserva na agenda de Luciano.
+            Ao utilizar o agendamento personalizado ou a página oficial do
+            Google, você pode informar nome, e-mail, telefone, serviço desejado,
+            data, horário e observações opcionais. Esses dados são usados para
+            registrar e administrar a reserva na agenda de Luciano.
           </p>
           <p>
             Quando você opta pelo contato via WhatsApp, as informações são
@@ -59,15 +59,21 @@ export default function PrivacyPolicyPage() {
             contato, entender o serviço desejado, consultar disponibilidade e
             combinar detalhes do atendimento.
           </p>
+          <p>
+            Para impedir reservas simultâneas e abuso, o sistema mantém registros
+            técnicos de intervalo, serviço, status e idempotência. O endereço IP
+            usado no controle de frequência é armazenado somente como hash. O
+            banco técnico não recebe nome, e-mail, telefone ou observações.
+          </p>
         </PolicySection>
 
         <PolicySection title="4. Serviços de terceiros">
           <p>
-            A página de agendamento pode incorporar o serviço oficial de
-            Agendamento de Horários do Google Agenda. O Google processa os dados
-            necessários para exibir disponibilidade, concluir a reserva e enviar
-            as comunicações relacionadas ao compromisso, conforme suas próprias
-            políticas.
+            A disponibilidade e as reservas utilizam o Google Agenda. O Google
+            processa os dados necessários para registrar o compromisso e pode
+            enviar comunicações relacionadas ao evento, conforme suas próprias
+            políticas. O armazenamento técnico de concorrência usa PostgreSQL
+            hospedado pelo Supabase, sem os dados pessoais do formulário.
           </p>
           <p>
             Links para WhatsApp e Instagram também direcionam você a plataformas

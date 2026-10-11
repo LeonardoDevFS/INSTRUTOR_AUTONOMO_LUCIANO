@@ -33,7 +33,8 @@ export function EventDetailDialog({
     setDeleting(true);
     setError("");
     try {
-      const response = await fetch(`/api/admin/blocks/${encodeURIComponent(event.id)}`, {
+      const endpoint = event.siteBooking ? "bookings" : "blocks";
+      const response = await fetch(`/api/admin/${endpoint}/${encodeURIComponent(event.id)}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ confirmEventId: event.id }),
@@ -70,7 +71,7 @@ export function EventDetailDialog({
       <section role="dialog" aria-modal="true" aria-labelledby="event-detail-title" className="max-h-[94vh] w-full overflow-y-auto rounded-t-[2rem] border border-white/10 bg-[#111] p-6 sm:max-w-xl sm:rounded-[2rem] sm:p-8">
         <div className="flex items-start justify-between gap-5">
           <div>
-            <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-gold">{event.kind === "block" ? "Bloqueio do painel" : event.kind === "participant" ? "Evento com participante" : "Compromisso"}</p>
+            <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-gold">{event.kind === "siteBooking" ? "Reserva pelo site" : event.kind === "block" ? "Bloqueio do painel" : event.kind === "participant" ? "Reserva ou evento do Google" : "Compromisso"}</p>
             <h2 id="event-detail-title" className="mt-2 text-2xl font-extrabold leading-tight">{event.title}</h2>
           </div>
           <button onClick={onClose} aria-label="Fechar" className="grid size-11 shrink-0 place-items-center rounded-full border border-white/10 text-white/60"><X size={19} /></button>
@@ -79,6 +80,17 @@ export function EventDetailDialog({
         <dl className="mt-7 grid gap-4 rounded-2xl border border-white/10 bg-black/25 p-5 sm:grid-cols-2">
           <Detail label="Data" value={eventDate(event).toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })} />
           <Detail label="Horário" value={formatEventTime(event)} />
+          <Detail
+            label="Origem"
+            value={
+              event.siteBooking
+                ? "Site Direção Segura"
+                : event.managedBlock
+                  ? "Bloqueio do painel"
+                  : "Google Agenda"
+            }
+          />
+          <Detail label="Status" value={event.status} />
           {event.location && <Detail label="Local" value={event.location} />}
           {event.organizer && <Detail label="Organizador" value={event.organizer} />}
         </dl>
@@ -126,25 +138,25 @@ export function EventDetailDialog({
 
         {error && <p role="alert" className="mt-5 rounded-2xl border border-red-400/20 bg-red-400/10 p-4 text-sm text-red-200">{error}</p>}
 
-        {event.managedBlock && !event.recurring ? (
+        {(event.managedBlock || event.siteBooking) && !event.recurring ? (
           <div className="mt-7 border-t border-white/10 pt-6">
             {confirmDelete ? (
               <div className="rounded-2xl border border-red-400/20 bg-red-400/[0.07] p-5">
-                <p className="font-bold">Remover este bloqueio do Google Agenda?</p>
-                <p className="mt-2 text-sm leading-6 text-white/50">A disponibilidade poderá voltar a aparecer na página pública. Esta ação não afeta outros eventos.</p>
+                <p className="font-bold">{event.siteBooking ? "Cancelar esta reserva?" : "Remover este bloqueio do Google Agenda?"}</p>
+                <p className="mt-2 text-sm leading-6 text-white/50">{event.siteBooking ? "A reserva será removida da agenda e o Google receberá a solicitação de notificar o aluno. A entrega do e-mail depende do Google." : "A disponibilidade poderá voltar a aparecer na página pública. Esta ação não afeta outros eventos."}</p>
                 <div className="mt-4 flex flex-wrap gap-3">
-                  <button disabled={deleting} onClick={() => void removeBlock()} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-red-500 px-5 text-sm font-extrabold text-white disabled:opacity-50">{deleting && <LoaderCircle size={16} className="animate-spin" />}Confirmar remoção</button>
+                  <button disabled={deleting} onClick={() => void removeBlock()} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-red-500 px-5 text-sm font-extrabold text-white disabled:opacity-50">{deleting && <LoaderCircle size={16} className="animate-spin" />}{event.siteBooking ? "Confirmar cancelamento" : "Confirmar remoção"}</button>
                   <button onClick={() => setConfirmDelete(false)} className="min-h-11 rounded-full border border-white/15 px-5 text-sm font-bold">Voltar</button>
                 </div>
               </div>
             ) : (
               <div className="flex flex-col gap-3 sm:flex-row">
-                <button onClick={onEdit} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-gold px-5 text-sm font-extrabold text-black"><Pencil size={16} />Editar bloqueio</button>
-                <button onClick={() => setConfirmDelete(true)} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-red-400/30 px-5 text-sm font-bold text-red-200"><Trash2 size={16} />Remover</button>
+                {event.managedBlock && <button onClick={onEdit} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-gold px-5 text-sm font-extrabold text-black"><Pencil size={16} />Editar bloqueio</button>}
+                <button onClick={() => setConfirmDelete(true)} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-red-400/30 px-5 text-sm font-bold text-red-200"><Trash2 size={16} />{event.siteBooking ? "Cancelar reserva" : "Remover"}</button>
               </div>
             )}
           </div>
-        ) : event.managedBlock && event.recurring ? (
+        ) : (event.managedBlock || event.siteBooking) && event.recurring ? (
           <div className="mt-7 rounded-2xl border border-gold/20 bg-gold/[0.06] p-5">
             <p className="font-bold">Bloqueio transformado em recorrente</p>
             <p className="mt-2 text-sm leading-6 text-white/50">Para evitar alterações em toda uma série por engano, gerencie este evento diretamente no Google Agenda.</p>

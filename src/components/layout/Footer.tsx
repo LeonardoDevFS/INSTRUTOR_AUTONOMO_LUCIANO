@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { AtSign, MessageCircle } from "lucide-react";
+import { AtSign, LockKeyhole, MessageCircle } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
 import { siteMedia } from "@/data/media";
@@ -65,6 +65,14 @@ export function Footer() {
 
                 {siteConfig.contact.instagramUsername}
               </a>
+
+              <Link
+                href="/admin"
+                className="flex items-center gap-2 hover:text-gold"
+              >
+                <LockKeyhole size={17} aria-hidden="true" />
+                Área do Instrutor
+              </Link>
             </div>
           </div>
 

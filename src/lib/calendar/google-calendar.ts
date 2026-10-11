@@ -10,6 +10,11 @@ import {
   DEFAULT_TIME_ZONE,
   getBlockEventId,
   getBlockReasonLabel,
+  getSiteBookingEventId,
+  SITE_BOOKING_MARKER_VALUE,
+  SITE_BOOKING_REQUEST_KEY,
+  SITE_BOOKING_SERVICE_KEY,
+  SITE_BOOKING_VERSION_KEY,
 } from "@/lib/calendar/constants";
 import { toGoogleEventRange } from "@/lib/calendar/date-time";
 import type { BlockInput } from "@/lib/calendar/schemas";
@@ -219,6 +224,75 @@ export function deleteGoogleBlock(
   return googleRequest<void>(
     accessToken,
     calendarPath(`/events/${encodeURIComponent(eventId)}?sendUpdates=none`),
+    { method: "DELETE", headers: etag ? { "If-Match": etag } : undefined },
+  );
+}
+
+export type SiteBookingEventInput = {
+  bookingId: string;
+  serviceId: string;
+  serviceName: string;
+  start: Date;
+  end: Date;
+  student: {
+    name: string;
+    email: string;
+    phone: string;
+    notes?: string;
+  };
+};
+
+export function createGoogleSiteBooking(
+  accessToken: string,
+  input: SiteBookingEventInput,
+) {
+  const description = [
+    `Nome: ${input.student.name}`,
+    `E-mail: ${input.student.email}`,
+    `Telefone: ${input.student.phone}`,
+    `Serviço: ${input.serviceName}`,
+    input.student.notes ? `Observações: ${input.student.notes}` : undefined,
+    "Origem: Site Direção Segura",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return googleRequest<GoogleCalendarEvent>(
+    accessToken,
+    calendarPath("/events?sendUpdates=all"),
+    {
+      method: "POST",
+      body: JSON.stringify({
+        id: getSiteBookingEventId(input.bookingId),
+        summary: `${input.serviceName} — ${input.student.name}`,
+        description,
+        eventType: "default",
+        transparency: "opaque",
+        visibility: "private",
+        start: { dateTime: input.start.toISOString(), timeZone: getTimeZone() },
+        end: { dateTime: input.end.toISOString(), timeZone: getTimeZone() },
+        attendees: [{ email: input.student.email }],
+        extendedProperties: {
+          private: {
+            [BLOCK_MARKER_KEY]: SITE_BOOKING_MARKER_VALUE,
+            [SITE_BOOKING_VERSION_KEY]: "1",
+            [SITE_BOOKING_SERVICE_KEY]: input.serviceId,
+            [SITE_BOOKING_REQUEST_KEY]: input.bookingId,
+          },
+        },
+      }),
+    },
+  );
+}
+
+export function deleteGoogleSiteBooking(
+  accessToken: string,
+  eventId: string,
+  etag?: string,
+) {
+  return googleRequest<void>(
+    accessToken,
+    calendarPath(`/events/${encodeURIComponent(eventId)}?sendUpdates=all`),
     { method: "DELETE", headers: etag ? { "If-Match": etag } : undefined },
   );
 }

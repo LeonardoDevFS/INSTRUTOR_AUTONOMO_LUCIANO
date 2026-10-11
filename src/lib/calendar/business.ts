@@ -4,6 +4,9 @@ import {
   BLOCK_REASON_CODE_KEY,
   BLOCK_REASON_KEY,
   BLOCK_REQUEST_KEY,
+  SITE_BOOKING_MARKER_VALUE,
+  SITE_BOOKING_REQUEST_KEY,
+  SITE_BOOKING_SERVICE_KEY,
 } from "@/lib/calendar/constants";
 import { zonedLocalToUtc } from "@/lib/calendar/date-time";
 import type {
@@ -19,11 +22,22 @@ export function isManagedBlock(event: GoogleCalendarEvent) {
   );
 }
 
+export function isSiteBooking(event: GoogleCalendarEvent) {
+  return (
+    event.extendedProperties?.private?.[BLOCK_MARKER_KEY] ===
+    SITE_BOOKING_MARKER_VALUE
+  );
+}
+
 export function isRecurringEvent(event: GoogleCalendarEvent) {
   return Boolean(event.recurringEventId || event.recurrence?.length);
 }
 
 export function classifyEvent(event: GoogleCalendarEvent): CalendarEventKind {
+  if (isSiteBooking(event)) {
+    return "siteBooking";
+  }
+
   if (isManagedBlock(event)) {
     return "block";
   }
@@ -83,6 +97,7 @@ export function serializeCalendarEvent(
   }
 
   const managedBlock = isManagedBlock(event);
+  const siteBooking = isSiteBooking(event);
   return {
     id: event.id,
     title: event.summary?.trim() || "Compromisso sem título",
@@ -96,6 +111,7 @@ export function serializeCalendarEvent(
     htmlLink: event.htmlLink,
     recurring: isRecurringEvent(event),
     managedBlock,
+    siteBooking,
     transparency: event.transparency ?? "opaque",
     attendees: event.attendees ?? [],
     organizer: event.organizer?.email,
@@ -104,6 +120,12 @@ export function serializeCalendarEvent(
       : undefined,
     reasonCode: managedBlock
       ? event.extendedProperties?.private?.[BLOCK_REASON_CODE_KEY]
+      : undefined,
+    serviceId: siteBooking
+      ? event.extendedProperties?.private?.[SITE_BOOKING_SERVICE_KEY]
+      : undefined,
+    bookingId: siteBooking
+      ? event.extendedProperties?.private?.[SITE_BOOKING_REQUEST_KEY]
       : undefined,
     formFields: parseFormFields(event.description),
   };

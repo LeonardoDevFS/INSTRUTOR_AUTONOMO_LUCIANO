@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { CalendarDays, Menu, X } from "lucide-react";
+import { CalendarDays, LockKeyhole, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 import { siteConfig } from "@/config/site";
@@ -49,7 +49,7 @@ export function Header() {
 
         <nav
           aria-label="Navegação principal"
-          className="hidden items-center gap-8 lg:flex"
+          className="hidden items-center gap-6 lg:flex"
         >
           {mainNavigation.map((item) => (
             <Link
@@ -65,7 +65,14 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden lg:block">
+        <div className="hidden items-center gap-4 lg:flex">
+          <Link
+            href="/admin"
+            className="hidden items-center gap-2 text-xs font-bold text-white/45 transition-colors hover:text-gold xl:inline-flex"
+          >
+            <LockKeyhole size={15} aria-hidden="true" />
+            Área do Instrutor
+          </Link>
           <Link
             href="/agendar"
             className="
@@ -117,6 +124,15 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+
+          <Link
+            href="/admin"
+            onClick={() => setMenuOpen(false)}
+            className="flex items-center gap-2 border-b border-white/5 py-4 font-semibold text-white/60"
+          >
+            <LockKeyhole size={17} aria-hidden="true" />
+            Área do Instrutor
+          </Link>
 
           <Link
             href="/agendar"

@@ -19,11 +19,32 @@ AUTH_SECRET=SEGREDO_ALEATORIO_EXCLUSIVO_DA_PRODUCAO
 ADMIN_ALLOWED_EMAIL=instrutorautonomoluciano@gmail.com
 GOOGLE_CALENDAR_ID=instrutorautonomoluciano@gmail.com
 APP_TIMEZONE=America/Sao_Paulo
+
+CUSTOM_BOOKING_ENABLED=false
+DATABASE_URL=URI_TRANSACTION_POOLER_SUPABASE_PORTA_6543
+GOOGLE_CALENDAR_REFRESH_TOKEN=REFRESH_TOKEN_OFFLINE
+BOOKING_MIN_ADVANCE_MINUTES=VALOR_CONFIRMADO
+BOOKING_MAX_ADVANCE_DAYS=VALOR_CONFIRMADO
+BOOKING_BUFFER_MINUTES=0
+BOOKING_CLOSED_DATES=
 ```
 
 `AUTH_GOOGLE_SECRET` e `AUTH_SECRET` são segredos. Nunca use o prefixo
-`NEXT_PUBLIC_` neles. Prefira um `AUTH_SECRET` de produção diferente do ambiente
-local.
+`NEXT_PUBLIC_` neles. `DATABASE_URL` e `GOOGLE_CALENDAR_REFRESH_TOKEN` também são
+segredos exclusivos do servidor. Prefira um `AUTH_SECRET` de produção diferente do
+ambiente local. Consulte `BOOKING_SETUP.md` antes de mudar
+`CUSTOM_BOOKING_ENABLED` para `true`.
+
+Em `DATABASE_URL`, use a URI copiada em **Supabase > Luciano Direção Segura >
+Connect > Transaction pooler**. Ela deve usar a porta `6543` e terminar em
+`sslmode=verify-full`. Não use a connection string direta na função serverless e
+não exponha a URI ao navegador. Teste primeiro a cadeia de certificados padrão da
+Netlify; não replique o caminho Windows de `SUPABASE_CA_CERT_PATH` em produção.
+Configure uma CA adicional na Netlify somente se o runtime realmente apresentar
+erro de cadeia. Nesse caso, cadastre `SUPABASE_CA_CERT_PEM` com o conteúdo PEM
+completo do certificado oficial baixado no Supabase, sem desativar a validação TLS
+ou de hostname. Não configure `SUPABASE_CA_CERT_PATH` e `SUPABASE_CA_CERT_PEM` ao
+mesmo tempo.
 
 Ao cadastrar variáveis, deixe o escopo disponível para **Functions** e **Builds**.
 Depois de qualquer alteração, faça um novo deploy para que as funções recebam os
@@ -41,6 +62,7 @@ No cliente OAuth do tipo **Aplicativo da Web**, mantenha:
 ### URIs de redirecionamento autorizados
 
 - `http://localhost:3000/api/auth/callback/google`
+- `http://localhost:53682/oauth2/callback` para a autorização offline local
 - `https://instrutor-luciano-itajuba.netlify.app/api/auth/callback/google`
 
 Quando `https://instrutorautonomoitajuba.com.br` estiver publicado, com DNS e
@@ -65,6 +87,7 @@ As rotas abaixo precisam aparecer como dinâmicas/server-side:
 - `/admin/agenda`
 - `/api/auth/*`
 - `/api/admin/*`
+- `/api/booking/*`
 
 ## 4. Validação após o deploy
 

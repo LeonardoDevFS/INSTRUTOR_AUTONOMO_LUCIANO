@@ -1,7 +1,8 @@
 # Painel administrativo da Direção Segura
 
-O painel fica em `/admin` e usa o Google Agenda como fonte dos compromissos. Ele
-não possui banco de dados próprio e não substitui a página pública de agendamento.
+O painel fica em `/admin` e usa o Google Agenda como fonte dos compromissos. A
+agenda personalizada usa um banco técnico separado somente para concorrência e
+idempotência; consulte `BOOKING_SETUP.md`.
 
 ## O que o painel faz
 
@@ -10,6 +11,7 @@ não possui banco de dados próprio e não substitui a página pública de agend
 - mostra visualizações de dia, semana e mês;
 - abre o evento original no Google Agenda;
 - cria, edita e remove somente bloqueios identificados pelo próprio painel;
+- reconhece e pode cancelar somente reservas identificadas como criadas pelo site;
 - avisa sobre sobreposição antes de criar ou editar um bloqueio.
 
 Reservas do Google Appointment Schedules não são apagadas automaticamente. O
@@ -54,6 +56,7 @@ sessão JWT criptografada e HttpOnly do Auth.js.
      com HTTPS.
 4. Cadastre os URIs de redirecionamento:
    - `http://localhost:3000/api/auth/callback/google`
+   - `http://localhost:53682/oauth2/callback` para `npm run google:authorize`
    - `https://instrutor-luciano-itajuba.netlify.app/api/auth/callback/google`
    - `https://instrutorautonomoitajuba.com.br/api/auth/callback/google` somente
      depois da publicação do domínio.
@@ -143,7 +146,9 @@ nenhum calendário.
   ele seja uma aula ou uma reserva feita pelo site.
 - Configurações internas do Appointment Schedules não têm gerenciamento completo
   por estes endpoints do Calendar.
-- Cancelamento e reagendamento de reservas usam o Google Agenda para garantir o
-  fluxo oficial. `events.delete` não é tratado como cancelamento nativo.
+- Reservas nativas continuam usando o fluxo oficial do Google. Somente reservas
+  marcadas como criadas pelo site podem ser canceladas diretamente no painel.
+- O reagendamento automático de reservas do site ainda não foi habilitado; faça o
+  cancelamento confirmado e uma nova reserva.
 - Sem as credenciais e o consentimento da conta autorizada, a interface existe,
   mas a integração real não pode ser validada de ponta a ponta.

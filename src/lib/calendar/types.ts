@@ -1,4 +1,9 @@
-export type CalendarEventKind = "block" | "participant" | "busy" | "other";
+export type CalendarEventKind =
+  | "siteBooking"
+  | "block"
+  | "participant"
+  | "busy"
+  | "other";
 
 export type CalendarAttendee = {
   email?: string;
@@ -20,11 +25,14 @@ export type AdminCalendarEvent = {
   htmlLink?: string;
   recurring: boolean;
   managedBlock: boolean;
+  siteBooking: boolean;
   transparency: "opaque" | "transparent";
   attendees: CalendarAttendee[];
   organizer?: string;
   reason?: string;
   reasonCode?: string;
+  serviceId?: string;
+  bookingId?: string;
   formFields: { label: string; value: string }[];
 };
 

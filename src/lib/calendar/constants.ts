@@ -7,6 +7,11 @@ export const BLOCK_REASON_KEY = "direcaoSeguraReason";
 export const BLOCK_REASON_CODE_KEY = "direcaoSeguraReasonCode";
 export const BLOCK_REQUEST_KEY = "direcaoSeguraRequestId";
 
+export const SITE_BOOKING_MARKER_VALUE = "site-booking";
+export const SITE_BOOKING_SERVICE_KEY = "direcaoSeguraServiceId";
+export const SITE_BOOKING_REQUEST_KEY = "direcaoSeguraBookingId";
+export const SITE_BOOKING_VERSION_KEY = "direcaoSeguraBookingVersion";
+
 export const blockReasons = [
   { value: "buscar-aluno", label: "Buscar aluno" },
   { value: "deslocamento", label: "Deslocamento" },
@@ -35,4 +40,8 @@ export function getBlockReasonLabel(reason: string, customReason?: string) {
 
 export function getBlockEventId(requestId: string) {
   return `ds${requestId.replaceAll("-", "").toLowerCase()}`;
+}
+
+export function getSiteBookingEventId(bookingId: string) {
+  return `dsb${bookingId.replaceAll("-", "").toLowerCase()}`;
 }

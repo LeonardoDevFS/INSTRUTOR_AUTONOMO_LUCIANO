@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 
+import { CustomBooking } from "@/components/booking/CustomBooking";
 import { GoogleBooking } from "@/components/booking/GoogleBooking";
 import { PageHero } from "@/components/sections/PageHero";
 import { getGoogleBookingConfig } from "@/config/booking";
+import {
+  bookingServices,
+  getPublicBookingRuntimeConfig,
+} from "@/config/public-booking";
 import { siteMedia } from "@/data/media";
 import { whatsappMessages } from "@/lib/whatsapp";
 
@@ -15,6 +20,7 @@ export const metadata: Metadata = {
 
 export default function BookingPage() {
   const googleBookingConfig = getGoogleBookingConfig();
+  const customBookingConfig = getPublicBookingRuntimeConfig();
 
   return (
     <>
@@ -33,7 +39,11 @@ export default function BookingPage() {
       />
 
       <section className="py-20 sm:py-24 lg:py-28">
-        <div className="mx-auto max-w-5xl px-5 lg:px-8">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <CustomBooking
+            services={bookingServices}
+            ready={customBookingConfig.ready}
+          />
           <GoogleBooking config={googleBookingConfig} />
         </div>
       </section>
