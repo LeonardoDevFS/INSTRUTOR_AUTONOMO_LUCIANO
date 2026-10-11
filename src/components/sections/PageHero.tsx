@@ -14,17 +14,14 @@ type PageHeroProps = {
   backHref: string;
   backLabel: string;
   whatsappMessage: string;
-  placeholderTitle: string;
-  placeholderDescription: string;
+  placeholderTitle?: string;
+  placeholderDescription?: string;
   badge?: string;
   imageSrc?: string;
   imageAlt?: string;
   imagePosition?: string;
   imageFit?: "cover" | "contain";
-  imageWidth?: number;
-  imageHeight?: number;
-  imageSizes?: string;
-  layout?: "default" | "guide-cover";
+  layout?: "default" | "centered";
   photoEffect?: PhotoEffectVariant;
   photoReveal?: boolean;
 };
@@ -43,9 +40,6 @@ export function PageHero({
   imageAlt,
   imagePosition,
   imageFit,
-  imageWidth,
-  imageHeight,
-  imageSizes,
   layout = "default",
   photoEffect = "portrait",
   photoReveal = false,
@@ -58,16 +52,23 @@ export function PageHero({
 
   return (
     <section className="relative isolate overflow-hidden border-b border-white/10 pt-20">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_78%_28%,rgba(229,185,63,0.16),transparent_28%)]" />
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-0 -z-10",
+          layout === "centered"
+            ? "bg-[radial-gradient(circle_at_50%_28%,rgba(229,185,63,0.16),transparent_32%)]"
+            : "bg-[radial-gradient(circle_at_78%_28%,rgba(229,185,63,0.16),transparent_28%)]",
+        )}
+      />
       <div
         className={cn(
           "mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:py-20 lg:px-8 lg:py-24",
-          layout === "guide-cover"
-            ? "items-start lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16 xl:gap-20"
+          layout === "centered"
+            ? "max-w-5xl place-items-center text-center"
             : "items-center lg:grid-cols-[1.05fr_0.95fr] lg:gap-16",
         )}
       >
-        <div>
+        <div className={cn(layout === "centered" && "flex flex-col items-center")}>
           <Breadcrumbs items={breadcrumbs} />
           <p className="mt-8 text-xs font-extrabold uppercase tracking-[0.3em] text-gold">
             {eyebrow}
@@ -94,26 +95,20 @@ export function PageHero({
           </ActionLink>
         </div>
 
-        <MediaPlaceholder
-          title={placeholderTitle}
-          description={placeholderDescription}
-          src={imageSrc}
-          alt={imageAlt}
-          objectPosition={imagePosition}
-          objectFit={imageFit}
-          intrinsicWidth={imageWidth}
-          intrinsicHeight={imageHeight}
-          sizes={imageSizes}
-          photoEffect={photoEffect}
-          reveal={photoReveal}
-          priority={Boolean(imageSrc)}
-          className={cn(
-            "w-full",
-            layout === "guide-cover"
-              ? "min-h-0 justify-self-center lg:max-w-[42rem] lg:justify-self-end"
-              : "min-h-[27rem] lg:min-h-[35rem]",
-          )}
-        />
+        {layout !== "centered" && (
+          <MediaPlaceholder
+            title={placeholderTitle ?? ""}
+            description={placeholderDescription ?? ""}
+            src={imageSrc}
+            alt={imageAlt}
+            objectPosition={imagePosition}
+            objectFit={imageFit}
+            photoEffect={photoEffect}
+            reveal={photoReveal}
+            priority={Boolean(imageSrc)}
+            className="min-h-[27rem] w-full lg:min-h-[35rem]"
+          />
+        )}
       </div>
     </section>
   );

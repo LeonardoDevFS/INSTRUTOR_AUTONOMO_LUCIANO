@@ -8,7 +8,6 @@ import {
   bookingServices,
   getPublicBookingRuntimeConfig,
 } from "@/config/public-booking";
-import { siteMedia } from "@/data/media";
 import { whatsappMessages } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -36,11 +35,7 @@ export default function BookingPage() {
         backHref="/"
         backLabel="Voltar ao início"
         whatsappMessage={whatsappMessages.booking}
-        placeholderTitle="Agenda Direção Segura"
-        placeholderDescription="Uma única agenda para todos os treinamentos da Direção Segura."
-        imageSrc={siteMedia.vehicles.src}
-        imageAlt={siteMedia.vehicles.alt}
-        imagePosition={siteMedia.vehicles.objectPosition}
+        layout="centered"
       />
 
       <section className="py-20 sm:py-24 lg:py-28">
