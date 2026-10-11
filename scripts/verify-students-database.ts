@@ -139,6 +139,45 @@ async function verifyPermissions(client: PoolClient) {
   }
 }
 
+async function verifyStudentListQueries(client: PoolClient) {
+  await client.query(
+    `SELECT s.id, s.full_name, s.phone, s.email, s.birth_date,
+            s.training_category, s.service_type, s.status, s.archived_at,
+            s.created_at, s.updated_at,
+            EXISTS (
+              SELECT 1 FROM lessons l
+              WHERE l.student_id = s.id
+                AND l.status = 'scheduled'
+                AND l.starts_at >= now()
+            ) AS has_future_lessons,
+            count(*) OVER ()::text AS total_count
+     FROM students s
+     WHERE s.archived_at IS NULL
+       AND ($1 = '' OR s.full_name ILIKE $1 OR s.phone ILIKE $1 OR coalesce(s.email, '') ILIKE $1)
+       AND ($2 = 'all' OR s.status = $2)
+       AND ($3 = 'all' OR s.training_category = $3)
+     ORDER BY s.updated_at DESC, s.full_name ASC
+     LIMIT $4 OFFSET $5`,
+    ["", "all", "all", 1, 0],
+  );
+
+  await client.query(
+    `SELECT
+       count(*)::text AS total,
+       count(*) FILTER (WHERE status = 'active')::text AS active,
+       count(*) FILTER (WHERE status = 'inactive')::text AS inactive,
+       count(*) FILTER (WHERE status = 'completed')::text AS completed,
+       count(*) FILTER (WHERE EXISTS (
+         SELECT 1 FROM lessons l
+         WHERE l.student_id = students.id
+           AND l.status = 'scheduled'
+           AND l.starts_at >= now()
+       ))::text AS with_future_lessons
+     FROM students
+     WHERE archived_at IS NULL`,
+  );
+}
+
 function postgresCode(error: unknown) {
   return typeof error === "object" && error !== null && "code" in error
     ? String(error.code)
@@ -313,6 +352,8 @@ async function main() {
     console.log("✓ Tabelas, constraints compostas e triggers");
     await verifyPermissions(client);
     console.log("✓ RLS e revogação de acesso público");
+    await verifyStudentListQueries(client);
+    console.log("✓ Consultas de listagem e indicadores de alunos");
     await verifyRelations(client);
     console.log("✓ Vínculos cruzados bloqueados e casos válidos aceitos; ROLLBACK concluído");
   } finally {

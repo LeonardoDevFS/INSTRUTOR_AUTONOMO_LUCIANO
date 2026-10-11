@@ -52,7 +52,18 @@ export function adminError(error: unknown) {
         message: "O registro não pôde ser associado porque foi alterado ou já está vinculado.",
       },
     }[error.code];
-    console.error("Student management dependency failure", { code: error.code });
+    if (error.diagnostic) {
+      console.error("Student database diagnostic", {
+        publicCode: error.code,
+        category: error.diagnostic.category,
+        ...(error.diagnostic.technicalCode
+          ? { technicalCode: error.diagnostic.technicalCode }
+          : {}),
+        databaseUrlPresent: error.diagnostic.databaseUrlPresent,
+        supabaseCaCertPemPresent: error.diagnostic.supabaseCaCertPemPresent,
+        production: error.diagnostic.production,
+      });
+    }
     return adminJson(
       {
         error: response.message,

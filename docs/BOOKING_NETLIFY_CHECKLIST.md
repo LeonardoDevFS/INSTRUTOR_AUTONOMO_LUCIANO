@@ -93,6 +93,40 @@ sábado das 07:00 às 13:00 e domingo sob consulta pelo WhatsApp.
    - `GOOGLE_OAUTH_EXPIRED`, `GOOGLE_OAUTH_CONFIGURATION` ou outro código Google.
 7. Não existe endpoint público de diagnóstico de infraestrutura.
 
+### Diagnóstico privado da Gestão de Alunos
+
+Depois de publicar uma versão com o diagnóstico seguro, abra o painel com a
+conta administrativa e carregue `/admin/alunos`. Nos logs da Function procure
+por `Student database diagnostic`. O registro contém somente:
+
+- `publicCode`;
+- `category`: `configuration`, `tls`, `dns`, `network`, `authentication`,
+  `permission`, `schema` ou `query`;
+- `technicalCode`, somente quando estiver na lista segura do código;
+- `databaseUrlPresent`;
+- `supabaseCaCertPemPresent`;
+- `production`.
+
+Esse log não inclui mensagem original, stack, SQL, parâmetros, host, URI ou dados
+de alunos. Interpretação inicial:
+
+- `configuration / DATABASE_CA_INVALID`: recadastre o PEM completo, sem aspas
+  externas; são aceitas quebras de linha reais ou `\n` literais;
+- `tls`: confira se a CA corresponde ao certificado oficial atual e preserve
+  `sslmode=verify-full`;
+- `dns` ou `network`: confira disponibilidade do Transaction Pooler e faça uma
+  nova tentativa controlada;
+- `authentication / 28P01`: confira usuário e senha da URI privada;
+- `permission / 42501`: confira os privilégios do usuário PostgreSQL usado pelo
+  backend;
+- `schema / 42P01` ou `42703`: confira se a migração foi aplicada no mesmo projeto;
+- `query`: revise a consulta indicada pelo fluxo, sem registrar seu conteúdo.
+
+Na Netlify, `DATABASE_URL` e `SUPABASE_CA_CERT_PEM` precisam estar disponíveis
+para **Functions** no contexto **Production**. Se também forem necessárias
+durante a compilação, inclua **Builds**. Após qualquer mudança, faça novo deploy;
+Functions já publicadas não recebem retroativamente as novas variáveis.
+
 ## 6. Teste controlado
 
 Somente após banco, Google e regras estarem validados:

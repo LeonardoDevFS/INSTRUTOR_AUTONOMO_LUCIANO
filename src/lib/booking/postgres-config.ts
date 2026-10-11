@@ -1,3 +1,4 @@
+import { X509Certificate } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -5,6 +6,28 @@ import type { PoolConfig } from "pg";
 
 const REQUIRED_SSL_MODE = "verify-full";
 const SUPABASE_POOLER_SUFFIX = ".pooler.supabase.com";
+
+export type PostgresConfigTechnicalCode =
+  | "DATABASE_URL_MISSING"
+  | "DATABASE_URL_INVALID"
+  | "DATABASE_TARGET_INVALID"
+  | "DATABASE_SSLMODE_INVALID"
+  | "DATABASE_SSL_PARAMETERS_INVALID"
+  | "DATABASE_CA_CONFLICT"
+  | "DATABASE_CA_INVALID"
+  | "DATABASE_CA_READ_FAILED"
+  | "DATABASE_TLS_NOT_ENCRYPTED"
+  | "DATABASE_TLS_UNAUTHORIZED";
+
+export class PostgresConfigError extends Error {
+  constructor(
+    public readonly technicalCode: PostgresConfigTechnicalCode,
+    message: string,
+  ) {
+    super(message);
+    this.name = "PostgresConfigError";
+  }
+}
 
 type DatabaseEnvironment = {
   [key: string]: string | undefined;
@@ -33,10 +56,14 @@ type TlsClient = {
 export function assertAuthorizedPostgresTls(client: unknown) {
   const stream = (client as TlsClient).connection?.stream;
   if (!stream?.encrypted) {
-    throw new Error("o socket cliente → Supabase não está criptografado.");
+    throw new PostgresConfigError(
+      "DATABASE_TLS_NOT_ENCRYPTED",
+      "o socket cliente → Supabase não está criptografado.",
+    );
   }
   if (stream.authorized !== true || stream.authorizationError) {
-    throw new Error(
+    throw new PostgresConfigError(
+      "DATABASE_TLS_UNAUTHORIZED",
       "o certificado ou o hostname do Supabase não foi validado pelo Node.js.",
     );
   }
@@ -46,14 +73,20 @@ export function inspectBookingDatabaseUrl(
   connectionString: string | undefined,
 ): BookingDatabaseTarget {
   if (!connectionString?.trim()) {
-    throw new Error("DATABASE_URL não está definida.");
+    throw new PostgresConfigError(
+      "DATABASE_URL_MISSING",
+      "DATABASE_URL não está definida.",
+    );
   }
 
   let url: URL;
   try {
     url = new URL(connectionString.trim());
   } catch {
-    throw new Error("DATABASE_URL não é uma URL PostgreSQL válida.");
+    throw new PostgresConfigError(
+      "DATABASE_URL_INVALID",
+      "DATABASE_URL não é uma URL PostgreSQL válida.",
+    );
   }
 
   if (
@@ -61,14 +94,16 @@ export function inspectBookingDatabaseUrl(
     !url.hostname.endsWith(SUPABASE_POOLER_SUFFIX) ||
     url.port !== "6543"
   ) {
-    throw new Error(
+    throw new PostgresConfigError(
+      "DATABASE_TARGET_INVALID",
       "DATABASE_URL deve usar o Supabase Transaction Pooler na porta 6543.",
     );
   }
 
   const sslMode = url.searchParams.get("sslmode");
   if (sslMode !== REQUIRED_SSL_MODE) {
-    throw new Error(
+    throw new PostgresConfigError(
+      "DATABASE_SSLMODE_INVALID",
       "DATABASE_URL deve usar sslmode=verify-full para validar TLS, certificado e hostname.",
     );
   }
@@ -78,7 +113,8 @@ export function inspectBookingDatabaseUrl(
     url.searchParams.has("sslkey") ||
     url.searchParams.has("sslrootcert")
   ) {
-    throw new Error(
+    throw new PostgresConfigError(
+      "DATABASE_SSL_PARAMETERS_INVALID",
       "Configure a CA adicional com SUPABASE_CA_CERT_PATH, não por parâmetros SSL na DATABASE_URL.",
     );
   }
@@ -92,14 +128,32 @@ export function inspectBookingDatabaseUrl(
 }
 
 function validateAdditionalCa(certificate: string, source: string) {
+  const normalizedCertificate = certificate
+    .replaceAll("\\r\\n", "\n")
+    .replaceAll("\\n", "\n")
+    .replaceAll("\r\n", "\n")
+    .trim();
+
   if (
-    !certificate.includes("-----BEGIN CERTIFICATE-----") ||
-    !certificate.includes("-----END CERTIFICATE-----")
+    !normalizedCertificate.startsWith("-----BEGIN CERTIFICATE-----") ||
+    !normalizedCertificate.endsWith("-----END CERTIFICATE-----")
   ) {
-    throw new Error(`${source} não contém um certificado PEM válido.`);
+    throw new PostgresConfigError(
+      "DATABASE_CA_INVALID",
+      `${source} não contém um certificado PEM válido.`,
+    );
   }
 
-  return certificate;
+  try {
+    new X509Certificate(normalizedCertificate);
+  } catch {
+    throw new PostgresConfigError(
+      "DATABASE_CA_INVALID",
+      `${source} não contém um certificado X.509 válido.`,
+    );
+  }
+
+  return normalizedCertificate;
 }
 
 function loadAdditionalCa(certificatePath: string) {
@@ -111,10 +165,9 @@ function loadAdditionalCa(certificatePath: string) {
       "SUPABASE_CA_CERT_PATH",
     );
   } catch (error) {
-    if (error instanceof Error && error.message.includes("certificado PEM")) {
-      throw error;
-    }
-    throw new Error(
+    if (error instanceof PostgresConfigError) throw error;
+    throw new PostgresConfigError(
+      "DATABASE_CA_READ_FAILED",
       "Não foi possível ler o certificado definido em SUPABASE_CA_CERT_PATH.",
     );
   }
@@ -134,7 +187,8 @@ export function createBookingDatabasePoolConfig(
   } satisfies PoolConfig;
 
   if (certificatePath && certificatePem) {
-    throw new Error(
+    throw new PostgresConfigError(
+      "DATABASE_CA_CONFLICT",
       "Use somente SUPABASE_CA_CERT_PATH ou SUPABASE_CA_CERT_PEM, nunca as duas.",
     );
   }
@@ -154,7 +208,7 @@ export function createBookingDatabasePoolConfig(
   const certificate = certificatePath
     ? loadAdditionalCa(certificatePath)
     : validateAdditionalCa(
-        certificatePem!.replaceAll("\\n", "\n"),
+        certificatePem!,
         "SUPABASE_CA_CERT_PEM",
       );
 

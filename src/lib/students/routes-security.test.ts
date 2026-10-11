@@ -32,3 +32,22 @@ test("rotas não registram corpo da requisição ou dados pessoais em logs", () 
     assert.equal(/console\.(log|error)\([^\n]*(request|input|student)/i.test(source), false);
   }
 });
+
+test("diagnóstico do banco registra somente campos técnicos permitidos", () => {
+  const source = readFileSync(resolve("src/lib/api/admin-response.ts"), "utf8");
+  const studentErrorBlock = source.match(
+    /if \(error instanceof StudentsDatabaseError\)([\s\S]*?)if \(error instanceof ZodError\)/,
+  )?.[1] ?? "";
+
+  for (const field of [
+    "category",
+    "technicalCode",
+    "databaseUrlPresent",
+    "supabaseCaCertPemPresent",
+    "production",
+  ]) {
+    assert.match(studentErrorBlock, new RegExp(field));
+  }
+  assert.doesNotMatch(studentErrorBlock, /error\.(message|stack|cause)/);
+  assert.doesNotMatch(studentErrorBlock, /console\.error\([^)]*,\s*error\s*\)/);
+});

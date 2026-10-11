@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
+import { rootCertificates } from "node:tls";
 import test from "node:test";
 
 import {
   createBookingDatabasePoolConfig,
   inspectBookingDatabaseUrl,
+  PostgresConfigError,
 } from "./postgres-config";
 
 const secureUrl =
@@ -36,14 +38,42 @@ test("rejeita conexão fora do Transaction Pooler", () => {
 });
 
 test("aplica uma CA explícita sem permitir que a URL substitua o objeto SSL", () => {
+  const certificate = rootCertificates[0];
+  assert.ok(certificate);
   const config = createBookingDatabasePoolConfig({
     DATABASE_URL: secureUrl,
-    SUPABASE_CA_CERT_PEM:
-      "-----BEGIN CERTIFICATE-----\\nTESTE\\n-----END CERTIFICATE-----",
+    SUPABASE_CA_CERT_PEM: certificate.replaceAll("\n", "\\n"),
   });
   const ssl = config.ssl as { ca?: string; rejectUnauthorized?: boolean };
 
   assert.doesNotMatch(config.connectionString ?? "", /sslmode=/);
   assert.equal(ssl.rejectUnauthorized, true);
   assert.match(ssl.ca ?? "", /BEGIN CERTIFICATE/);
+});
+
+test("rejeita CA com marcadores PEM mas conteúdo X.509 inválido", () => {
+  assert.throws(
+    () => createBookingDatabasePoolConfig({
+      DATABASE_URL: secureUrl,
+      SUPABASE_CA_CERT_PEM:
+        "-----BEGIN CERTIFICATE-----\\nINVALIDO\\n-----END CERTIFICATE-----",
+    }),
+    (error: unknown) =>
+      error instanceof PostgresConfigError
+      && error.technicalCode === "DATABASE_CA_INVALID",
+  );
+});
+
+test("mantém verificação TLS obrigatória quando uma CA explícita é usada", () => {
+  const certificate = rootCertificates[0];
+  assert.ok(certificate);
+  const config = createBookingDatabasePoolConfig({
+    DATABASE_URL: secureUrl,
+    SUPABASE_CA_CERT_PEM: certificate,
+  });
+  const ssl = config.ssl as { rejectUnauthorized?: boolean };
+
+  assert.equal(ssl.rejectUnauthorized, true);
+  assert.doesNotMatch(config.connectionString ?? "", /sslmode=/);
+  assert.match(config.connectionString ?? "", /\.pooler\.supabase\.com:6543/);
 });

@@ -6,6 +6,7 @@ import { createStudent, listStudents } from "@/lib/students/database";
 import { studentInputSchema, studentListQuerySchema } from "@/lib/students/schemas";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function GET(request: NextRequest) {
   try {

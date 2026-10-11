@@ -2,6 +2,11 @@ import "server-only";
 
 import { Pool, type PoolClient, type QueryResultRow } from "pg";
 
+import {
+  createSafePostgresDiagnostic,
+  type PostgresFailurePhase,
+  type SafePostgresDiagnostic,
+} from "@/lib/booking/postgres-diagnostics";
 import { createBookingDatabasePoolConfig } from "@/lib/booking/postgres-config";
 import { calculateFinancialBalance } from "@/lib/students/finance";
 import { normalizeEmail, normalizePhone, type StudentInput, type StudentRecordAction } from "@/lib/students/schemas";
@@ -28,6 +33,7 @@ export class StudentsDatabaseError extends Error {
       | "POSSIBLE_STUDENT_DUPLICATE"
       | "STUDENT_RECORD_CONFLICT",
     public readonly details?: Array<Pick<StudentSummary, "id" | "fullName" | "phone" | "email">>,
+    public readonly diagnostic?: SafePostgresDiagnostic,
   ) {
     super("Não foi possível acessar a gestão de alunos.");
     this.name = "StudentsDatabaseError";
@@ -128,8 +134,12 @@ function database() {
   return studentsPool;
 }
 
-function normalizeDatabaseError(error: unknown): never {
+function normalizeDatabaseError(
+  error: unknown,
+  phase: PostgresFailurePhase,
+): never {
   if (error instanceof StudentsDatabaseError) throw error;
+  const diagnostic = createSafePostgresDiagnostic(error, phase);
   const code = typeof error === "object" && error !== null && "code" in error
     ? String(error.code)
     : "";
@@ -137,7 +147,11 @@ function normalizeDatabaseError(error: unknown): never {
     ? String(error.constraint)
     : "";
   if (code === "42P01" || code === "42703") {
-    throw new StudentsDatabaseError("STUDENTS_SCHEMA_NOT_INSTALLED");
+    throw new StudentsDatabaseError(
+      "STUDENTS_SCHEMA_NOT_INSTALLED",
+      undefined,
+      diagnostic,
+    );
   }
   if (code === "23505") {
     throw new StudentsDatabaseError(
@@ -149,21 +163,27 @@ function normalizeDatabaseError(error: unknown): never {
   if (code === "23503" || code === "23P01") {
     throw new StudentsDatabaseError("STUDENT_RECORD_CONFLICT");
   }
-  throw new StudentsDatabaseError("STUDENTS_DATABASE_UNAVAILABLE");
+  throw new StudentsDatabaseError(
+    "STUDENTS_DATABASE_UNAVAILABLE",
+    undefined,
+    diagnostic,
+  );
 }
 
 async function query<Row extends QueryResultRow>(text: string, values: unknown[] = []) {
   try {
     return await database().query<Row>(text, values);
   } catch (error) {
-    normalizeDatabaseError(error);
+    normalizeDatabaseError(error, "query");
   }
 }
 
 async function transaction<T>(operation: (client: PoolClient) => Promise<T>) {
   let client: PoolClient | undefined;
+  let failurePhase: PostgresFailurePhase = "connection";
   try {
     client = await database().connect();
+    failurePhase = "query";
     await client.query("BEGIN");
     const result = await operation(client);
     await client.query("COMMIT");
@@ -176,7 +196,7 @@ async function transaction<T>(operation: (client: PoolClient) => Promise<T>) {
         // Mantém a falha original sem expor detalhes da conexão.
       }
     }
-    normalizeDatabaseError(error);
+    normalizeDatabaseError(error, failurePhase);
   } finally {
     client?.release();
   }
@@ -395,7 +415,13 @@ export async function createStudent(
       ],
     );
     const row = result.rows[0];
-    if (!row) throw new StudentsDatabaseError("STUDENTS_DATABASE_UNAVAILABLE");
+    if (!row) {
+      throw new StudentsDatabaseError(
+        "STUDENTS_DATABASE_UNAVAILABLE",
+        undefined,
+        createSafePostgresDiagnostic(undefined, "query"),
+      );
+    }
     await audit(client, {
       studentId: row.id,
       entityType: "student",
