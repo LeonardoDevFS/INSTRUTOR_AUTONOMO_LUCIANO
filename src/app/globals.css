@@ -169,6 +169,15 @@ section[id] {
     box-shadow 450ms ease;
 }
 
+.photo-effects[data-intrinsic="true"] .photo-effects__frame {
+  position: relative;
+  inset: auto;
+}
+
+.photo-effects[data-intrinsic="true"] .photo-effects__media {
+  transform: none;
+}
+
 .photo-effects__media {
   transform: scale(1.001);
   transition: transform 800ms cubic-bezier(0.22, 1, 0.36, 1);

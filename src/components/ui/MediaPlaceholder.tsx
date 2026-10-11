@@ -16,6 +16,8 @@ type MediaPlaceholderProps = {
   alt?: string;
   objectPosition?: string;
   objectFit?: "cover" | "contain";
+  intrinsicWidth?: number;
+  intrinsicHeight?: number;
   priority?: boolean;
   sizes?: string;
   photoEffect?: PhotoEffectVariant;
@@ -31,6 +33,8 @@ export function MediaPlaceholder({
   alt,
   objectPosition = "center",
   objectFit = "cover",
+  intrinsicWidth,
+  intrinsicHeight,
   priority = false,
   sizes = "(min-width: 1024px) 45vw, 100vw",
   photoEffect = "portrait",
@@ -38,28 +42,44 @@ export function MediaPlaceholder({
   revealDelay = 0,
 }: MediaPlaceholderProps) {
   if (src) {
+    const useIntrinsicSize = Boolean(intrinsicWidth && intrinsicHeight);
+
     return (
       <PhotoEffects
         variant={photoEffect}
+        intrinsic={useIntrinsicSize}
         reveal={reveal}
         revealDelay={revealDelay}
         className={cn(
           "min-h-80 rounded-[2rem] bg-[#0d0d0d]",
+          useIntrinsicSize && "min-h-0",
           className,
         )}
       >
-        <Image
-          src={src}
-          alt={alt ?? ""}
-          fill
-          priority={priority}
-          sizes={sizes}
-          className={cn(
-            "photo-effects__media",
-            objectFit === "contain" ? "object-contain" : "object-cover",
-          )}
-          style={{ objectPosition }}
-        />
+        {intrinsicWidth && intrinsicHeight ? (
+          <Image
+            src={src}
+            alt={alt ?? ""}
+            width={intrinsicWidth}
+            height={intrinsicHeight}
+            priority={priority}
+            sizes={sizes}
+            className="photo-effects__media h-auto w-full object-contain"
+          />
+        ) : (
+          <Image
+            src={src}
+            alt={alt ?? ""}
+            fill
+            priority={priority}
+            sizes={sizes}
+            className={cn(
+              "photo-effects__media",
+              objectFit === "contain" ? "object-contain" : "object-cover",
+            )}
+            style={{ objectPosition }}
+          />
+        )}
       </PhotoEffects>
     );
   }

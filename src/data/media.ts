@@ -76,7 +76,7 @@ export const siteMedia = {
     objectPosition: "center center",
   },
   guidesCover: {
-    src: "/images/guias/guia-cnh-direcao-segura.jpg",
+    src: "/images/guias/guia do luciano com foto do carro, ele e a moto.png",
     alt: "Arte informativa da Direção Segura sobre o guia completo para tirar a CNH",
     objectPosition: "center center",
   },

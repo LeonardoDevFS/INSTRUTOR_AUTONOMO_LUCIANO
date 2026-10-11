@@ -31,6 +31,10 @@ export default function GuidesPage() {
         imageAlt={siteMedia.guidesCover.alt}
         imagePosition={siteMedia.guidesCover.objectPosition}
         imageFit="contain"
+        imageWidth={1055}
+        imageHeight={1491}
+        imageSizes="(min-width: 1280px) 42rem, (min-width: 1024px) 55vw, 100vw"
+        layout="guide-cover"
       />
 
       <section className="py-20 sm:py-24 lg:py-28">

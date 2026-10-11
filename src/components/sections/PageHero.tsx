@@ -4,6 +4,7 @@ import { Breadcrumbs, type BreadcrumbItem } from "@/components/seo/Breadcrumbs";
 import { ActionLink } from "@/components/ui/ActionLink";
 import { MediaPlaceholder } from "@/components/ui/MediaPlaceholder";
 import type { PhotoEffectVariant } from "@/components/ui/PhotoEffects";
+import { cn } from "@/lib/utils";
 import { createWhatsAppUrl } from "@/lib/whatsapp";
 
 type PageHeroProps = {
@@ -20,6 +21,10 @@ type PageHeroProps = {
   imageAlt?: string;
   imagePosition?: string;
   imageFit?: "cover" | "contain";
+  imageWidth?: number;
+  imageHeight?: number;
+  imageSizes?: string;
+  layout?: "default" | "guide-cover";
   photoEffect?: PhotoEffectVariant;
   photoReveal?: boolean;
 };
@@ -38,6 +43,10 @@ export function PageHero({
   imageAlt,
   imagePosition,
   imageFit,
+  imageWidth,
+  imageHeight,
+  imageSizes,
+  layout = "default",
   photoEffect = "portrait",
   photoReveal = false,
 }: PageHeroProps) {
@@ -50,7 +59,14 @@ export function PageHero({
   return (
     <section className="relative isolate overflow-hidden border-b border-white/10 pt-20">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_78%_28%,rgba(229,185,63,0.16),transparent_28%)]" />
-      <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-8 lg:py-24">
+      <div
+        className={cn(
+          "mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:py-20 lg:px-8 lg:py-24",
+          layout === "guide-cover"
+            ? "items-start lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16 xl:gap-20"
+            : "items-center lg:grid-cols-[1.05fr_0.95fr] lg:gap-16",
+        )}
+      >
         <div>
           <Breadcrumbs items={breadcrumbs} />
           <p className="mt-8 text-xs font-extrabold uppercase tracking-[0.3em] text-gold">
@@ -85,10 +101,18 @@ export function PageHero({
           alt={imageAlt}
           objectPosition={imagePosition}
           objectFit={imageFit}
+          intrinsicWidth={imageWidth}
+          intrinsicHeight={imageHeight}
+          sizes={imageSizes}
           photoEffect={photoEffect}
           reveal={photoReveal}
           priority={Boolean(imageSrc)}
-          className="min-h-[27rem] lg:min-h-[35rem]"
+          className={cn(
+            "w-full",
+            layout === "guide-cover"
+              ? "min-h-0 justify-self-center lg:max-w-[42rem] lg:justify-self-end"
+              : "min-h-[27rem] lg:min-h-[35rem]",
+          )}
         />
       </div>
     </section>

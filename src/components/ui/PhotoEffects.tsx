@@ -15,6 +15,7 @@ type PhotoEffectsProps = {
   children: ReactNode;
   variant?: PhotoEffectVariant;
   className?: string;
+  intrinsic?: boolean;
   reveal?: boolean;
   revealDelay?: number;
 };
@@ -27,6 +28,7 @@ export function PhotoEffects({
   children,
   variant = "portrait",
   className,
+  intrinsic = false,
   reveal = false,
   revealDelay = 0,
 }: PhotoEffectsProps) {
@@ -101,6 +103,7 @@ export function PhotoEffects({
       ref={containerRef}
       className={cn("photo-effects", className)}
       data-variant={variant}
+      data-intrinsic={intrinsic ? "true" : "false"}
       data-reveal={reveal ? "true" : "false"}
       data-visible={reveal ? "false" : "true"}
       style={style}
