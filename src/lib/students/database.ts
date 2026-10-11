@@ -133,11 +133,18 @@ function normalizeDatabaseError(error: unknown): never {
   const code = typeof error === "object" && error !== null && "code" in error
     ? String(error.code)
     : "";
+  const constraint = typeof error === "object" && error !== null && "constraint" in error
+    ? String(error.constraint)
+    : "";
   if (code === "42P01" || code === "42703") {
     throw new StudentsDatabaseError("STUDENTS_SCHEMA_NOT_INSTALLED");
   }
   if (code === "23505") {
-    throw new StudentsDatabaseError("STUDENT_DUPLICATE");
+    throw new StudentsDatabaseError(
+      constraint === "students_duplicate_confirmation_required"
+        ? "STUDENT_DUPLICATE"
+        : "STUDENT_RECORD_CONFLICT",
+    );
   }
   if (code === "23503" || code === "23P01") {
     throw new StudentsDatabaseError("STUDENT_RECORD_CONFLICT");
@@ -358,7 +365,7 @@ export async function createStudent(
       phone: candidate.phone,
       email: candidate.email,
     }));
-    if (obvious) {
+    if (obvious && !input.confirmPossibleDuplicate) {
       throw new StudentsDatabaseError("STUDENT_DUPLICATE", duplicateDetails);
     }
     if (candidates.length > 0 && !input.confirmPossibleDuplicate) {
@@ -368,8 +375,9 @@ export async function createStudent(
     const result = await client.query<StudentRow>(
       `INSERT INTO students
         (full_name, phone, phone_normalized, email, email_normalized, birth_date,
-         training_category, service_type, status)
-       VALUES ($1, $2, $3, $4, $5, $6::date, $7, $8, $9)
+         training_category, service_type, status, duplicate_confirmed_at,
+         duplicate_confirmed_by)
+       VALUES ($1, $2, $3, $4, $5, $6::date, $7, $8, $9, $10::timestamptz, $11)
        RETURNING id, full_name, phone, email, birth_date, training_category,
                  service_type, status, archived_at, created_at, updated_at`,
       [
@@ -382,6 +390,8 @@ export async function createStudent(
         input.trainingCategory,
         input.serviceType,
         input.status,
+        candidates.length > 0 && input.confirmPossibleDuplicate ? new Date().toISOString() : null,
+        candidates.length > 0 && input.confirmPossibleDuplicate ? actorEmail : null,
       ],
     );
     const row = result.rows[0];
@@ -392,7 +402,10 @@ export async function createStudent(
       entityId: row.id,
       action: "student.created",
       actorEmail,
-      changedFields: ["fullName", "phone", "email", "birthDate", "trainingCategory", "serviceType", "status"],
+      changedFields: [
+        "fullName", "phone", "email", "birthDate", "trainingCategory", "serviceType", "status",
+        ...(candidates.length > 0 && input.confirmPossibleDuplicate ? ["duplicateConfirmation"] : []),
+      ],
     });
     return mapStudent(row);
   });
@@ -411,7 +424,7 @@ export async function updateStudent(
       (candidate) => candidate.full_name.trim().toLowerCase() === normalizedName && normalizePhone(candidate.phone) === normalizedPhone,
     );
     const duplicateDetails = candidates.map((candidate) => ({ id: candidate.id, fullName: candidate.full_name, phone: candidate.phone, email: candidate.email }));
-    if (obvious) throw new StudentsDatabaseError("STUDENT_DUPLICATE", duplicateDetails);
+    if (obvious && !input.confirmPossibleDuplicate) throw new StudentsDatabaseError("STUDENT_DUPLICATE", duplicateDetails);
     if (candidates.length > 0 && !input.confirmPossibleDuplicate) {
       throw new StudentsDatabaseError("POSSIBLE_STUDENT_DUPLICATE", duplicateDetails);
     }
@@ -421,11 +434,19 @@ export async function updateStudent(
        SET full_name = $2, phone = $3, phone_normalized = $4,
            email = $5, email_normalized = $6, birth_date = $7::date,
            training_category = $8, service_type = $9, status = $10,
+           duplicate_confirmed_at = $11::timestamptz,
+           duplicate_confirmed_by = $12,
            updated_at = now()
        WHERE id = $1::uuid AND archived_at IS NULL
        RETURNING id, full_name, phone, email, birth_date, training_category,
                  service_type, status, archived_at, created_at, updated_at`,
-      [studentId, input.fullName, input.phone, normalizedPhone, input.email ?? null, normalizeEmail(input.email) ?? null, input.birthDate ?? null, input.trainingCategory, input.serviceType, input.status],
+      [
+        studentId, input.fullName, input.phone, normalizedPhone, input.email ?? null,
+        normalizeEmail(input.email) ?? null, input.birthDate ?? null,
+        input.trainingCategory, input.serviceType, input.status,
+        candidates.length > 0 && input.confirmPossibleDuplicate ? new Date().toISOString() : null,
+        candidates.length > 0 && input.confirmPossibleDuplicate ? actorEmail : null,
+      ],
     );
     const row = result.rows[0];
     if (!row) throw new StudentsDatabaseError("STUDENT_NOT_FOUND");
@@ -435,7 +456,10 @@ export async function updateStudent(
       entityId: studentId,
       action: "student.updated",
       actorEmail,
-      changedFields: ["fullName", "phone", "email", "birthDate", "trainingCategory", "serviceType", "status"],
+      changedFields: [
+        "fullName", "phone", "email", "birthDate", "trainingCategory", "serviceType", "status",
+        ...(candidates.length > 0 && input.confirmPossibleDuplicate ? ["duplicateConfirmation"] : []),
+      ],
     });
     return mapStudent(row);
   });

@@ -49,6 +49,7 @@ export function StudentFormDialog({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [matches, setMatches] = useState<Match[]>([]);
+  const [duplicateIsExact, setDuplicateIsExact] = useState(false);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -77,8 +78,13 @@ export function StudentFormDialog({
         student?: StudentSummary;
       };
       if (!response.ok) {
-        if (payload.code === "POSSIBLE_STUDENT_DUPLICATE") {
-          setMatches(payload.matches ?? []);
+        if (payload.code === "POSSIBLE_STUDENT_DUPLICATE" || payload.code === "STUDENT_DUPLICATE") {
+          const duplicateMatches = payload.matches ?? [];
+          if (duplicateMatches.length === 0) {
+            throw new Error(payload.error || "Revise a possível duplicidade e tente novamente.");
+          }
+          setMatches(duplicateMatches);
+          setDuplicateIsExact(payload.code === "STUDENT_DUPLICATE");
           return;
         }
         throw new Error(payload.error || "Não foi possível salvar o aluno.");
@@ -137,8 +143,8 @@ export function StudentFormDialog({
 
           {matches.length > 0 && (
             <div className="rounded-2xl border border-amber-300/25 bg-amber-300/[0.07] p-5">
-              <p className="font-bold text-amber-100">Possíveis cadastros semelhantes</p>
-              <p className="mt-2 text-sm leading-6 text-white/55">Revise antes de criar outra ficha. Nenhum registro será mesclado automaticamente.</p>
+              <p className="font-bold text-amber-100">{duplicateIsExact ? "Cadastro com a mesma identidade encontrado" : "Possíveis cadastros semelhantes"}</p>
+              <p className="mt-2 text-sm leading-6 text-white/55">Revise antes de criar outra ficha. A confirmação será registrada na auditoria e nenhum cadastro será mesclado automaticamente.</p>
               <ul className="mt-4 space-y-2 text-sm">
                 {matches.map((match) => <li key={match.id} className="rounded-xl bg-black/25 p-3"><strong>{match.fullName}</strong><span className="mt-1 block text-white/45">{match.phone}{match.email ? ` · ${match.email}` : ""}</span></li>)}
               </ul>

@@ -25,7 +25,12 @@ mostra o estado seguro **Migração pendente** e não aceita cadastros.
    - `student_audit_log`;
    - coluna opcional `booking_reservations.student_id`.
 4. Confirme RLS e `REVOKE ALL` para `anon` e `authenticated`.
-5. Faça backup ou snapshot conforme os recursos disponíveis no projeto.
+5. Confirme as chaves compostas que impedem:
+   - pagamento associado ao contrato de outro aluno;
+   - avaliação associada à aula de outro aluno;
+   - aula associada à reserva de outro aluno.
+6. Confirme os gatilhos de `updated_at` e de confirmação de duplicidade.
+7. Faça backup ou snapshot conforme os recursos disponíveis no projeto.
 
 ## Aplicação manual
 
@@ -40,9 +45,29 @@ mostra o estado seguro **Migração pendente** e não aceita cadastros.
 npm run students:verify
 ```
 
-O verificador confere TLS, tabelas, coluna de vínculo, RLS, permissões e
-integridade referencial. Os registros técnicos usados no teste são executados em
-transação e revertidos com `ROLLBACK`.
+O verificador confere TLS, tabelas, coluna de vínculo, RLS, permissões, triggers
+e integridade referencial. Ele testa tanto os vínculos válidos quanto as
+tentativas de cruzar alunos em pagamentos, avaliações e reservas. Os registros
+técnicos são executados em uma transação e revertidos com `ROLLBACK`.
+
+## Política de duplicidade
+
+Nome e telefone iguais geram um bloqueio por padrão. O administrador pode manter
+duas fichas somente depois de revisar o aviso e clicar em **Confirmar cadastro
+separado**. A confirmação registra data, e-mail administrativo e uma entrada na
+trilha de auditoria. Sem essa confirmação, o trigger do PostgreSQL também bloqueia
+a operação, inclusive em acessos que contornem a interface.
+
+Semelhanças apenas por nome, telefone ou e-mail seguem o mesmo fluxo de aviso e
+confirmação no backend. Nenhum registro é mesclado ou associado automaticamente.
+
+## Preservação financeira e de reservas
+
+- Pagamentos sem contrato continuam permitidos.
+- Um contrato com pagamentos não pode ser excluído, preservando a rastreabilidade.
+- Reservas antigas podem continuar com `student_id` nulo.
+- Uma reserva sem aluno precisa ser vinculada manualmente antes de ser usada por
+  uma aula; nome, telefone e e-mail nunca criam esse vínculo automaticamente.
 
 ## Teste local
 

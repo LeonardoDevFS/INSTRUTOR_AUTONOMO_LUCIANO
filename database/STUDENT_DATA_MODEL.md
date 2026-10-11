@@ -25,6 +25,18 @@ no fluxo administrativo. CPF e informações financeiras só devem ser adicionad
 quando houver finalidade, base legal, controle de acesso administrativo e política
 de retenção definidos.
 
+As relações que carregam simultaneamente o identificador do registro e do aluno
+usam chaves estrangeiras compostas. Assim, pagamentos não aceitam contratos de
+outro aluno, avaliações não aceitam aulas de outro aluno e aulas não aceitam
+reservas vinculadas a outro aluno. `payments.contract_id` continua opcional e
+reservas antigas com `student_id` nulo permanecem válidas e sem associação
+automática.
+
+Cadastros com nome e telefone iguais são bloqueados pelo PostgreSQL até que o
+administrador confirme explicitamente a duplicidade. A decisão fica identificada
+por data e e-mail administrativo; o índice de identidade é apenas de busca, pois
+um índice `UNIQUE` impediria o fluxo de confirmação aprovado.
+
 Todas as novas tabelas têm RLS habilitado e acesso revogado para `anon` e
 `authenticated`. O acesso ocorre apenas pelas rotas administrativas autenticadas
 do backend. Nenhuma dessas tabelas é consultada diretamente por componentes
