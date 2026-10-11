@@ -2,6 +2,7 @@
 
 import { ExternalLink, LoaderCircle, Pencil, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 import { eventDate, formatEventTime } from "@/components/admin/admin-date";
 import type { AdminCalendarEvent } from "@/lib/calendar/types";
@@ -104,6 +105,18 @@ export function EventDetailDialog({
               <Detail label="Telefone" value={participantPhone ?? "Informação não disponível"} />
               <Detail label="Serviço solicitado" value={requestedService ?? "Informação não disponível"} />
             </dl>
+          </div>
+        )}
+
+        {event.siteBooking && (
+          <div className="mt-5 rounded-2xl border border-gold/20 bg-gold/[0.06] p-5">
+            <p className="font-bold">Ficha do aluno</p>
+            <p className="mt-2 text-sm leading-6 text-white/50">
+              A associação com um aluno é manual para evitar cadastros duplicados.
+            </p>
+            <Link href="/admin/alunos" className="mt-4 inline-flex min-h-11 items-center rounded-full border border-gold/35 px-5 text-sm font-extrabold text-gold">
+              Abrir Gestão de Alunos
+            </Link>
           </div>
         )}
 

@@ -7,6 +7,7 @@
     "build": "next build",
     "booking:doctor": "tsx scripts/booking-doctor.ts",
     "db:verify": "tsx scripts/verify-booking-database.ts",
+    "students:verify": "tsx scripts/verify-students-database.ts",
     "google:authorize": "tsx scripts/authorize-google-calendar.ts",
     "start": "next start",
     "lint": "eslint",

@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 
 import { AdminAuthError } from "@/lib/auth/require-admin";
 import { GoogleCalendarError } from "@/lib/calendar/google-calendar";
+import { StudentsDatabaseError } from "@/lib/students/database";
 
 const noStoreHeaders = {
   "Cache-Control": "private, no-store, max-age=0",
@@ -24,6 +25,44 @@ export function adminError(error: unknown) {
     );
   }
 
+  if (error instanceof StudentsDatabaseError) {
+    const response = {
+      STUDENTS_SCHEMA_NOT_INSTALLED: {
+        status: 503,
+        message: "A Gestão de Alunos aguarda a aplicação da migração revisada.",
+      },
+      STUDENTS_DATABASE_UNAVAILABLE: {
+        status: 503,
+        message: "A Gestão de Alunos está temporariamente indisponível.",
+      },
+      STUDENT_NOT_FOUND: {
+        status: 404,
+        message: "Aluno não encontrado.",
+      },
+      STUDENT_DUPLICATE: {
+        status: 409,
+        message: "Já existe um cadastro com o mesmo nome e telefone.",
+      },
+      POSSIBLE_STUDENT_DUPLICATE: {
+        status: 409,
+        message: "Encontramos um possível cadastro semelhante. Revise antes de continuar.",
+      },
+      STUDENT_RECORD_CONFLICT: {
+        status: 409,
+        message: "O registro não pôde ser associado porque foi alterado ou já está vinculado.",
+      },
+    }[error.code];
+    console.error("Student management dependency failure", { code: error.code });
+    return adminJson(
+      {
+        error: response.message,
+        code: error.code,
+        ...(error.details ? { matches: error.details } : {}),
+      },
+      { status: response.status },
+    );
+  }
+
   if (error instanceof ZodError) {
     return adminJson(
       {
@@ -42,7 +81,9 @@ export function adminError(error: unknown) {
     );
   }
 
-  console.error("Admin API error", error);
+  console.error("Admin API unexpected failure", {
+    name: error instanceof Error ? error.name : "UnknownError",
+  });
   return adminJson(
     { error: "Ocorreu um erro inesperado.", code: "INTERNAL_ERROR" },
     { status: 500 },

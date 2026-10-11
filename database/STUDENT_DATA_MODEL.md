@@ -1,22 +1,23 @@
-# Modelo futuro de alunos no mesmo Supabase
+# Modelo de alunos no mesmo Supabase
 
 O projeto **Luciano Direção Segura** deve permanecer como o único PostgreSQL do
-sistema. Esta etapa cria somente as tabelas técnicas do agendamento. Antes de
-criar tabelas de alunos, consulte o Schema Visualizer/Table Editor do projeto e
-exporte a definição existente para evitar nomes e cadastros duplicados.
+sistema. O schema remoto foi inspecionado em 11 de outubro de 2026 e continha
+somente as tabelas técnicas `booking_reservations` e `booking_rate_limits`.
+A migração aditiva está pronta em `database/students.sql`, mas não foi executada.
 
-Modelo planejado, ainda não executado:
+Modelo preparado, ainda não executado:
 
 - `students`: cadastro canônico e dados mínimos do aluno;
 - `license_processes`: processo de primeira habilitação ou adição de categoria;
 - `lessons`: aulas previstas e realizadas, ligadas ao aluno e, quando aplicável,
   à reserva de origem;
-- `student_skills`: habilidades observadas sem diagnóstico médico;
+- `student_skill_assessments`: histórico de habilidades observadas sem diagnóstico médico;
 - `student_notes`: anotações operacionais com autoria e data;
 - `contracts`: condições comerciais aceitas;
 - `payments`: lançamentos e estados de pagamento, sem armazenar dados completos de
   cartão;
-- `booking_reservations.student_id`: vínculo opcional futuro com `students`.
+- `student_audit_log`: trilha privada das alterações administrativas relevantes;
+- `booking_reservations.student_id`: vínculo opcional com `students`.
 
 Uma reserva pública não deve criar automaticamente múltiplas fichas a partir de
 variações de telefone/e-mail. O vínculo com um aluno existente deve ser confirmado
@@ -24,6 +25,7 @@ no fluxo administrativo. CPF e informações financeiras só devem ser adicionad
 quando houver finalidade, base legal, controle de acesso administrativo e política
 de retenção definidos.
 
-As futuras tabelas devem ter RLS habilitado, nenhum acesso para `anon`, políticas
-administrativas testadas e trilha de alterações para campos sensíveis. Nenhuma
-dessas tabelas deve ser consultada diretamente pelos componentes públicos.
+Todas as novas tabelas têm RLS habilitado e acesso revogado para `anon` e
+`authenticated`. O acesso ocorre apenas pelas rotas administrativas autenticadas
+do backend. Nenhuma dessas tabelas é consultada diretamente por componentes
+públicos.

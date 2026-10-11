@@ -1,12 +1,13 @@
 "use client";
 
-import { CalendarDays, LayoutDashboard } from "lucide-react";
+import { CalendarDays, LayoutDashboard, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const items = [
   { href: "/admin", label: "Visão geral", icon: LayoutDashboard },
   { href: "/admin/agenda", label: "Agenda", icon: CalendarDays },
+  { href: "/admin/alunos", label: "Alunos", icon: UsersRound },
 ] as const;
 
 export function AdminNav({ mobile = false }: { mobile?: boolean }) {
@@ -17,7 +18,7 @@ export function AdminNav({ mobile = false }: { mobile?: boolean }) {
       aria-label="Navegação administrativa"
       className={
         mobile
-          ? "grid grid-cols-2 gap-2"
+          ? "grid grid-cols-3 gap-2"
           : "mt-8 flex flex-1 flex-col gap-2"
       }
     >

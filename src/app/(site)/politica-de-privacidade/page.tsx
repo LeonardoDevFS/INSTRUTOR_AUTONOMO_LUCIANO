@@ -24,7 +24,7 @@ export default function PrivacyPolicyPage() {
             Política de Privacidade
           </h1>
           <p className="mt-6 text-sm text-white/40">
-            Última atualização: 10 de outubro de 2026.
+            Última atualização: 11 de outubro de 2026.
           </p>
         </div>
       </header>
@@ -51,6 +51,14 @@ export default function PrivacyPolicyPage() {
             enviadas somente depois que decide abrir a conversa nessa
             plataforma.
           </p>
+          <p>
+            Depois da confirmação administrativa do atendimento, Luciano pode
+            manter uma ficha privada com os dados mínimos de contato, categoria,
+            aulas, evolução didática, acompanhamento do processo, condições
+            comerciais, pagamentos e anotações necessárias ao serviço. CPF,
+            documentos, informações médicas e dados completos de cartão não são
+            solicitados nesta versão.
+          </p>
         </PolicySection>
 
         <PolicySection title="3. Para que as informações são usadas">
@@ -63,7 +71,9 @@ export default function PrivacyPolicyPage() {
             Para impedir reservas simultâneas e abuso, o sistema mantém registros
             técnicos de intervalo, serviço, status e idempotência. O endereço IP
             usado no controle de frequência é armazenado somente como hash. O
-            banco técnico não recebe nome, e-mail, telefone ou observações.
+            banco técnico da reserva pública não recebe nome, e-mail, telefone
+            ou observações. Um vínculo com a ficha privada somente pode ser feito
+            manualmente no painel administrativo.
           </p>
         </PolicySection>
 
@@ -73,7 +83,10 @@ export default function PrivacyPolicyPage() {
             processa os dados necessários para registrar o compromisso e pode
             enviar comunicações relacionadas ao evento, conforme suas próprias
             políticas. O armazenamento técnico de concorrência usa PostgreSQL
-            hospedado pelo Supabase, sem os dados pessoais do formulário.
+            hospedado pelo Supabase. Quando a Gestão de Alunos estiver ativa, o
+            mesmo banco também armazenará a ficha administrativa privada descrita
+            nesta política, sem acesso direto pelo navegador ou pela API pública
+            do Supabase.
           </p>
           <p>
             Links para WhatsApp e Instagram também direcionam você a plataformas
@@ -103,7 +116,23 @@ export default function PrivacyPolicyPage() {
           </p>
         </PolicySection>
 
-        <PolicySection title="6. Seus direitos e contato">
+        <PolicySection title="6. Segurança, conservação e acesso">
+          <p>
+            A ficha de alunos fica restrita ao administrador autorizado, com
+            autenticação, comunicação criptografada, controle de permissões e
+            trilha de alterações importantes. O sistema prefere arquivamento para
+            evitar perda acidental do histórico.
+          </p>
+          <p>
+            Os dados devem ser conservados somente pelo período necessário ao
+            atendimento, cumprimento de obrigações aplicáveis e exercício regular
+            de direitos. Solicitações de correção ou eliminação serão analisadas
+            antes da alteração definitiva para preservar registros que precisem
+            ser mantidos legitimamente.
+          </p>
+        </PolicySection>
+
+        <PolicySection title="7. Seus direitos e contato">
           <p>
             Você pode solicitar informações, correção ou eliminação dos dados
             mantidos no atendimento, quando aplicável, entrando em contato pelo
