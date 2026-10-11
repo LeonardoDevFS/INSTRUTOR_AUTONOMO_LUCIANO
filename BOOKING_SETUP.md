@@ -52,6 +52,17 @@ Depois da migração e de configurar `DATABASE_URL` localmente, execute:
 npm run db:verify
 ```
 
+Para auditar, sem criar eventos, toda a configuração do agendamento execute:
+
+```bash
+npm run booking:doctor
+```
+
+O comando informa apenas presença, ausência e categoria segura das falhas. Ele
+valida o token offline, lê ocupações da agenda sem exibir seus dados, consulta o
+banco e procura ao menos um horário elegível. Nenhuma senha, token, connection
+string ou compromisso é impresso.
+
 O verificador confirma conexão TLS pelo pooler, tabelas, RLS, privilégios,
 transação e bloqueio de sobreposição. Os registros de teste usam uma transação
 revertida com `ROLLBACK`; nada permanece no banco.
@@ -204,6 +215,9 @@ Checklist:
 11. testar em celular e no deploy da Netlify.
 
 Somente após todos os itens use `CUSTOM_BOOKING_ENABLED=true` em produção.
+
+Para a configuração e validação da Netlify, siga também
+[`docs/BOOKING_NETLIFY_CHECKLIST.md`](docs/BOOKING_NETLIFY_CHECKLIST.md).
 
 ## 8. Plano gratuito e indisponibilidade
 

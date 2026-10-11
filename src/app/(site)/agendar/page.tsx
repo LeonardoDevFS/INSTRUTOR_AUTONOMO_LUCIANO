@@ -18,6 +18,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/agendar" },
 };
 
+// A liberação depende de variáveis disponíveis no runtime da Netlify. Não
+// congele `ready` durante o build, pois isso manteria a interface desativada
+// mesmo depois de configurar as Functions e fazer um novo deploy.
+export const dynamic = "force-dynamic";
+
 export default function BookingPage() {
   const googleBookingConfig = getGoogleBookingConfig();
   const customBookingConfig = getPublicBookingRuntimeConfig();

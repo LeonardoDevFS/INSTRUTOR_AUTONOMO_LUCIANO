@@ -3,8 +3,8 @@ import { randomUUID } from "node:crypto";
 import type { NextRequest } from "next/server";
 
 import {
+  auditPublicBookingEnvironment,
   getBookingService,
-  getPublicBookingRuntimeConfig,
 } from "@/config/public-booking";
 import { BookingApiError, bookingError, bookingJson } from "@/lib/api/booking-response";
 import { buildSlotsForDate } from "@/lib/booking/availability";
@@ -46,8 +46,13 @@ export async function POST(request: NextRequest) {
 
   try {
     assertSameOrigin(request);
-    const runtime = getPublicBookingRuntimeConfig();
+    const configuration = auditPublicBookingEnvironment();
+    const runtime = configuration.runtime;
     if (!runtime.ready) {
+      console.error("Public booking configuration unavailable", {
+        reason: runtime.reason ?? "unknown",
+        issues: configuration.issues,
+      });
       throw new BookingApiError(
         "O agendamento personalizado ainda está em validação.",
         503,

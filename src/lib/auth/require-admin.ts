@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { isAdminAuthConfigured, isAllowedAdminEmail } from "@/lib/auth/admin";
 import { resolveGoogleAccessToken } from "@/lib/auth/google-tokens";
+import { isRequestOriginAllowed } from "@/lib/http/request-origin";
 
 export class AdminAuthError extends Error {
   constructor(
@@ -65,23 +66,21 @@ export async function requireAdminApi(request: NextRequest) {
 }
 
 export function assertSameOrigin(request: NextRequest) {
-  const origin = request.headers.get("origin");
-  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
-  const forwardedProtocol = request.headers.get("x-forwarded-proto");
-  const protocol = forwardedProtocol ?? (request.nextUrl.protocol.replace(":", "") || "https");
-
-  if (!origin || !host) {
-    throw new AdminAuthError("Origem da requisição inválida.", 403, "INVALID_ORIGIN");
-  }
-
-  let originUrl: URL;
-  try {
-    originUrl = new URL(origin);
-  } catch {
-    throw new AdminAuthError("Origem da requisição inválida.", 403, "INVALID_ORIGIN");
-  }
-
-  if (originUrl.host !== host || originUrl.protocol !== `${protocol}:`) {
+  if (
+    !isRequestOriginAllowed({
+      origin: request.headers.get("origin"),
+      host: request.headers.get("host"),
+      forwardedHost: request.headers.get("x-forwarded-host"),
+      forwardedProtocol: request.headers.get("x-forwarded-proto"),
+      requestOrigin: request.nextUrl.origin,
+      configuredOrigins: [
+        process.env.NEXT_PUBLIC_SITE_URL,
+        process.env.URL,
+        process.env.DEPLOY_PRIME_URL,
+        process.env.DEPLOY_URL,
+      ],
+    })
+  ) {
     throw new AdminAuthError("Origem da requisição inválida.", 403, "INVALID_ORIGIN");
   }
 }

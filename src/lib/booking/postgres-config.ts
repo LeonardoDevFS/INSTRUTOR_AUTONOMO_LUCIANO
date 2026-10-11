@@ -20,6 +20,28 @@ export type BookingDatabaseTarget = {
   sslMode: typeof REQUIRED_SSL_MODE;
 };
 
+type TlsClient = {
+  connection?: {
+    stream?: {
+      encrypted?: boolean;
+      authorized?: boolean;
+      authorizationError?: Error | string | null;
+    };
+  };
+};
+
+export function assertAuthorizedPostgresTls(client: unknown) {
+  const stream = (client as TlsClient).connection?.stream;
+  if (!stream?.encrypted) {
+    throw new Error("o socket cliente → Supabase não está criptografado.");
+  }
+  if (stream.authorized !== true || stream.authorizationError) {
+    throw new Error(
+      "o certificado ou o hostname do Supabase não foi validado pelo Node.js.",
+    );
+  }
+}
+
 export function inspectBookingDatabaseUrl(
   connectionString: string | undefined,
 ): BookingDatabaseTarget {

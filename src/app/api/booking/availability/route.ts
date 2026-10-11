@@ -1,8 +1,8 @@
 import type { NextRequest } from "next/server";
 
 import {
+  auditPublicBookingEnvironment,
   getBookingService,
-  getPublicBookingRuntimeConfig,
 } from "@/config/public-booking";
 import { BookingApiError, bookingError, bookingJson } from "@/lib/api/booking-response";
 import {
@@ -21,8 +21,13 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
-    const runtime = getPublicBookingRuntimeConfig();
+    const configuration = auditPublicBookingEnvironment();
+    const runtime = configuration.runtime;
     if (!runtime.ready) {
+      console.error("Public booking configuration unavailable", {
+        reason: runtime.reason ?? "unknown",
+        issues: configuration.issues,
+      });
       throw new BookingApiError(
         "O agendamento personalizado ainda está em validação.",
         503,

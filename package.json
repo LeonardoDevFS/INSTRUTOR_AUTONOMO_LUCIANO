@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "booking:doctor": "tsx scripts/booking-doctor.ts",
     "db:verify": "tsx scripts/verify-booking-database.ts",
     "google:authorize": "tsx scripts/authorize-google-calendar.ts",
     "start": "next start",

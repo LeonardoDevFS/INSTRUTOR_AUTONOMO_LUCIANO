@@ -98,16 +98,25 @@ export function getBookingService(serviceId: string) {
   return bookingServices.find((service) => service.id === serviceId);
 }
 
+type BookingEnvironment = Record<string, string | undefined>;
+
+export type BookingConfigurationIssue = {
+  variable: string;
+  problem: "disabled" | "missing" | "invalid";
+};
+
 function positiveInteger(value: string | undefined) {
-  if (!value || !/^\d+$/.test(value)) return null;
-  const parsed = Number(value);
-  return parsed > 0 ? parsed : null;
+  const normalized = value?.trim();
+  if (!normalized || !/^\d+$/.test(normalized)) return null;
+  const parsed = Number(normalized);
+  return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
-function nonNegativeInteger(value: string | undefined, fallback?: number) {
-  if (value === undefined || value === "") return fallback ?? null;
-  if (!/^\d+$/.test(value)) return null;
-  return Number(value);
+function nonNegativeInteger(value: string | undefined) {
+  const normalized = value?.trim();
+  if (!normalized || !/^\d+$/.test(normalized)) return null;
+  const parsed = Number(normalized);
+  return Number.isSafeInteger(parsed) ? parsed : null;
 }
 
 export type PublicBookingRuntimeConfig = {
@@ -120,44 +129,96 @@ export type PublicBookingRuntimeConfig = {
   closedDates: string[];
 };
 
-export function getPublicBookingRuntimeConfig(): PublicBookingRuntimeConfig {
-  const enabled = process.env.CUSTOM_BOOKING_ENABLED === "true";
+export type PublicBookingEnvironmentAudit = {
+  runtime: PublicBookingRuntimeConfig;
+  issues: BookingConfigurationIssue[];
+};
+
+export function auditPublicBookingEnvironment(
+  environment: BookingEnvironment = process.env,
+): PublicBookingEnvironmentAudit {
+  const issues: BookingConfigurationIssue[] = [];
+  const enabledValue = environment.CUSTOM_BOOKING_ENABLED?.trim();
+  const enabled = enabledValue === "true";
   const minAdvanceMinutes = nonNegativeInteger(
-    process.env.BOOKING_MIN_ADVANCE_MINUTES,
+    environment.BOOKING_MIN_ADVANCE_MINUTES,
   );
-  const maxAdvanceDays = positiveInteger(process.env.BOOKING_MAX_ADVANCE_DAYS);
-  const bufferMinutes = nonNegativeInteger(process.env.BOOKING_BUFFER_MINUTES);
-  const closedDates = (process.env.BOOKING_CLOSED_DATES ?? "")
+  const maxAdvanceDays = positiveInteger(environment.BOOKING_MAX_ADVANCE_DAYS);
+  const bufferMinutes = nonNegativeInteger(environment.BOOKING_BUFFER_MINUTES);
+  const closedDateEntries = (environment.BOOKING_CLOSED_DATES ?? "")
     .split(",")
     .map((date) => date.trim())
-    .filter((date) => /^\d{4}-\d{2}-\d{2}$/.test(date));
+    .filter(Boolean);
+  const closedDates = closedDateEntries.filter((date) =>
+    /^\d{4}-\d{2}-\d{2}$/.test(date),
+  );
 
-  if (!enabled) return { enabled, ready: false, reason: "disabled", closedDates };
-  if (!process.env.DATABASE_URL?.trim()) {
-    return { enabled, ready: false, reason: "database", closedDates };
+  if (!enabled) {
+    issues.push({
+      variable: "CUSTOM_BOOKING_ENABLED",
+      problem: enabledValue ? "disabled" : "missing",
+    });
   }
-  if (
-    !process.env.GOOGLE_CALENDAR_REFRESH_TOKEN?.trim() ||
-    !process.env.AUTH_GOOGLE_ID?.trim() ||
-    !process.env.AUTH_GOOGLE_SECRET?.trim() ||
-    !process.env.GOOGLE_CALENDAR_ID?.trim()
-  ) {
-    return { enabled, ready: false, reason: "google", closedDates };
+  if (!environment.DATABASE_URL?.trim()) {
+    issues.push({ variable: "DATABASE_URL", problem: "missing" });
   }
-  if (
-    minAdvanceMinutes === null ||
-    maxAdvanceDays === null ||
-    bufferMinutes === null
-  ) {
-    return { enabled, ready: false, reason: "rules", closedDates };
+  for (const variable of [
+    "GOOGLE_CALENDAR_REFRESH_TOKEN",
+    "AUTH_GOOGLE_ID",
+    "AUTH_GOOGLE_SECRET",
+    "GOOGLE_CALENDAR_ID",
+  ]) {
+    if (!environment[variable]?.trim()) {
+      issues.push({ variable, problem: "missing" });
+    }
   }
+  for (const [variable, value] of [
+    ["BOOKING_MIN_ADVANCE_MINUTES", minAdvanceMinutes],
+    ["BOOKING_MAX_ADVANCE_DAYS", maxAdvanceDays],
+    ["BOOKING_BUFFER_MINUTES", bufferMinutes],
+  ] as const) {
+    if (value === null) {
+      issues.push({
+        variable,
+        problem: environment[variable]?.trim() ? "invalid" : "missing",
+      });
+    }
+  }
+  if (closedDates.length !== closedDateEntries.length) {
+    issues.push({ variable: "BOOKING_CLOSED_DATES", problem: "invalid" });
+  }
+
+  const reason = !enabled
+    ? "disabled"
+    : issues.some((issue) => issue.variable === "DATABASE_URL")
+      ? "database"
+      : issues.some((issue) =>
+          [
+            "GOOGLE_CALENDAR_REFRESH_TOKEN",
+            "AUTH_GOOGLE_ID",
+            "AUTH_GOOGLE_SECRET",
+            "GOOGLE_CALENDAR_ID",
+          ].includes(issue.variable),
+        )
+        ? "google"
+        : issues.length > 0
+          ? "rules"
+          : undefined;
 
   return {
-    enabled,
-    ready: true,
-    minAdvanceMinutes,
-    maxAdvanceDays,
-    bufferMinutes,
-    closedDates,
+    runtime: {
+      enabled,
+      ready: issues.length === 0,
+      reason,
+      minAdvanceMinutes: minAdvanceMinutes ?? undefined,
+      maxAdvanceDays: maxAdvanceDays ?? undefined,
+      bufferMinutes: bufferMinutes ?? undefined,
+      closedDates: [...new Set(closedDates)],
+    },
+    issues,
   };
+}
+
+export function getPublicBookingRuntimeConfig(): PublicBookingRuntimeConfig {
+  return auditPublicBookingEnvironment().runtime;
 }

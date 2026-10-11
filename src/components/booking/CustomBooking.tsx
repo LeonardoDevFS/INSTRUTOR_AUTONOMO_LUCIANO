@@ -19,6 +19,11 @@ import type { BookingService } from "@/config/public-booking";
 
 type Slot = { time: string; start: string; end: string };
 type BookingDay = { date: string; available: boolean; slots: Slot[] };
+type BookingApiPayload = {
+  error?: string;
+  code?: string;
+  days?: BookingDay[];
+};
 type FormData = {
   name: string;
   email: string;
@@ -81,6 +86,25 @@ function formatDate(date: string) {
   }).format(new Date(`${date}T12:00:00Z`));
 }
 
+async function readBookingPayload(response: Response) {
+  try {
+    return (await response.json()) as BookingApiPayload;
+  } catch {
+    return {} satisfies BookingApiPayload;
+  }
+}
+
+function bookingErrorMessage(payload: BookingApiPayload, fallback: string) {
+  if (payload.code === "BOOKING_GOOGLE_AUTH_UNAVAILABLE") {
+    return "A agenda precisa ser reconectada. Use o agendamento pelo Google enquanto isso.";
+  }
+  if (payload.code === "BOOKING_DATABASE_UNAVAILABLE") {
+    return "A agenda está temporariamente indisponível. Tente novamente em instantes.";
+  }
+  if (payload.error) return payload.error;
+  return fallback;
+}
+
 export function CustomBooking({
   services,
   ready,
@@ -110,9 +134,14 @@ export function CustomBooking({
       { cache: "no-store", signal: controller.signal },
     )
       .then(async (response) => {
-        const payload = await response.json();
+        const payload = await readBookingPayload(response);
         if (!response.ok) {
-          throw new Error(payload.error || "Não foi possível consultar os horários.");
+          throw new Error(
+            bookingErrorMessage(
+              payload,
+              "Não foi possível consultar os horários.",
+            ),
+          );
         }
         setDays(payload.days ?? []);
       })
@@ -179,7 +208,7 @@ export function CustomBooking({
           idempotencyKey: attemptKey,
         }),
       });
-      const payload = await response.json();
+      const payload = await readBookingPayload(response);
       if (!response.ok) {
         if (
           payload.code === "SLOT_UNAVAILABLE" ||
@@ -187,7 +216,12 @@ export function CustomBooking({
         ) {
           setIdempotencyKey("");
         }
-        throw new Error(payload.error || "Não foi possível confirmar a reserva.");
+        throw new Error(
+          bookingErrorMessage(
+            payload,
+            "Não foi possível confirmar a reserva.",
+          ),
+        );
       }
       setSuccess(true);
     } catch (cause) {
@@ -471,7 +505,7 @@ export function CustomBooking({
         )}
 
         {error && (
-          <p role="alert" className="mt-6 rounded-2xl border border-red-400/25 bg-red-400/[0.08] p-4 text-sm text-red-200">
+          <p role="alert" aria-live="assertive" className="mt-6 rounded-2xl border border-red-400/25 bg-red-400/[0.08] p-4 text-sm text-red-200">
             {error}
           </p>
         )}
@@ -488,7 +522,7 @@ export function CustomBooking({
               disabled={!ready || (step === 1 && !serviceId) || (step === 2 && !selectedDate) || (step === 3 && !selectedSlot)}
               className="min-h-12 rounded-full bg-gold px-7 text-sm font-extrabold text-black transition hover:bg-gold-light disabled:cursor-not-allowed disabled:opacity-35"
             >
-              Continuar
+              {!ready && step === 1 ? "Agenda em validação" : "Continuar"}
             </button>
           ) : (
             <button type="button" onClick={() => void confirmBooking()} disabled={submitting} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-gold px-7 text-sm font-extrabold text-black transition hover:bg-gold-light disabled:opacity-50">

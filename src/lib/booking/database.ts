@@ -15,11 +15,45 @@ export type BookingRow = {
   calendar_sync_status?: "pending" | "synced" | "cancel_pending" | "error";
 };
 
+export class BookingDatabaseError extends Error {
+  constructor(
+    public readonly code:
+      | "BOOKING_DATABASE_CONFIGURATION"
+      | "BOOKING_DATABASE_TLS"
+      | "BOOKING_DATABASE_UNAVAILABLE",
+    options?: ErrorOptions,
+  ) {
+    super("A infraestrutura de reservas está indisponível.", options);
+    this.name = "BookingDatabaseError";
+  }
+}
+
+function normalizeDatabaseError(error: unknown) {
+  if (error instanceof BookingDatabaseError) return error;
+  const message = error instanceof Error ? error.message.toLowerCase() : "";
+  const code =
+    message.includes("database_url") ||
+    message.includes("booking_database_not_configured") ||
+    message.includes("supabase_ca_cert") ||
+    message.includes("transaction pooler")
+      ? "BOOKING_DATABASE_CONFIGURATION"
+      : message.includes("ssl") ||
+          message.includes("tls") ||
+          message.includes("certificate") ||
+          message.includes("self-signed")
+        ? "BOOKING_DATABASE_TLS"
+        : "BOOKING_DATABASE_UNAVAILABLE";
+
+  return new BookingDatabaseError(code, {
+    cause: error instanceof Error ? error : undefined,
+  });
+}
+
 let bookingPool: Pool | undefined;
 
 function database() {
   if (!process.env.DATABASE_URL?.trim()) {
-    throw new Error("BOOKING_DATABASE_NOT_CONFIGURED");
+    throw new BookingDatabaseError("BOOKING_DATABASE_CONFIGURATION");
   }
 
   bookingPool ??= new Pool(createBookingDatabasePoolConfig());
@@ -27,21 +61,32 @@ function database() {
 }
 
 async function query<Row extends QueryResultRow>(text: string, values: unknown[] = []) {
-  return database().query<Row>(text, values);
+  try {
+    return await database().query<Row>(text, values);
+  } catch (error) {
+    throw normalizeDatabaseError(error);
+  }
 }
 
 async function transaction<T>(operation: (client: PoolClient) => Promise<T>) {
-  const client = await database().connect();
+  let client: PoolClient | undefined;
   try {
+    client = await database().connect();
     await client.query("BEGIN");
     const result = await operation(client);
     await client.query("COMMIT");
     return result;
   } catch (error) {
-    await client.query("ROLLBACK");
-    throw error;
+    if (client) {
+      try {
+        await client.query("ROLLBACK");
+      } catch {
+        // Preserve o erro original de conexão ou da transação.
+      }
+    }
+    throw normalizeDatabaseError(error);
   } finally {
-    client.release();
+    client?.release();
   }
 }
 

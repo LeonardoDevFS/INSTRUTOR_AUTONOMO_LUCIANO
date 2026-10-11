@@ -3,7 +3,10 @@ import { randomUUID } from "node:crypto";
 import { loadEnvConfig } from "@next/env";
 import { Pool, type PoolClient } from "pg";
 
-import { createBookingDatabasePoolConfig } from "../src/lib/booking/postgres-config";
+import {
+  assertAuthorizedPostgresTls,
+  createBookingDatabasePoolConfig,
+} from "../src/lib/booking/postgres-config";
 
 loadEnvConfig(process.cwd());
 
@@ -25,23 +28,7 @@ const requiredReservationColumns = [
 ];
 
 async function verifyTls(client: PoolClient) {
-  type TlsStream = {
-    encrypted?: boolean;
-    authorized?: boolean;
-    authorizationError?: Error | string | null;
-  };
-  const stream = (
-    client as unknown as { connection?: { stream?: TlsStream } }
-  ).connection?.stream;
-
-  if (!stream?.encrypted) {
-    throw new Error("o socket cliente → Supabase não está criptografado.");
-  }
-  if (stream.authorized !== true || stream.authorizationError) {
-    throw new Error(
-      "o certificado ou o hostname do Supabase não foi validado pelo Node.js.",
-    );
-  }
+  assertAuthorizedPostgresTls(client);
 }
 
 async function verifySchema(client: PoolClient) {

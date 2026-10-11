@@ -50,6 +50,11 @@ Ao cadastrar variáveis, deixe o escopo disponível para **Functions** e **Build
 Depois de qualquer alteração, faça um novo deploy para que as funções recebam os
 valores atualizados.
 
+No plano Free, a configuração de escopos específicos pode não estar disponível.
+Nesse caso, use o escopo padrão para todos. Se a interface oferecer a seleção,
+inclua **Builds** e **Functions** para as variáveis usadas pelo agendamento e pela
+renderização dinâmica de `/agendar`.
+
 ## 2. URLs no cliente OAuth do Google
 
 No cliente OAuth do tipo **Aplicativo da Web**, mantenha:
@@ -97,6 +102,10 @@ As rotas abaixo precisam aparecer como dinâmicas/server-side:
 4. Verifique o nome, fuso e eventos da agenda.
 5. Faça o primeiro teste de escrita em uma agenda de teste, não na agenda real.
 6. Crie um bloqueio futuro, confira no Google e depois remova apenas esse bloqueio.
+
+O checklist completo do agendamento público, incluindo ativação gradual, códigos
+seguros dos logs e teste de confirmação, está em
+[`docs/BOOKING_NETLIFY_CHECKLIST.md`](docs/BOOKING_NETLIFY_CHECKLIST.md).
 7. Confirme manualmente que o agendador público respeita eventos ocupados da agenda.
 8. Repita em celular.
 
