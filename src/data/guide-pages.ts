@@ -17,6 +17,8 @@ export type JourneyStep = {
   after: string;
   tip: string;
   sourceIds?: readonly OfficialSourceId[];
+  detailedSteps?: readonly string[];
+  officialActions?: readonly { sourceId: OfficialSourceId; label: string }[];
   notice?: { title: string; text: string; tone?: "attention" | "info" };
 };
 
@@ -40,6 +42,18 @@ export const officialGuideSources = {
     shortTitle: "Primeira habilitação no Portal MG",
     url: "https://www.mg.gov.br/servico/obter-1a-habilitacao-cnh-ou-acc",
     officialUpdatedAt: "9 de setembro de 2026",
+  },
+  firstLicensePcd: {
+    id: "firstLicensePcd",
+    title: "Primeira habilitação para pessoa com deficiência — Portal MG",
+    shortTitle: "Primeira CNH para PcD",
+    url: "https://www.mg.gov.br/servico/obter-1a-habilitacao-cnh-ou-acc-pessoa-com-deficiencia",
+  },
+  driverStatus: {
+    id: "driverStatus",
+    title: "Consultar situação do condutor — Detran-MG",
+    shortTitle: "Consultar situação do condutor",
+    url: "https://transito.mg.gov.br/infracoes/multa/consultar-situacao-do-condutor-1",
   },
   categoryAddition: {
     id: "categoryAddition",
@@ -94,6 +108,12 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
     requirements: ["18 anos completos", "Saber ler e escrever", "Documento oficial de identificação", "CPF"],
     after: "Com os requisitos conferidos, escolha a categoria adequada ao veículo que pretende conduzir.",
     tip: "Crie uma pasta física ou digital para comprovantes e protocolos.",
+    detailedSteps: [
+      "Verifique a idade mínima, alfabetização e CPF.",
+      "Separe documento de identificação atualizado com foto e CPF.",
+      "Confira se os dados pessoais estão corretos antes da solicitação.",
+      "Leia os requisitos e as orientações do serviço oficial.",
+    ],
     sourceIds: ["firstLicense", "resolution1020"],
   },
   {
@@ -106,6 +126,11 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
     requirements: ["Decisão entre categoria A, B ou AB"],
     after: "A escolha será registrada no requerimento e orientará a formação prática.",
     tip: "A opção AB amplia possibilidades, mas exige preparação prática separada para carro e moto.",
+    detailedSteps: [
+      "Escolha A (moto), B (carro) ou AB (ambas).",
+      "Para AB, prepare-se para aulas e prova prática de cada categoria.",
+      "Confirme a categoria no requerimento, antes de emitir as taxas.",
+    ],
     sourceIds: ["firstLicense", "resolution1020"],
   },
   {
@@ -118,6 +143,16 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
     requirements: ["Conta Gov.br quando exigida", "Dados pessoais e endereço atualizados"],
     after: "O fluxo estadual orientará DAE, biometria e exames.",
     tip: "Salve a tela final e os comprovantes; não confie somente em mensagens de terceiros.",
+    detailedSteps: [
+      "Abra o serviço oficial de primeira habilitação no Portal MG.",
+      "Leia os requisitos e siga o acesso ao formulário do Detran-MG.",
+      "Confira CPF, nome, endereço e categoria antes de concluir.",
+      "Se iniciou no aplicativo CNH do Brasil, verifique também as etapas estaduais exigidas em Minas Gerais.",
+      "Guarde protocolos e comprovantes gerados.",
+    ],
+    officialActions: [
+      { sourceId: "firstLicense", label: "Iniciar a primeira CNH" },
+    ],
     sourceIds: ["firstLicense", "cnhBrasil", "resolution1020"],
   },
   {
@@ -130,6 +165,16 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
     requirements: ["CPF", "Dados do requerimento", "Meio de pagamento aceito no serviço"],
     after: "Após a compensação, agende biometria, exame médico e avaliação psicológica.",
     tip: "Confira o beneficiário antes de pagar e não use boleto enviado por perfil desconhecido.",
+    detailedSteps: [
+      "Emita o Documento de Arrecadação Estadual (DAE) pelo serviço oficial.",
+      "Confira dados, serviço, prazo e meios de pagamento autorizados.",
+      "Pague no canal indicado e guarde o comprovante.",
+      "Acompanhe a compensação para liberar o agendamento de biometria e exames.",
+      "Consulte as taxas de outras etapas somente quando forem exigidas.",
+    ],
+    officialActions: [
+      { sourceId: "firstLicense", label: "Consultar cadastro e DAE" },
+    ],
     sourceIds: ["firstLicense"],
   },
   {
@@ -142,7 +187,18 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
     requirements: ["Documento oficial atualizado com foto e CPF", "Comprovante ou agendamento solicitado"],
     after: "Com os resultados lançados, siga para a formação teórica.",
     tip: "Chegue com antecedência e leve exatamente o documento indicado no agendamento.",
-    sourceIds: ["firstLicense", "resolution1020"],
+    detailedSteps: [
+      "Após a compensação, agende biometria, exame médico e avaliação psicológica.",
+      "Confira local, data, horário e documentos exigidos pelo atendimento.",
+      "Compareça para avaliação e coleta de foto, assinatura e digitais.",
+      "Acompanhe os resultados registrados no processo.",
+      "Para PcD, consulte o fluxo específico: pode ser necessário laudo e, conforme a avaliação médica, Junta Médica Especial.",
+    ],
+    officialActions: [
+      { sourceId: "firstLicense", label: "Consultar exames e biometria" },
+      { sourceId: "firstLicensePcd", label: "Ver o procedimento para PcD" },
+    ],
+    sourceIds: ["firstLicense", "resolution1020", "firstLicensePcd"],
   },
   {
     id: "curso-teorico",
@@ -154,6 +210,15 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
     requirements: ["Conta Gov.br na opção CNH do Brasil", "Conclusão registrada no Renach"],
     after: "Com as etapas anteriores concluídas, emita a taxa aplicável e agende a prova teórica.",
     tip: "Relacione legislação e sinalização com situações observadas no cotidiano, em vez de apenas decorar respostas.",
+    detailedSteps: [
+      "Escolha o curso gratuito pelo aplicativo CNH do Brasil ou a modalidade disponível em CFC credenciado.",
+      "Conclua o conteúdo e siga as instruções para registrar a formação no sistema oficial.",
+      "Verifique o registro antes de solicitar a prova teórica.",
+      "Revise legislação, sinalização e segurança no trânsito.",
+    ],
+    officialActions: [
+      { sourceId: "cnhBrasil", label: "Acessar orientações do curso gratuito" },
+    ],
     sourceIds: ["firstLicense", "cnhBrasil", "resolution1020"],
   },
   {
@@ -166,6 +231,16 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
     requirements: ["Etapas anteriores concluídas", "Documento oficial com foto", "Agendamento"],
     after: "Após aprovação e expedição da Licença de Aprendizagem, começa a fase prática.",
     tip: "Explique em voz alta por que cada alternativa está certa ou errada para revelar dúvidas reais.",
+    detailedSteps: [
+      "Confira se as etapas anteriores estão concluídas no processo.",
+      "Emita e pague a taxa correspondente quando liberada pelo serviço oficial.",
+      "Agende a prova e salve data, local e horário.",
+      "Leve os documentos solicitados no dia da avaliação.",
+      "Consulte o resultado e, se necessário, as regras vigentes de reagendamento.",
+    ],
+    officialActions: [
+      { sourceId: "firstLicense", label: "Consultar prova teórica" },
+    ],
     sourceIds: ["firstLicense", "resolution1020"],
     notice: { title: "Se houver reprovação", text: "É possível realizar nova prova. Consulte no Portal MG a taxa e o procedimento válidos para o seu caso.", tone: "attention" },
   },
@@ -179,7 +254,16 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
     requirements: ["Aprovação teórica", "Licença válida", "Instrutor autorizado"],
     after: "O instrutor poderá planejar as habilidades práticas.",
     tip: "Conte o que já conhece e suas dúvidas antes da primeira aula; o planejamento começa pela conversa.",
-    sourceIds: ["resolution1020", "autonomousInstructor", "firstLicense"],
+    detailedSteps: [
+      "Após aprovação teórica, confira se a Licença de Aprendizagem foi expedida.",
+      "Verifique a categoria, validade e eventuais restrições.",
+      "Escolha um instrutor autorizado e combine como o registro das aulas será feito.",
+      "Para PcD, confira antes se o veículo precisa cumprir requisitos ou adaptações determinados na avaliação.",
+    ],
+    officialActions: [
+      { sourceId: "firstLicensePcd", label: "Ver orientações para PcD" },
+    ],
+    sourceIds: ["resolution1020", "autonomousInstructor", "firstLicense", "firstLicensePcd"],
   },
   {
     id: "aulas-praticas",
@@ -191,6 +275,13 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
     requirements: ["Licença válida", "Instrutor autorizado", "Veículo conforme as regras"],
     after: "Com o mínimo registrado e preparo adequado, siga para o exame de direção.",
     tip: "Não transforme a carga mínima em meta automática; priorize consistência e segurança.",
+    detailedSteps: [
+      "Com a Licença de Aprendizagem válida, combine o plano de aulas com o instrutor autorizado.",
+      "Pratique progressivamente os comandos, manobras e a circulação.",
+      "Verifique se as aulas foram registradas no processo conforme as regras atuais.",
+      "Lembre-se: o mínimo administrativo não garante preparo individual; treine o necessário para dirigir com segurança.",
+      "Antes do exame, confira a liberação oficial da etapa prática.",
+    ],
     sourceIds: ["firstLicense", "resolution1020"],
     notice: { title: "Regra atual", text: "A exigência antiga de 20 horas práticas não é a regra vigente. O mínimo atual para A ou B é de 2 horas, mas o treinamento pode ser maior quando necessário.", tone: "info" },
   },
@@ -204,6 +295,12 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
     requirements: ["Aulas registradas", "Agendamento quando liberado"],
     after: "Com o agendamento confirmado, compareça à avaliação oficial.",
     tip: "Execute cada ação de modo consciente e previsível; segurança importa mais que pressa.",
+    detailedSteps: [
+      "Peça ao instrutor uma avaliação dos pontos que ainda precisam melhorar.",
+      "Treine essas habilidades em condições legais e supervisionadas.",
+      "Confira o registro das aulas e os requisitos do exame.",
+      "Consulte a forma de agendamento e a documentação necessária.",
+    ],
     sourceIds: ["firstLicense", "resolution1020"],
   },
   {
@@ -216,6 +313,16 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
     requirements: ["Carga mínima registrada", "Agendamento", "Documento solicitado"],
     after: "Aprovado, o registro no Renach permite expedir a PPD; reprovado, siga o reagendamento oficial.",
     tip: "Observe, decida e execute uma ação de cada vez.",
+    detailedSteps: [
+      "Confirme a liberação da prova após o registro das aulas.",
+      "Confira a taxa e o agendamento disponíveis no serviço oficial.",
+      "Consulte data, local e horário definidos pelo Detran-MG.",
+      "Realize o exame e acompanhe o resultado oficial.",
+      "Se precisar repetir, verifique o reagendamento e os custos aplicáveis no seu caso.",
+    ],
+    officialActions: [
+      { sourceId: "firstLicense", label: "Consultar prova prática" },
+    ],
     sourceIds: ["firstLicense", "resolution1020"],
     notice: { title: "Nova tentativa", text: "A norma federal prevê segunda tentativa sem taxa adicional, enquanto o Portal MG ainda descreve novo DAE em alguns fluxos. Confirme a regra aplicada antes de pagar.", tone: "attention" },
   },
@@ -229,6 +336,12 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
     requirements: ["Aprovação prática", "PPD válida", "Ausência de impedimento definitivo"],
     after: "Com a CNH definitiva, mantenha aprendizagem contínua e observe a validade do documento.",
     tip: "Aumente a complexidade dos trajetos gradualmente; autonomia cresce com prática responsável.",
+    detailedSteps: [
+      "Após a aprovação, acompanhe a emissão da Permissão para Dirigir (PPD).",
+      "Confira documento digital e instruções para a entrega física.",
+      "Durante os 12 meses da PPD, respeite as condições legais da permissão.",
+      "Ao final, consulte a situação e a emissão da CNH definitiva nos canais oficiais.",
+    ],
     sourceIds: ["firstLicense", "resolution1020"],
   },
 ] as const;
@@ -273,7 +386,10 @@ export const categoryAdditionSteps: readonly JourneyStep[] = [
     requirements: ["Documento de habilitação", "CPF", "Endereço atualizado em Minas Gerais"],
     after: "Com os dados regulares, solicite oficialmente a adição.",
     tip: "Faça a consulta antes de planejar aulas; pendências administrativas cabem ao órgão competente.",
-    sourceIds: ["categoryAddition"],
+    officialActions: [
+      { sourceId: "driverStatus", label: "Consultar situação do condutor" },
+    ],
+    sourceIds: ["categoryAddition", "driverStatus"],
   },
   {
     id: "solicitar-servico",
@@ -285,6 +401,9 @@ export const categoryAdditionSteps: readonly JourneyStep[] = [
     requirements: ["Dados da CNH", "CPF", "Categoria pretendida"],
     after: "A compensação libera os exames aplicáveis.",
     tip: "Consulte o DAE atual do seu processo em vez de usar valores de publicações antigas.",
+    officialActions: [
+      { sourceId: "categoryAddition", label: "Solicitar adição de categoria" },
+    ],
     sourceIds: ["categoryAddition"],
   },
   {
@@ -421,6 +540,8 @@ export const firstLicenseFaq: readonly JourneyFaqItem[] = [
   { question: "O curso teórico da CNH do Brasil é gratuito?", answer: "Sim. Na revisão deste guia, o Governo Federal e o Portal MG informavam a opção digital gratuita no aplicativo CNH do Brasil. CFCs também oferecem modalidades com condições próprias." },
   { question: "Ainda são obrigatórias 20 horas de prática?", answer: "Não como regra vigente para A ou B. A Resolução nº 1.020/2025 e o Portal MG informam mínimo de 2 horas/aula. Esse mínimo administrativo não significa que duas horas preparem toda pessoa." },
   { question: "O que acontece se eu reprovar?", answer: "É possível realizar nova avaliação. Como há divergência entre a norma federal e detalhes operacionais publicados pelo Portal MG sobre taxa e reagendamento, confirme a regra aplicada antes de pagar." },
+  { question: "Como funciona a primeira CNH para pessoa com deficiência?", answer: "Minas Gerais possui um procedimento oficial específico. Dependendo da avaliação médica, podem existir exames adicionais, laudos e encaminhamento à Junta Médica Especial. Consulte o Portal MG para identificar seu fluxo." },
+  { question: "Toda pessoa com deficiência precisa de veículo adaptado?", answer: "Não. A necessidade de adaptações depende da avaliação e das restrições estabelecidas pelo órgão competente. Antes de contratar aulas, consulte as exigências oficiais e converse com Luciano para verificar a possibilidade de atendimento e a disponibilidade de veículo compatível." },
   { question: "Luciano faz cadastro, exames ou emite a CNH?", answer: "Não. Cadastro, biometria, avaliações, provas e emissão são responsabilidades oficiais. Luciano pode orientar e atuar na etapa prática quando o processo e o formato estiverem autorizados." },
   { question: "A CNH definitiva chega automaticamente?", answer: "A Resolução nº 1.020/2025 prevê emissão automática após um ano de PPD, se não houver impedimento definitivo. Acompanhe a situação nos canais oficiais." },
 ] as const;
