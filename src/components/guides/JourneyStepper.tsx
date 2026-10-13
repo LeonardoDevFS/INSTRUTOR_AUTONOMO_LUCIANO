@@ -10,7 +10,7 @@ import {
   RotateCcw,
   ShieldAlert,
 } from "lucide-react";
-import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 
 import {
   officialGuideSources,
@@ -35,6 +35,8 @@ export function JourneyStepper({
   const [activeIndex, setActiveIndex] = useState(0);
   const [completed, setCompleted] = useState<string[]>([]);
   const [activeVariantId, setActiveVariantId] = useState(variants[0]?.id ?? "");
+  const contentRef = useRef<HTMLElement>(null);
+  const stepListRef = useRef<HTMLOListElement>(null);
   const storageKey = `direcao-segura:jornada:${journeyKey}`;
   const activeStep = steps[activeIndex];
   const activeVariant = variants.find(({ id }) => id === activeVariantId);
@@ -79,15 +81,14 @@ export function JourneyStepper({
 
   function resetJourney() {
     persist([]);
-    setActiveIndex(0);
-    document.getElementById(`${journeyKey}-step-0`)?.focus();
+    selectStep(0);
+    stepListRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    document.getElementById(`${journeyKey}-step-0`)?.focus({ preventScroll: true });
   }
 
   function selectStep(index: number) {
+    contentRef.current?.scrollTo({ top: 0, behavior: "auto" });
     setActiveIndex(index);
-    document
-      .getElementById(`${journeyKey}-content`)
-      ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
   function handleStepKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -104,8 +105,20 @@ export function JourneyStepper({
 
     if (nextIndex === null) return;
     event.preventDefault();
-    setActiveIndex(nextIndex);
-    document.getElementById(`${journeyKey}-step-${nextIndex}`)?.focus();
+    selectStep(nextIndex);
+    const nextButton = document.getElementById(`${journeyKey}-step-${nextIndex}`);
+    nextButton?.focus({ preventScroll: true });
+
+    const list = stepListRef.current;
+    if (list && nextButton) {
+      const listRect = list.getBoundingClientRect();
+      const buttonRect = nextButton.getBoundingClientRect();
+      if (buttonRect.top < listRect.top) {
+        list.scrollBy({ top: buttonRect.top - listRect.top, behavior: "auto" });
+      } else if (buttonRect.bottom > listRect.bottom) {
+        list.scrollBy({ top: buttonRect.bottom - listRect.bottom, behavior: "auto" });
+      }
+    }
   }
 
   return (
@@ -163,7 +176,7 @@ export function JourneyStepper({
         )}
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-start">
-          <aside className="rounded-[2rem] border border-white/10 bg-black/35 p-4 lg:sticky lg:top-24">
+          <aside className="rounded-[2rem] border border-white/10 bg-black/35 p-4 lg:sticky lg:top-24 lg:flex lg:h-[min(44rem,calc(100svh-7rem))] lg:min-h-0 lg:flex-col">
             <div className="px-2 pb-4">
               <div className="flex items-center justify-between gap-4 text-xs font-bold uppercase tracking-[0.14em]">
                 <span className="text-white/55">Minha jornada</span>
@@ -174,7 +187,7 @@ export function JourneyStepper({
               </div>
               <p className="mt-2 text-xs text-white/35">Checklist pessoal, sem vínculo com o Detran.</p>
             </div>
-            <ol aria-label="Etapas da jornada" className="max-h-[32rem] space-y-1 overflow-y-auto pr-1">
+            <ol ref={stepListRef} aria-label="Etapas da jornada" className="guide-scrollbar space-y-1 pr-1 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:pr-2 lg:touch-pan-y">
               {steps.map((step, index) => {
                 const selected = index === activeIndex;
                 const done = completedSet.has(step.id);
@@ -207,7 +220,14 @@ export function JourneyStepper({
             </button>
           </aside>
 
-          <article id={`${journeyKey}-content`} aria-live="polite" className="min-w-0 rounded-[2rem] border border-white/10 bg-black/40 p-5 sm:p-8 lg:p-10">
+          <article
+            ref={contentRef}
+            id={`${journeyKey}-content`}
+            aria-live="polite"
+            aria-label="Conteúdo e orientações da etapa selecionada"
+            tabIndex={0}
+            className="guide-scrollbar min-w-0 rounded-[2rem] border border-white/10 bg-black/40 p-5 sm:p-8 lg:h-[min(44rem,calc(100svh-7rem))] lg:overflow-y-auto lg:overscroll-contain lg:p-10 lg:touch-pan-y"
+          >
             <div className="flex flex-col gap-5 border-b border-white/10 pb-7 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-gold">Etapa {activeIndex + 1} de {steps.length}</p>
@@ -219,6 +239,41 @@ export function JourneyStepper({
                 Concluí esta etapa
               </label>
             </div>
+
+            {activeStep.detailedSteps && activeStep.detailedSteps.length > 0 && (
+              <section className="mt-7 rounded-2xl border border-gold/20 bg-gold/[0.045] p-5 sm:p-6" aria-labelledby={`${journeyKey}-${activeStep.id}-details`}>
+                <h4 id={`${journeyKey}-${activeStep.id}-details`} className="text-lg font-extrabold text-white">Passo a passo detalhado</h4>
+                <p className="mt-2 text-sm leading-6 text-white/50">Siga esta sequência e confirme as exigências no serviço oficial.</p>
+                <ol className="mt-5 space-y-4">
+                  {activeStep.detailedSteps.map((instruction, index) => (
+                    <li key={instruction} className="flex items-start gap-3">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-gold/35 bg-gold/10 text-xs font-extrabold text-gold" aria-hidden="true">{index + 1}</span>
+                      <span className="text-sm leading-6 text-white/70">{instruction}</span>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )}
+
+            {activeStep.officialActions && activeStep.officialActions.length > 0 && (
+              <section className="mt-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5" aria-labelledby={`${journeyKey}-${activeStep.id}-official-actions`}>
+                <h4 id={`${journeyKey}-${activeStep.id}-official-actions`} className="text-sm font-extrabold text-white">Acesse o serviço oficial</h4>
+                <p className="mt-2 text-sm leading-6 text-white/55">Você será direcionado ao portal governamental responsável, em uma nova guia.</p>
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  {activeStep.officialActions.map(({ sourceId, label }) => (
+                    <a
+                      key={`${sourceId}-${label}`}
+                      href={officialGuideSources[sourceId].url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-gold px-5 text-center text-sm font-extrabold text-black transition hover:bg-gold-light"
+                    >
+                      {label}<ExternalLink size={16} aria-hidden="true" />
+                    </a>
+                  ))}
+                </div>
+              </section>
+            )}
 
             <div className="mt-8 grid gap-8 xl:grid-cols-2">
               <ContentBlock title="O que é?" text={activeStep.what} />

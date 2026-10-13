@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Check, HeartHandshake, MessageCircle, Route } from "lucide-react";
+import { Check, ExternalLink, HeartHandshake, MessageCircle, Route, ShieldCheck } from "lucide-react";
 
 import { GuideHero } from "@/components/guides/GuideHero";
 import { ContactCta } from "@/components/sections/ContactCta";
-import { guideReviewDate, fearOfDrivingSituations } from "@/data/guide-pages";
+import { ActionLink } from "@/components/ui/ActionLink";
+import { guideReviewDate, fearOfDrivingSituations, officialGuideSources } from "@/data/guide-pages";
 import { whatsappMessages } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -49,6 +50,31 @@ export default function FearOfDrivingGuidePage() {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      <section className="pb-20 sm:pb-24" aria-labelledby="driver-status-title">
+        <div className="mx-auto max-w-5xl px-5 lg:px-8">
+          <div className="grid gap-5 rounded-3xl border border-white/10 bg-surface p-6 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:p-7">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-gold/20 bg-gold/10 text-gold">
+              <ShieldCheck size={23} aria-hidden="true" />
+            </span>
+            <div>
+              <h2 id="driver-status-title" className="text-lg font-extrabold text-white">Quer conferir a situação da sua CNH?</h2>
+              <p className="mt-2 text-sm leading-6 text-white/55">Esta consulta é apenas uma verificação administrativa opcional antes de retomar as aulas. Ela não explica nem define a causa da insegurança para dirigir.</p>
+            </div>
+            <ActionLink
+              href={officialGuideSources.driverStatus.url}
+              external
+              variant="secondary"
+              icon={<ExternalLink size={16} aria-hidden="true" />}
+              ariaLabel="Consultar situação do condutor no portal oficial do Detran-MG (abre em nova guia)"
+              className="sm:justify-self-end"
+            >
+              Consultar no Detran-MG
+            </ActionLink>
+          </div>
+          <p className="mt-3 text-xs text-white/35">O botão abre um site governamental em uma nova guia.</p>
         </div>
       </section>
 

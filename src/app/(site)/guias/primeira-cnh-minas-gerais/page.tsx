@@ -8,6 +8,7 @@ import { JourneyFAQ } from "@/components/guides/JourneyFAQ";
 import { JourneyGlossary } from "@/components/guides/JourneyGlossary";
 import { JourneyStepper } from "@/components/guides/JourneyStepper";
 import { OfficialSources } from "@/components/guides/OfficialSources";
+import { PcdGuidance } from "@/components/guides/PcdGuidance";
 import { siteConfig } from "@/config/site";
 import {
   firstLicenseFaq,
@@ -58,9 +59,11 @@ export default function FirstLicenseGuidePage() {
               <CategoryCard icon={<><Bike aria-hidden="true" /><Car aria-hidden="true" /></>} category="AB" title="As duas" description="Formação e exame prático realizados para cada categoria." />
             </div>
           </div>
-          <OfficialSources sources={[officialGuideSources.firstLicense, officialGuideSources.cnhBrasil, officialGuideSources.resolution1020, officialGuideSources.autonomousInstructor]} />
+          <OfficialSources sources={[officialGuideSources.firstLicense, officialGuideSources.firstLicensePcd, officialGuideSources.cnhBrasil, officialGuideSources.resolution1020, officialGuideSources.autonomousInstructor]} />
         </div>
       </section>
+
+      <PcdGuidance />
 
       <JourneyStepper journeyKey="primeira-cnh-mg" title="Da primeira dúvida à CNH definitiva." steps={firstLicenseSteps} />
 

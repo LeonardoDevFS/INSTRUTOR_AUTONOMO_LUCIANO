@@ -54,7 +54,7 @@ export default function CategoryAdditionGuidePage() {
               <p className="text-sm leading-7 text-white/60"><strong className="text-white">Adição não é mudança de categoria.</strong> A passagem para C, D ou E usa outro serviço e possui requisitos específicos. Este guia trata somente de A e B.</p>
             </div>
           </div>
-          <OfficialSources sources={[officialGuideSources.categoryAddition, officialGuideSources.resolution1020, officialGuideSources.autonomousInstructor]} />
+          <OfficialSources sources={[officialGuideSources.categoryAddition, officialGuideSources.driverStatus, officialGuideSources.resolution1020, officialGuideSources.autonomousInstructor]} />
         </div>
       </section>
 

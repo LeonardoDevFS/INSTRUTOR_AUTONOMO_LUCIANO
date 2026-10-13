@@ -84,6 +84,30 @@ a {
   outline-offset: 4px;
 }
 
+.guide-scrollbar {
+  scrollbar-color: rgba(229, 185, 63, 0.72) rgba(255, 255, 255, 0.06);
+  scrollbar-width: thin;
+}
+
+.guide-scrollbar::-webkit-scrollbar {
+  width: 0.55rem;
+}
+
+.guide-scrollbar::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.guide-scrollbar::-webkit-scrollbar-thumb {
+  border: 2px solid #0b0b0b;
+  border-radius: 999px;
+  background: rgba(229, 185, 63, 0.72);
+}
+
+.guide-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-light);
+}
+
 .skip-link {
   position: fixed;
   top: 1rem;

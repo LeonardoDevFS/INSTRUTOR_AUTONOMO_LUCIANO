@@ -46,7 +46,7 @@ export function GuideHero({
             : "max-w-5xl",
         )}
       >
-        <div>
+        <div className="min-w-0">
           <Breadcrumbs
             items={[
               { label: "Início", href: "/" },
@@ -54,10 +54,10 @@ export function GuideHero({
               { label: eyebrow },
             ]}
           />
-          <p className="mt-9 text-xs font-extrabold uppercase tracking-[0.3em] text-gold">
+          <p className="mt-9 max-w-full break-words text-xs font-extrabold uppercase leading-5 tracking-[0.2em] text-gold sm:tracking-[0.3em]">
             {eyebrow}
           </p>
-          <h1 className="mt-5 break-words text-balance font-display text-5xl font-extrabold uppercase leading-[0.9] text-white sm:text-6xl lg:text-7xl">
+          <h1 className="mt-5 max-w-full text-balance font-display text-[2.65rem] font-extrabold uppercase leading-[0.9] text-white [overflow-wrap:anywhere] sm:text-6xl lg:text-7xl">
             {title}
           </h1>
           <p className="mt-7 max-w-3xl text-base leading-8 text-white/60 sm:text-lg">

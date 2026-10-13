@@ -34,4 +34,7 @@ export const whatsappMessages = {
 
   cnhGuidance:
     "Olá, Luciano! Preciso de orientação sobre etapas, exames, taxas ou documentação da minha CNH.",
+
+  pcdGuidance:
+    "Olá, Luciano! Estou buscando orientações sobre a primeira habilitação para pessoa com deficiência. Gostaria de conversar sobre minhas necessidades e verificar a possibilidade de realizar aulas com um veículo adequado ou adaptado.",
 } as const;
