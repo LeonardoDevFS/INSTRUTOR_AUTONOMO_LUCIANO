@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bike, Car, Check, ShieldCheck } from "lucide-react";
+import { Accessibility, Bike, Car, Check, ExternalLink, MessageCircle, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { GuideHero } from "@/components/guides/GuideHero";
@@ -16,7 +16,7 @@ import {
   guideReviewDate,
   officialGuideSources,
 } from "@/data/guide-pages";
-import { whatsappMessages } from "@/lib/whatsapp";
+import { createWhatsAppUrl, whatsappMessages } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Primeira Habilitação: Caminho até a CNH em MG",
@@ -58,7 +58,52 @@ export default function FirstLicenseGuidePage() {
               <CategoryCard icon={<><Bike aria-hidden="true" /><Car aria-hidden="true" /></>} category="AB" title="As duas" description="Formação e exame prático realizados para cada categoria." />
             </div>
           </div>
-          <OfficialSources sources={[officialGuideSources.firstLicense, officialGuideSources.cnhBrasil, officialGuideSources.resolution1020, officialGuideSources.autonomousInstructor]} />
+          <OfficialSources sources={[officialGuideSources.firstLicense, officialGuideSources.firstLicensePcd, officialGuideSources.cnhBrasil, officialGuideSources.resolution1020, officialGuideSources.autonomousInstructor]} />
+        </div>
+      </section>
+
+      <section className="pb-16 sm:pb-20">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="rounded-[2rem] border border-gold/25 bg-gold/[0.055] p-6 sm:p-9">
+            <div className="flex items-center gap-3 text-gold">
+              <Accessibility size={27} aria-hidden="true" />
+              <span className="text-xs font-extrabold uppercase tracking-[0.22em]">Orientações específicas para PcD</span>
+            </div>
+            <h2 className="mt-5 max-w-4xl font-display text-3xl font-extrabold uppercase leading-tight text-white sm:text-4xl">Primeira CNH para pessoa com deficiência</h2>
+            <p className="mt-4 max-w-4xl text-sm leading-7 text-white/65">
+              Quem é pessoa com deficiência pode precisar seguir avaliações específicas no Detran-MG. Dependendo da avaliação
+              e das restrições estabelecidas, o veículo usado nas aulas e na prova pode precisar de adaptações. Nem toda
+              pessoa com deficiência necessita de um carro adaptado: as exigências dependem de cada caso.
+            </p>
+            <ol className="mt-6 grid gap-3 md:grid-cols-3">
+              {[
+                ["01", "Consulte o processo PcD", "Veja no Portal MG os requisitos, documentos e exames específicos."],
+                ["02", "Confira a avaliação", "Verifique laudos, eventual Junta Médica Especial e exigências para o veículo."],
+                ["03", "Planeje as aulas", "Converse com Luciano sobre sua necessidade e a viabilidade de atendimento com veículo compatível."],
+              ].map(([number, heading, description]) => (
+                <li key={number} className="rounded-2xl border border-white/10 bg-black/30 p-5">
+                  <span className="text-xs font-extrabold text-gold">{number}</span>
+                  <h3 className="mt-3 text-base font-extrabold text-white">{heading}</h3>
+                  <p className="mt-2 text-sm leading-6 text-white/55">{description}</p>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-5 text-xs leading-6 text-white/45">
+              A avaliação e a definição de adaptações pertencem aos órgãos responsáveis. O contato não confirma que Luciano
+              possua veículo adaptado nem garante disponibilidade para todos os tipos de atendimento.
+            </p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <a href={officialGuideSources.firstLicensePcd.url} target="_blank" rel="noopener noreferrer"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-gold px-6 text-sm font-extrabold text-black transition hover:bg-gold-light">
+                Ver primeira CNH para PcD no Portal MG <ExternalLink size={17} aria-hidden="true" />
+              </a>
+              <a href={createWhatsAppUrl("Olá, Luciano! Estou buscando orientações sobre a primeira CNH para pessoa com deficiência. Gostaria de conversar sobre minhas necessidades e verificar a possibilidade de aulas com veículo adequado ou adaptado.")}
+                target="_blank" rel="noopener noreferrer"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-gold/40 px-6 text-sm font-extrabold text-gold transition hover:bg-gold/10">
+                Falar com Luciano sobre adaptações <MessageCircle size={17} aria-hidden="true" />
+              </a>
+            </div>
+          </div>
         </div>
       </section>
 

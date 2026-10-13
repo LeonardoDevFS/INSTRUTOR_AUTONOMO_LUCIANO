@@ -85,9 +85,8 @@ export function JourneyStepper({
 
   function selectStep(index: number) {
     setActiveIndex(index);
-    document
-      .getElementById(`${journeyKey}-content`)
-      ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    const panel = document.getElementById(`${journeyKey}-content`);
+    if (panel) panel.scrollTop = 0;
   }
 
   function handleStepKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -174,7 +173,7 @@ export function JourneyStepper({
               </div>
               <p className="mt-2 text-xs text-white/35">Checklist pessoal, sem vínculo com o Detran.</p>
             </div>
-            <ol aria-label="Etapas da jornada" className="max-h-[32rem] space-y-1 overflow-y-auto pr-1">
+            <ol aria-label="Etapas da jornada" className="max-h-[28rem] space-y-1 overflow-y-auto overscroll-contain pr-2 [scrollbar-color:#e5b93f_#202020] [scrollbar-width:thin]">
               {steps.map((step, index) => {
                 const selected = index === activeIndex;
                 const done = completedSet.has(step.id);
@@ -207,7 +206,7 @@ export function JourneyStepper({
             </button>
           </aside>
 
-          <article id={`${journeyKey}-content`} aria-live="polite" className="min-w-0 rounded-[2rem] border border-white/10 bg-black/40 p-5 sm:p-8 lg:p-10">
+          <article id={`${journeyKey}-content`} aria-live="polite" className="min-w-0 rounded-[2rem] border border-white/10 bg-black/40 p-5 sm:p-8 lg:max-h-[42rem] lg:overflow-y-auto lg:overscroll-contain lg:scroll-smooth lg:[scrollbar-color:#e5b93f_#202020] lg:[scrollbar-width:thin] lg:focus-visible:outline-gold lg:p-10" tabIndex={0} aria-label="Conteúdo e orientações da etapa selecionada">
             <div className="flex flex-col gap-5 border-b border-white/10 pb-7 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-gold">Etapa {activeIndex + 1} de {steps.length}</p>
@@ -219,6 +218,35 @@ export function JourneyStepper({
                 Concluí esta etapa
               </label>
             </div>
+
+            {activeStep.detailedSteps && activeStep.detailedSteps.length > 0 && (
+              <section className="mt-7 rounded-2xl border border-gold/20 bg-gold/[0.045] p-5 sm:p-6" aria-label="Passo a passo detalhado">
+                <h4 className="text-lg font-extrabold text-white">Passo a passo detalhado</h4>
+                <p className="mt-2 text-sm text-white/50">Siga esta sequência e confirme os requisitos no serviço oficial.</p>
+                <ol className="mt-5 space-y-4">
+                  {activeStep.detailedSteps.map((instruction, index) => (
+                    <li key={instruction} className="flex items-start gap-3">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-gold/35 bg-gold/10 text-xs font-extrabold text-gold">{index + 1}</span>
+                      <span className="text-sm leading-6 text-white/70">{instruction}</span>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )}
+
+            {activeStep.officialActions && activeStep.officialActions.length > 0 && (
+              <section className="mt-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5" aria-label="Serviços oficiais desta etapa">
+                <h4 className="text-sm font-extrabold text-white">Acesse o serviço oficial</h4>
+                <p className="mt-2 text-sm leading-6 text-white/55">O link abre o portal do órgão responsável em outra guia. Este checklist é apenas informativo.</p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  {activeStep.officialActions.map(({ sourceId, label }) => (
+                    <a key={sourceId} href={officialGuideSources[sourceId].url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-gold px-5 text-sm font-extrabold text-black transition hover:bg-gold-light">
+                      {label}<ExternalLink size={16} aria-hidden="true" />
+                    </a>
+                  ))}
+                </div>
+              </section>
+            )}
 
             <div className="mt-8 grid gap-8 xl:grid-cols-2">
               <ContentBlock title="O que é?" text={activeStep.what} />
