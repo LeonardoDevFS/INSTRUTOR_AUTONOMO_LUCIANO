@@ -64,14 +64,14 @@ export default function FearOfDrivingGuidePage() {
               <p className="mt-2 text-sm leading-6 text-white/55">Esta consulta é apenas uma verificação administrativa opcional antes de retomar as aulas. Ela não explica nem define a causa da insegurança para dirigir.</p>
             </div>
             <ActionLink
-              href={officialGuideSources.driverStatus.url}
+              href={officialGuideSources.detranDriverStatus.url}
               external
               variant="secondary"
               icon={<ExternalLink size={16} aria-hidden="true" />}
               ariaLabel="Consultar situação do condutor no portal oficial do Detran-MG (abre em nova guia)"
               className="sm:justify-self-end"
             >
-              Consultar no Detran-MG
+              Consultar situação do condutor no Detran-MG
             </ActionLink>
           </div>
           <p className="mt-3 text-xs text-white/35">O botão abre um site governamental em uma nova guia.</p>

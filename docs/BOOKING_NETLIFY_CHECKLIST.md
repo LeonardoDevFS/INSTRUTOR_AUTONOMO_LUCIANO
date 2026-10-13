@@ -22,6 +22,10 @@ Variáveis privadas não usam o prefixo `NEXT_PUBLIC_`.
 - `GOOGLE_CALENDAR_ID`
 - `APP_TIMEZONE`
 
+Em produção, configure `NEXT_PUBLIC_SITE_URL` exatamente como
+`https://instrutorautonomoitajuba.com.br`. Disponibilize essa variável para
+**Builds** e **Functions** e faça um novo deploy após a alteração.
+
 ### Agendamento personalizado
 
 - `DATABASE_URL`

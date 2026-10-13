@@ -10,7 +10,7 @@ No painel da Netlify, abra o site e acesse **Site configuration > Environment
 variables**. Cadastre as variáveis abaixo no contexto de produção:
 
 ```env
-NEXT_PUBLIC_SITE_URL=https://instrutor-luciano-itajuba.netlify.app
+NEXT_PUBLIC_SITE_URL=https://instrutorautonomoitajuba.com.br
 NEXT_PUBLIC_GOOGLE_BOOKING_URL=URL_PUBLICA_DA_PAGINA_DE_AGENDAMENTO
 
 AUTH_GOOGLE_ID=CLIENT_ID_DO_GOOGLE
@@ -62,21 +62,17 @@ No cliente OAuth do tipo **Aplicativo da Web**, mantenha:
 ### Origens JavaScript autorizadas
 
 - `http://localhost:3000`
-- `https://instrutor-luciano-itajuba.netlify.app`
+- `https://instrutorautonomoitajuba.com.br`
 
 ### URIs de redirecionamento autorizados
 
 - `http://localhost:3000/api/auth/callback/google`
 - `http://localhost:53682/oauth2/callback` para a autorização offline local
-- `https://instrutor-luciano-itajuba.netlify.app/api/auth/callback/google`
+- `https://instrutorautonomoitajuba.com.br/api/auth/callback/google`
 
-Quando `https://instrutorautonomoitajuba.com.br` estiver publicado, com DNS e
-HTTPS funcionando, adicione também:
-
-- origem: `https://instrutorautonomoitajuba.com.br`
-- callback: `https://instrutorautonomoitajuba.com.br/api/auth/callback/google`
-
-Não remova a URL Netlify antes de confirmar que o domínio próprio está estável.
+O domínio próprio acima é a origem canônica de produção. O subdomínio técnico da
+Netlify não deve substituir esse endereço em `NEXT_PUBLIC_SITE_URL`, nos links
+públicos ou nas configurações canônicas de SEO.
 
 ## 3. Deploy
 

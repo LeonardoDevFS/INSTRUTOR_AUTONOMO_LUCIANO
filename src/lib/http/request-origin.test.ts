@@ -6,8 +6,8 @@ import { isRequestOriginAllowed } from "./request-origin";
 test("aceita a origem externa reconstruída pelos headers do proxy", () => {
   assert.equal(
     isRequestOriginAllowed({
-      origin: "https://direcao-segura.netlify.app",
-      forwardedHost: "direcao-segura.netlify.app, internal.proxy",
+      origin: "https://instrutorautonomoitajuba.com.br",
+      forwardedHost: "instrutorautonomoitajuba.com.br, internal.proxy",
       forwardedProtocol: "https, http",
       requestOrigin: "http://internal.local",
     }),
@@ -30,7 +30,7 @@ test("rejeita origem ausente, inválida ou diferente", () => {
   assert.equal(
     isRequestOriginAllowed({
       origin: "https://site-malicioso.example",
-      configuredOrigins: ["https://direcao-segura.netlify.app"],
+      configuredOrigins: ["https://instrutorautonomoitajuba.com.br"],
     }),
     false,
   );

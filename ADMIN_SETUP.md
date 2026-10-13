@@ -51,15 +51,11 @@ sessão JWT criptografada e HttpOnly do Auth.js.
 2. Escolha o tipo **Aplicativo da Web**.
 3. Cadastre as origens JavaScript:
    - `http://localhost:3000`
-   - `https://instrutor-luciano-itajuba.netlify.app`
-   - `https://instrutorautonomoitajuba.com.br` somente após o domínio estar ativo
-     com HTTPS.
+   - `https://instrutorautonomoitajuba.com.br`
 4. Cadastre os URIs de redirecionamento:
    - `http://localhost:3000/api/auth/callback/google`
    - `http://localhost:53682/oauth2/callback` para `npm run google:authorize`
-   - `https://instrutor-luciano-itajuba.netlify.app/api/auth/callback/google`
-   - `https://instrutorautonomoitajuba.com.br/api/auth/callback/google` somente
-     depois da publicação do domínio.
+   - `https://instrutorautonomoitajuba.com.br/api/auth/callback/google`
 5. Guarde o Client ID e Client Secret. Nunca os envie ao Git.
 
 Se o domínio de produção mudar, adicione a nova origem e o callback equivalente.

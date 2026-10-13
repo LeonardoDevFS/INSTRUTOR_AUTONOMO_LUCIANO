@@ -36,6 +36,36 @@ export type JourneyVariant = {
 export const guideReviewDate = "13 de outubro de 2026";
 
 export const officialGuideSources = {
+  detranHabilitation: {
+    id: "detranHabilitation",
+    title: "Serviços de habilitação — Detran-MG",
+    shortTitle: "Serviços de habilitação do Detran-MG",
+    url: "https://www.detran.mg.gov.br/habilitacao",
+  },
+  detranFirstLicense: {
+    id: "detranFirstLicense",
+    title: "Obter a primeira habilitação — Detran-MG",
+    shortTitle: "Primeira habilitação no Detran-MG",
+    url: "https://www.detran.mg.gov.br/habilitacao/1-habilitacao-quero-ser-condutor/obter-a-1-habilitacao-cnh-ou-acc-1",
+  },
+  detranDriverStatus: {
+    id: "detranDriverStatus",
+    title: "Consultar situação do condutor — Detran-MG",
+    shortTitle: "Situação do condutor no Detran-MG",
+    url: "https://www.detran.mg.gov.br/infracoes/multa/consultar-situacao-do-condutor-1",
+  },
+  detranFirstLicensePcd: {
+    id: "detranFirstLicensePcd",
+    title: "Primeira habilitação para pessoa com deficiência — Detran-MG",
+    shortTitle: "Primeira CNH PcD no Detran-MG",
+    url: "https://www.detran.mg.gov.br/habilitacao/pessoa-com-deficiencia/obter-a-1-habilitacao-cnh-ou-acc-pessoa-com-deficiencia",
+  },
+  detranCategoryAddition: {
+    id: "detranCategoryAddition",
+    title: "Adicionar categoria A, B ou ACC — Detran-MG",
+    shortTitle: "Adição de categoria no Detran-MG",
+    url: "https://www.detran.mg.gov.br/habilitacao/alteracao-de-categoria-da-cnh/adicionar-categoria-a-ou-b-ou-acc",
+  },
   firstLicense: {
     id: "firstLicense",
     title: "Obter a 1ª habilitação: CNH ou ACC — Portal MG",
@@ -102,7 +132,10 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
       "Consulte as categorias disponíveis e identifique quais veículos cada uma permite conduzir.",
       "Use os canais oficiais para acompanhar regras, cadastro e resultados.",
     ],
-    sourceIds: ["resolution1020", "cnhBrasil"],
+    officialActions: [
+      { sourceId: "detranHabilitation", label: "Acessar serviços de habilitação do Detran-MG" },
+    ],
+    sourceIds: ["detranHabilitation", "resolution1020", "cnhBrasil"],
   },
   {
     id: "requisitos",
@@ -156,9 +189,9 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
       "Guarde protocolos e comprovantes gerados.",
     ],
     officialActions: [
-      { sourceId: "firstLicense", label: "Iniciar primeira habilitação" },
+      { sourceId: "detranFirstLicense", label: "Iniciar primeira habilitação no Detran-MG" },
     ],
-    sourceIds: ["firstLicense", "cnhBrasil", "resolution1020"],
+    sourceIds: ["detranFirstLicense", "firstLicense", "cnhBrasil", "resolution1020"],
   },
   {
     id: "taxas-cadastro",
@@ -201,9 +234,9 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
     ],
     officialActions: [
       { sourceId: "firstLicense", label: "Consultar exames e biometria" },
-      { sourceId: "firstLicensePcd", label: "Ver procedimento PcD" },
+      { sourceId: "detranFirstLicensePcd", label: "Ver procedimento PcD" },
     ],
-    sourceIds: ["firstLicense", "resolution1020", "firstLicensePcd"],
+    sourceIds: ["firstLicense", "resolution1020", "detranFirstLicensePcd", "firstLicensePcd"],
   },
   {
     id: "curso-teorico",
@@ -269,9 +302,9 @@ export const firstLicenseSteps: readonly JourneyStep[] = [
     ],
     officialActions: [
       { sourceId: "autonomousInstructor", label: "Consultar autorização de instrutor" },
-      { sourceId: "firstLicensePcd", label: "Ver orientações para PcD" },
+      { sourceId: "detranFirstLicensePcd", label: "Ver orientações para PcD" },
     ],
-    sourceIds: ["resolution1020", "autonomousInstructor", "firstLicense", "firstLicensePcd"],
+    sourceIds: ["resolution1020", "autonomousInstructor", "firstLicense", "detranFirstLicensePcd", "firstLicensePcd"],
   },
   {
     id: "aulas-praticas",
@@ -393,7 +426,10 @@ export const categoryAdditionSteps: readonly JourneyStep[] = [
       "Não use este fluxo para mudança às categorias C, D ou E.",
       "Leia o serviço oficial antes de emitir qualquer taxa.",
     ],
-    sourceIds: ["categoryAddition", "resolution1020"],
+    officialActions: [
+      { sourceId: "detranHabilitation", label: "Acessar serviços de habilitação do Detran-MG" },
+    ],
+    sourceIds: ["detranHabilitation", "categoryAddition", "resolution1020"],
   },
   {
     id: "conferir-prontuario",
@@ -412,9 +448,9 @@ export const categoryAdditionSteps: readonly JourneyStep[] = [
       "Procure o órgão responsável para resolver qualquer pendência antes de pagar taxas.",
     ],
     officialActions: [
-      { sourceId: "driverStatus", label: "Consultar situação do condutor" },
+      { sourceId: "detranDriverStatus", label: "Consultar situação do condutor no Detran-MG" },
     ],
-    sourceIds: ["categoryAddition", "driverStatus"],
+    sourceIds: ["categoryAddition", "detranDriverStatus"],
   },
   {
     id: "solicitar-servico",
@@ -434,9 +470,9 @@ export const categoryAdditionSteps: readonly JourneyStep[] = [
       "Acompanhe a compensação antes de agendar os exames.",
     ],
     officialActions: [
-      { sourceId: "categoryAddition", label: "Solicitar adição de categoria" },
+      { sourceId: "detranCategoryAddition", label: "Solicitar adição de categoria no Detran-MG" },
     ],
-    sourceIds: ["categoryAddition"],
+    sourceIds: ["detranCategoryAddition", "categoryAddition"],
   },
   {
     id: "exames-aplicaveis",
@@ -573,9 +609,9 @@ export const categoryAdditionSteps: readonly JourneyStep[] = [
       "Só conduza o novo tipo de veículo após confirmar a autorização no documento.",
     ],
     officialActions: [
-      { sourceId: "driverStatus", label: "Consultar situação do condutor" },
+      { sourceId: "detranDriverStatus", label: "Consultar situação do condutor no Detran-MG" },
     ],
-    sourceIds: ["categoryAddition", "resolution1020"],
+    sourceIds: ["categoryAddition", "detranDriverStatus", "resolution1020"],
   },
 ] as const;
 

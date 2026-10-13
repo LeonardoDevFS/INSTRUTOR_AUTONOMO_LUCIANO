@@ -60,10 +60,10 @@ export function PcdGuidance() {
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <ActionLink
-                href={officialGuideSources.firstLicensePcd.url}
+                href={officialGuideSources.detranFirstLicensePcd.url}
                 external
                 icon={<ExternalLink size={17} aria-hidden="true" />}
-                ariaLabel="Ver procedimento oficial de primeira habilitação para pessoa com deficiência no Portal MG (abre em nova guia)"
+                ariaLabel="Ver procedimento oficial de primeira habilitação para pessoa com deficiência no Detran-MG (abre em nova guia)"
               >
                 Ver procedimento PcD
               </ActionLink>

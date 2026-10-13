@@ -1,4 +1,5 @@
 export const siteConfig = {
+  siteUrl: "https://instrutorautonomoitajuba.com.br",
   name: "Luciano Oliveira",
   brand: "Direção Segura",
   profession: "Instrutor Autônomo",

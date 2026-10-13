@@ -48,6 +48,6 @@ Execute primeiro com uma agenda exclusiva de teste. Não use dados reais de alun
 
 - [ ] `npm test`, `npm run lint` e `npm run build` aprovados.
 - [ ] Nenhum `.env.local`, token ou credencial aparece em `git status`.
-- [ ] Callback local e callback Netlify cadastrados no cliente OAuth.
+- [ ] Callback local e callback do domínio oficial cadastrados no cliente OAuth.
 - [ ] Variáveis de produção configuradas na Netlify.
 - [ ] Teste mobile feito com a conta administrativa real após autorização.
