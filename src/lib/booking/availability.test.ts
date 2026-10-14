@@ -82,3 +82,47 @@ test("remove horários sobrepostos por evento Google ou retenção persistente",
   assert.equal(slots.some((slot) => slot.time === "07:50"), false);
   assert.equal(slots.some((slot) => slot.time === "08:40"), true);
 });
+
+test("evento Google da categoria A bloqueia o horário da categoria B", () => {
+  const now = new Date("2026-10-10T12:00:00Z");
+  const events = [{
+    start: { dateTime: "2026-10-15T15:00:00-03:00" },
+    end: { dateTime: "2026-10-15T15:50:00-03:00" },
+  }];
+  const slots = buildSlotsForDate(
+    "2026-10-15", { ...service, id: "carro-categoria-b" },
+    { ...runtime, bufferMinutes: 10 }, events, [], now,
+  );
+  assert.equal(slots.some((slot) => slot.time === "15:00"), false);
+  assert.equal(slots.some((slot) => slot.time === "16:00"), true);
+});
+
+test("reserva existente de outra categoria bloqueia todas as modalidades", () => {
+  const reservations = [{
+    start: new Date("2026-10-15T15:00:00-03:00"),
+    end: new Date("2026-10-15T15:50:00-03:00"),
+  }];
+  const slots = buildSlotsForDate(
+    "2026-10-15", { ...service, id: "moto-categoria-a" },
+    { ...runtime, bufferMinutes: 10 }, [], reservations,
+    new Date("2026-10-10T12:00:00Z"),
+  );
+  assert.equal(slots.some((slot) => slot.time === "15:00"), false);
+  assert.equal(slots.some((slot) => slot.time === "16:00"), true);
+});
+
+test("margem de dez minutos impede eventos Google e retenções quase adjacentes", () => {
+  const now = new Date("2026-10-10T12:00:00Z");
+  const start = "2026-10-15T15:51:00-03:00";
+  const end = "2026-10-15T15:55:00-03:00";
+  const googleEvents = [{ start: { dateTime: start }, end: { dateTime: end } }];
+  const reservations = [{ start: new Date(start), end: new Date(end) }];
+  for (const [events, ranges] of [[googleEvents, []], [[], reservations]] as const) {
+    const slots = buildSlotsForDate(
+      "2026-10-15", service, { ...runtime, bufferMinutes: 10 },
+      [...events], [...ranges], now,
+    );
+    assert.equal(slots.some((slot) => slot.time === "15:00"), false);
+    assert.equal(slots.some((slot) => slot.time === "16:00"), false);
+  }
+});

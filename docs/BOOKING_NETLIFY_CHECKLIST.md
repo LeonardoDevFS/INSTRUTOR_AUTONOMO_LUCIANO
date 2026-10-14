@@ -147,7 +147,12 @@ Somente após banco, Google e regras estarem validados:
 10. teste duas solicitações para o mesmo horário e a repetição da mesma chave de
     idempotência;
 11. se qualquer etapa falhar, volte `CUSTOM_BOOKING_ENABLED=false`, faça novo
-    deploy e mantenha o agendamento pelo Google como contingência.
+    deploy e mantenha somente o WhatsApp como contingência manual;
+12. confirme que `/agendar` não anuncia uma segunda página pública de reservas;
+13. confira que os eventos são gravados no mesmo `GOOGLE_CALENDAR_ID` consultado
+    pelo site, incluindo eventos ocupados criados manualmente;
+14. suspenda no próprio Google a antiga programação pública se ela continuar
+    aceitando reservas em paralelo, até verificar bloqueios nos dois sentidos.
 
 Não declare produção validada apenas porque a consulta de disponibilidade retorna
 horários. A confirmação controlada e a verificação do evento no Google são

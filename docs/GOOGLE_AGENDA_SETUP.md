@@ -1,5 +1,12 @@
 # Google Agenda — configuração do agendamento da Direção Segura
 
+> **Orientação legada:** estas etapas descrevem a antiga página externa de
+> agendamentos do Google. O site agora divulga somente um formulário automático
+> de reserva e oferece WhatsApp para contato manual. Não reative uma segunda
+> página pública de reservas sem verificar conflito bidirecional com a mesma
+> `GOOGLE_CALENDAR_ID`. A remoção do link no site não desativa uma página
+> já criada no Google. Consulte `BOOKING_SETUP.md`.
+
 Este documento explica como configurar uma única página pública de agendamento para todos os serviços de Luciano Oliveira, usando uma conta Google pessoal e sem contratar uma assinatura.
 
 ## Antes de começar

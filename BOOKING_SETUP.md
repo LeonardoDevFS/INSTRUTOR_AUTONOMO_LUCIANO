@@ -1,8 +1,10 @@
 # Agendamento personalizado — Supabase Free
 
-A interface está disponível em `/agendar`, mas a confirmação permanece desativada
-até a configuração e os testes descritos aqui serem concluídos. Nesse período,
-**Agendar pelo Google** continua sendo o fluxo público seguro.
+O único fluxo público automático de reservas é o formulário em `/agendar`.
+O Google Agenda continua sendo a fonte de horários ocupados e o destino dos
+eventos do site. Se o agendamento personalizado estiver indisponível, a
+contingência é o atendimento manual pelo WhatsApp, não uma segunda página
+automática de agendamentos.
 
 Esta arquitetura utiliza somente o projeto Supabase existente **Luciano Direção
 Segura**, na região de São Paulo. Não é necessário criar Neon ou outro banco.
@@ -190,10 +192,21 @@ a consistência:
 - cancelamentos ficam como `cancel_pending` até a exclusão ser confirmada;
 - as próximas consultas processam até dez pendências antigas por vez.
 
-Essa proteção resolve concorrência entre reservas internas. Ainda não existe
-garantia transacional contra uma reserva externa criada no Google exatamente entre
-a última leitura e a escrita. Enquanto os dois fluxos públicos coexistirem, o novo
-agendador não deve ser o fluxo principal.
+A disponibilidade e a revalidação final incluem agora a margem de
+`BOOKING_BUFFER_MINUTES` antes e depois das aulas, inclusive contra eventos
+ocupados do Google e reservas no PostgreSQL.
+
+**Atenção:** não existe transação única entre Google Calendar e PostgreSQL.
+Uma reserva externa criada exatamente entre a checagem final e a gravação
+ainda pode gerar conflito. Para reduzir esse risco, removemos a divulgação
+da segunda página automática de agendamento do Google no site.
+
+Se a antiga página do Google ainda estiver ativa ou compartilhada por outros
+canais, suspenda a programação de horários no próprio Google até validar,
+nos dois sentidos, que um agendamento bloqueia o mesmo horário nos dois sistemas.
+Nenhuma alteração no GitHub desativa essa página externa. Os compromissos
+manuais precisam ficar no calendário apontado por `GOOGLE_CALENDAR_ID`
+e marcados como **Ocupado**.
 
 ## 7. Ativar somente após validar
 

@@ -16,6 +16,15 @@ export type BookingDay = {
   slots: BookingSlot[];
 };
 
+// A margem protege os dois lados da aula, inclusive de eventos criados no Google.
+export function getProtectedSlotRange(start: Date, end: Date, bufferMinutes: number) {
+  const bufferMs = bufferMinutes * 60_000;
+  return {
+    from: new Date(start.getTime() - bufferMs),
+    to: new Date(end.getTime() + bufferMs),
+  };
+}
+
 function timeToMinutes(time: string) {
   const [hours, minutes] = time.split(":").map(Number);
   return hours * 60 + minutes;
@@ -72,8 +81,9 @@ export function buildSlotsForDate(
     const start = zonedLocalToUtc(date, time);
     const end = new Date(start.getTime() + service.durationMinutes * 60_000);
     if (start.getTime() < earliest || start.getTime() > latest) continue;
-    if (findConflicts(events, start, end).length > 0) continue;
-    if (reservedRanges.some((range) => range.start < end && range.end > start)) continue;
+    const protectedRange = getProtectedSlotRange(start, end, runtime.bufferMinutes ?? 0);
+    if (findConflicts(events, protectedRange.from, protectedRange.to).length > 0) continue;
+    if (reservedRanges.some((range) => range.start < protectedRange.to && range.end > protectedRange.from)) continue;
     slots.push({ time, start: start.toISOString(), end: end.toISOString() });
   }
 

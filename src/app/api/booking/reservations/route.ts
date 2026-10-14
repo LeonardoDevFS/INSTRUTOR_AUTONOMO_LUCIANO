@@ -7,7 +7,7 @@ import {
   getBookingService,
 } from "@/config/public-booking";
 import { BookingApiError, bookingError, bookingJson } from "@/lib/api/booking-response";
-import { buildSlotsForDate } from "@/lib/booking/availability";
+import { buildSlotsForDate, getProtectedSlotRange } from "@/lib/booking/availability";
 import {
   acquireBooking,
   confirmBooking,
@@ -191,16 +191,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Uma última consulta ao Google respeitando também a margem entre aulas.
+    const protectedRange = getProtectedSlotRange(
+      new Date(validSlot.start),
+      new Date(validSlot.end),
+      runtime.bufferMinutes ?? 0,
+    );
     const finalEvents = await listGoogleEvents(
       accessToken,
-      validSlot.start,
-      validSlot.end,
+      protectedRange.from.toISOString(),
+      protectedRange.to.toISOString(),
     );
     if (
       findConflicts(
         finalEvents,
-        new Date(validSlot.start),
-        new Date(validSlot.end),
+        protectedRange.from,
+        protectedRange.to,
       ).length > 0
     ) {
       await failBooking(bookingId);
