@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AtSign, Clock3, CreditCard, MapPin, MessageCircle } from "lucide-react";
+import { AtSign, Clock3, CreditCard, MapPin, MapPinned, MessageCircle } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { PageHero } from "@/components/sections/PageHero";
@@ -82,7 +82,17 @@ export default function ContactPage() {
               icon={<MapPin aria-hidden="true" />}
               title="Atendimento"
               description={siteConfig.location.serviceArea}
-            />
+            >
+              <ActionLink
+                href={siteConfig.contact.googleMapsUrl}
+                external
+                variant="text"
+                icon={<MapPinned size={16} aria-hidden="true" />}
+                ariaLabel="Ver perfil de Luciano no Google Maps (abre em nova guia)"
+              >
+                Ver no Google Maps
+              </ActionLink>
+            </ContactCard>
           </div>
 
           <div className="mt-5 grid gap-5 lg:grid-cols-2">

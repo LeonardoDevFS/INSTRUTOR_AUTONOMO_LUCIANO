@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { WhatsAppFloat } from "@/components/layout/WhatsAppFloat";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { siteConfig } from "@/config/site";
+import { siteMedia } from "@/data/media";
 import { getAbsoluteUrl } from "@/lib/seo/site-url";
 
 type SiteLayoutProps = {
@@ -16,9 +17,17 @@ export default function SiteLayout({ children }: SiteLayoutProps) {
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": getAbsoluteUrl("/#organization"),
-    name: siteConfig.brand,
+    name: `${siteConfig.name} — ${siteConfig.profession}`,
+    alternateName: siteConfig.brand,
     url: getAbsoluteUrl(),
+    logo: getAbsoluteUrl(siteMedia.branding.logo),
+    image: getAbsoluteUrl(siteMedia.hero.src),
     description: siteConfig.description,
+    telephone: `+${siteConfig.contact.phoneE164}`,
+    brand: {
+      "@type": "Brand",
+      name: siteConfig.brand,
+    },
     founder: {
       "@type": "Person",
       name: siteConfig.name,
@@ -38,7 +47,10 @@ export default function SiteLayout({ children }: SiteLayoutProps) {
         name: siteConfig.location.stateFullName,
       },
     },
-    sameAs: [siteConfig.contact.instagramUrl],
+    sameAs: [
+      siteConfig.contact.instagramUrl,
+      siteConfig.contact.googleMapsUrl,
+    ],
   };
 
   return (

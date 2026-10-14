@@ -87,6 +87,7 @@ Pode haver atendimento presencial mediante disponibilidade.
 - WhatsApp E.164: 5535991812056
 - Instagram: @instrutorautonomo.luciano
 - Instagram URL: https://www.instagram.com/instrutorautonomo.luciano/
+- Google Maps: https://maps.app.goo.gl/cnpvsF72as6pt4vk9
 
 ### Horários
 - Segunda a sexta: 07:00 às 20:00

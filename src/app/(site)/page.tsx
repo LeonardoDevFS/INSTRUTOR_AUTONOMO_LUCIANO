@@ -6,6 +6,7 @@ import { FaqSection } from "@/components/home/FaqSection";
 import { FinalCta } from "@/components/home/FinalCta";
 import { GoalsSection } from "@/components/home/GoalsSection";
 import { GuidesSection } from "@/components/home/GuidesSection";
+import { GoogleReviewsSection } from "@/components/home/GoogleReviewsSection";
 import { Hero } from "@/components/home/Hero";
 import { LicensedDriversSection } from "@/components/home/LicensedDriversSection";
 import { MentorshipSection } from "@/components/home/MentorshipSection";
@@ -33,6 +34,7 @@ export default function HomePage() {
       <VehicleTrainingSection />
       <LicensedDriversSection />
       <ResultsTeaser />
+      <GoogleReviewsSection />
       <BookingTeaser />
       <GuidesSection />
       <FaqSection />
