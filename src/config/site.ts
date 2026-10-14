@@ -31,6 +31,9 @@ export const siteConfig = {
 
     instagramUsername: "@instrutorautonomo.luciano",
     instagramUrl: "https://www.instagram.com/instrutorautonomo.luciano/",
+
+    googleMapsUrl: "https://maps.app.goo.gl/cnpvsF72as6pt4vk9",
+    googleReviewUrl: null as string | null,
   },
 
   schedule: {

@@ -58,6 +58,7 @@ Leia `docs/PROJECT_SPEC.md` antes de qualquer alteração relevante.
 - Experiência divulgada: 27 anos
 - WhatsApp: (35) 99181-2056
 - Instagram: @instrutorautonomo.luciano
+- Google Maps: https://maps.app.goo.gl/cnpvsF72as6pt4vk9
 - Categorias: A e B
 
 ## Serviços principais

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { AtSign, LockKeyhole, MessageCircle } from "lucide-react";
+import { AtSign, LockKeyhole, MapPinned, MessageCircle } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
 import { siteMedia } from "@/data/media";
@@ -64,6 +64,16 @@ export function Footer() {
                 <AtSign size={17} />
 
                 {siteConfig.contact.instagramUsername}
+              </a>
+
+              <a
+                href={siteConfig.contact.googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-gold"
+              >
+                <MapPinned size={17} aria-hidden="true" />
+                Perfil no Google Maps
               </a>
 
               <Link

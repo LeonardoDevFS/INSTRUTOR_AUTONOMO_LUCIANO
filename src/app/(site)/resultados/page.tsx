@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { Camera, MessageSquareQuote, ShieldCheck } from "lucide-react";
+import { Camera, ExternalLink, MessageSquareQuote, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 
 import { ContactCta } from "@/components/sections/ContactCta";
 import { PageHero } from "@/components/sections/PageHero";
 import { PhotoEffects } from "@/components/ui/PhotoEffects";
+import { ActionLink } from "@/components/ui/ActionLink";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { siteConfig } from "@/config/site";
 import { siteMedia } from "@/data/media";
 import { whatsappMessages } from "@/lib/whatsapp";
 
@@ -109,6 +111,17 @@ export default function ResultsPage() {
                 </p>
               </article>
             ))}
+          </div>
+          <div className="mt-10 flex justify-center">
+            <ActionLink
+              href={siteConfig.contact.googleMapsUrl}
+              external
+              variant="secondary"
+              icon={<ExternalLink size={16} aria-hidden="true" />}
+              ariaLabel="Confira as avaliações de Luciano no Google Maps (abre em nova guia)"
+            >
+              Confira nossas avaliações no Google
+            </ActionLink>
           </div>
         </div>
       </section>
