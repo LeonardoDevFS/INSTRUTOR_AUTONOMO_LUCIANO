@@ -86,7 +86,7 @@ Leia `docs/PROJECT_SPEC.md` antes de qualquer alteração relevante.
 Consulte `docs/PROJECT_SPEC.md`. Não criar rotas duplicadas ou conteúdo concorrendo consigo mesmo.
 
 ## SEO
-- Prioridade alta para SEO local e conteúdo útil.
+- Prioridade alta para SEO local e conteúdo útil..
 - Não fazer keyword stuffing.
 - Metadata exclusiva por rota.
 - URLs legíveis.
