@@ -29,8 +29,8 @@ export const siteConfig = {
     phoneDisplay: "(35) 99181-2056",
     phoneE164: "5535991812056",
 
-    instagramUsername: "@inst_luciano",
-    instagramUrl: "https://www.instagram.com/inst_luciano/",
+    instagramUsername: "@instrutorautonomo.luciano",
+    instagramUrl: "https://www.instagram.com/instrutorautonomo.luciano/",
   },
 
   schedule: {

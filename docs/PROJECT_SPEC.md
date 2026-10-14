@@ -85,8 +85,8 @@ Pode haver atendimento presencial mediante disponibilidade.
 - Atendimento: Itajubá e região
 - WhatsApp: (35) 99181-2056
 - WhatsApp E.164: 5535991812056
-- Instagram: @inst_luciano
-- Instagram URL: https://www.instagram.com/inst_luciano/
+- Instagram: @instrutorautonomo.luciano
+- Instagram URL: https://www.instagram.com/instrutorautonomo.luciano/
 
 ### Horários
 - Segunda a sexta: 07:00 às 20:00
@@ -418,7 +418,7 @@ Manter consistência:
 - Direção Segura
 - (35) 99181-2056
 - Itajubá/MG e região
-- @inst_luciano
+- @instrutorautonomo.luciano
 
 Google Business Profile já existe.
 Nunca inventar endereço de sede.
@@ -724,7 +724,7 @@ quanto tempo precisa existir entre um horário e outro: Aconselhável uma aula p
 Eu vou criar um site pro instrutor Luciano.
 Ele é de Itajubá, Mg (Depois mando melhor onde é especificamente).
 Eu quero que seja um site bem chamativo, faça o aluno clicar pra agendar mesmo.
-https://www.instagram.com/inst_luciano/ esse é o instagram dele pra você ter uma ideia do que quero pro layout.
+https://www.instagram.com/instrutorautonomo.luciano/ esse é o instagram dele pra você ter uma ideia do que quero pro layout.
 35 9181-2056 Esse é o número pra agendar, ja que ele foi burro e não colocou kkkk.
 O site precisa ser bem construído, baseado nas fotos do insta dele, tem que ser naquele estilo em média e chamar a atenção.
 Preciso que esse site seja um dos PRIMEIROS a aparecer ao procurar instrutores de auto escola em Itajubá, MG. Se não, o primeiro até. Vamos apelar bastante pra esse SEO, pra conseguir tal resultado.

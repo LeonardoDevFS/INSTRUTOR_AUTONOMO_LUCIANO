@@ -57,7 +57,7 @@ Leia `docs/PROJECT_SPEC.md` antes de qualquer alteração relevante.
 - Área: Itajubá e região
 - Experiência divulgada: 27 anos
 - WhatsApp: (35) 99181-2056
-- Instagram: @inst_luciano
+- Instagram: @instrutorautonomo.luciano
 - Categorias: A e B
 
 ## Serviços principais
