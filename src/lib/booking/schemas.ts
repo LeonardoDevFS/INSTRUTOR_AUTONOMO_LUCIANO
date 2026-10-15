@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { cancellationTokenPattern } from "@/lib/booking/cancellation-token";
+
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/;
 
@@ -23,6 +25,7 @@ export const publicBookingSchema = z.object({
   notes: z.string().trim().max(600).optional().default(""),
   privacyAccepted: z.literal(true),
   idempotencyKey: z.uuid(),
+  cancellationToken: z.string().regex(cancellationTokenPattern),
   website: z.string().max(0).optional().default(""),
 }).superRefine((value, context) => {
   const parsed = new Date(`${value.date}T12:00:00Z`);
@@ -39,3 +42,8 @@ export const publicBookingSchema = z.object({
 });
 
 export type PublicBookingInput = z.infer<typeof publicBookingSchema>;
+
+export const cancellationRequestSchema = z.object({
+  action: z.enum(["inspect", "cancel"]),
+  token: z.string().regex(cancellationTokenPattern),
+});

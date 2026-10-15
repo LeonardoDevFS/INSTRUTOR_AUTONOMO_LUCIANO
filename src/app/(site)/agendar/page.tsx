@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { CustomBooking } from "@/components/booking/CustomBooking";
 import { BookingContact } from "@/components/booking/BookingContact";
 import { PageHero } from "@/components/sections/PageHero";
+import { getGoogleBookingConfig } from "@/config/booking";
 import {
   bookingServices,
   getPublicBookingRuntimeConfig,
@@ -23,6 +24,7 @@ export const dynamic = "force-dynamic";
 
 export default function BookingPage() {
   const customBookingConfig = getPublicBookingRuntimeConfig();
+  const googleBookingConfig = getGoogleBookingConfig();
 
   return (
     <>
@@ -42,7 +44,7 @@ export default function BookingPage() {
             services={bookingServices}
             ready={customBookingConfig.ready}
           />
-          <BookingContact />
+          <BookingContact googleBooking={googleBookingConfig} />
         </div>
       </section>
     </>

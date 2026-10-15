@@ -17,6 +17,9 @@ CREATE TABLE IF NOT EXISTS public.booking_reservations (
   calendar_sync_status text NOT NULL DEFAULT 'pending',
   sync_attempts integer NOT NULL DEFAULT 0,
   last_sync_error text,
+  cancellation_token_hash text UNIQUE,
+  cancellation_requested_at timestamptz,
+  cancelled_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
   CONSTRAINT booking_calendar_sync_status_check CHECK (
@@ -30,7 +33,10 @@ CREATE TABLE IF NOT EXISTS public.booking_reservations (
 ALTER TABLE public.booking_reservations
   ADD COLUMN IF NOT EXISTS calendar_sync_status text NOT NULL DEFAULT 'pending',
   ADD COLUMN IF NOT EXISTS sync_attempts integer NOT NULL DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS last_sync_error text;
+  ADD COLUMN IF NOT EXISTS last_sync_error text,
+  ADD COLUMN IF NOT EXISTS cancellation_token_hash text,
+  ADD COLUMN IF NOT EXISTS cancellation_requested_at timestamptz,
+  ADD COLUMN IF NOT EXISTS cancelled_at timestamptz;
 
 DO $$
 BEGIN
@@ -55,8 +61,25 @@ BEGIN
     ALTER TABLE public.booking_reservations
       ADD CONSTRAINT booking_sync_attempts_check CHECK (sync_attempts >= 0);
   END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'booking_cancellation_token_hash_check'
+      AND conrelid = 'public.booking_reservations'::regclass
+  ) THEN
+    ALTER TABLE public.booking_reservations
+      ADD CONSTRAINT booking_cancellation_token_hash_check CHECK (
+        cancellation_token_hash IS NULL
+        OR cancellation_token_hash ~ '^[0-9a-f]{64}$'
+      );
+  END IF;
 END
 $$;
+
+CREATE UNIQUE INDEX IF NOT EXISTS booking_cancellation_token_hash_unique_idx
+  ON public.booking_reservations (cancellation_token_hash)
+  WHERE cancellation_token_hash IS NOT NULL;
 
 CREATE INDEX IF NOT EXISTS booking_reservations_range_idx
   ON public.booking_reservations (starts_at, ends_at)
@@ -65,7 +88,10 @@ CREATE INDEX IF NOT EXISTS booking_reservations_range_idx
 CREATE INDEX IF NOT EXISTS booking_reservations_reconciliation_idx
   ON public.booking_reservations (updated_at)
   WHERE status = 'holding'
-     OR (status = 'cancelled' AND calendar_sync_status = 'cancel_pending');
+     OR (
+       status IN ('confirmed', 'cancelled')
+       AND calendar_sync_status = 'cancel_pending'
+     );
 
 DO $$
 BEGIN
