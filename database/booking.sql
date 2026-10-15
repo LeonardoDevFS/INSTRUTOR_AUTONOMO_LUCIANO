@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS public.booking_reservations (
   calendar_sync_status text NOT NULL DEFAULT 'pending',
   sync_attempts integer NOT NULL DEFAULT 0,
   last_sync_error text,
-  cancellation_token_hash text UNIQUE,
+  cancellation_token_hash text,
   cancellation_requested_at timestamptz,
   cancelled_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),

@@ -92,6 +92,12 @@ export function EventDetailDialog({
             }
           />
           <Detail label="Status" value={event.status} />
+          {event.bookingStatus && (
+            <Detail label="Reserva no site" value={event.bookingStatus} />
+          )}
+          {event.bookingSyncStatus && (
+            <Detail label="Sincronização" value={event.bookingSyncStatus} />
+          )}
           {event.location && <Detail label="Local" value={event.location} />}
           {event.organizer && <Detail label="Organizador" value={event.organizer} />}
         </dl>

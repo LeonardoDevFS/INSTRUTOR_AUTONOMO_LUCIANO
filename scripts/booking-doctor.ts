@@ -6,6 +6,7 @@ import {
   bookingServices,
   type PublicBookingRuntimeConfig,
 } from "../src/config/public-booking";
+import { getGoogleBookingConfig } from "../src/config/booking";
 import {
   buildSlotsForDate,
   getDateKeyInTimeZone,
@@ -39,6 +40,9 @@ function report(status: CheckStatus, label: string, detail?: string) {
 
 function safeDatabaseFailure(error: unknown) {
   const message = error instanceof Error ? error.message.toLowerCase() : "";
+  if (message.includes("booking_cancellation_columns_missing")) {
+    return "migração aditiva de cancelamento ainda não aplicada (database/booking.sql)";
+  }
   if (
     message.includes("ssl") ||
     message.includes("tls") ||
@@ -148,6 +152,21 @@ async function verifyDatabase(client: PoolClient) {
   if (!result.rows[0]?.reservations || !result.rows[0]?.rate_limits) {
     throw new Error("BOOKING_TABLES_MISSING");
   }
+
+  const columns = await client.query<{ column_name: string }>(`
+    SELECT column_name
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'booking_reservations'
+      AND column_name IN (
+        'cancellation_token_hash',
+        'cancellation_requested_at',
+        'cancelled_at'
+      )
+  `);
+  if (columns.rows.length !== 3) {
+    throw new Error("BOOKING_CANCELLATION_COLUMNS_MISSING");
+  }
 }
 
 async function reservedRanges(client: PoolClient, from: Date, to: Date) {
@@ -223,6 +242,24 @@ async function verifyEligibleSlot(input: {
 async function main() {
   console.log("Booking Doctor — Direção Segura (somente leitura)\n");
   const audit = auditPublicBookingEnvironment();
+  const googleBooking = getGoogleBookingConfig();
+
+  if (googleBooking.status === "ready") {
+    report("pass", "Página pública oficial do Google configurada");
+    report(
+      "warning",
+      "Agenda consultada pela página externa",
+      "a URL pública não informa o calendarId; confirme manualmente no Google que ela consulta GOOGLE_CALENDAR_ID",
+    );
+  } else {
+    report(
+      "fail",
+      "Página pública oficial do Google",
+      googleBooking.status === "missing"
+        ? "NEXT_PUBLIC_GOOGLE_BOOKING_URL ausente"
+        : "NEXT_PUBLIC_GOOGLE_BOOKING_URL não é uma página oficial aceita",
+    );
+  }
 
   if (audit.runtime.enabled) {
     report("pass", "Agendamento personalizado habilitado");

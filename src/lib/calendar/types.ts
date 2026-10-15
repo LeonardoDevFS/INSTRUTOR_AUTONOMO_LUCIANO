@@ -33,7 +33,22 @@ export type AdminCalendarEvent = {
   reasonCode?: string;
   serviceId?: string;
   bookingId?: string;
+  bookingStatus?: "holding" | "confirmed" | "failed" | "cancelled" | "missing";
+  bookingSyncStatus?: "pending" | "synced" | "cancel_pending" | "error";
+  bookingSyncIssue?: string;
   formFields: { label: string; value: string }[];
+};
+
+export type AdminBookingSyncIssue = {
+  bookingId: string;
+  startsAt: string;
+  endsAt: string;
+  code:
+    | "CANCELLATION_PENDING"
+    | "GOOGLE_EVENT_MISSING"
+    | "GOOGLE_EVENT_NOT_LINKED"
+    | "SYNC_ERROR"
+    | "DATABASE_RESERVATION_MISSING";
 };
 
 export type CalendarSummary = {

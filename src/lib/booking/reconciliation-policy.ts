@@ -12,7 +12,7 @@ export type ReconciliationAction =
   | "retry-later";
 
 export function getReconciliationAction(
-  status: "holding" | "cancelled",
+  status: "holding" | "confirmed" | "cancelled",
   outcome: ReconciliationOutcome,
 ): ReconciliationAction {
   if (status === "holding") {

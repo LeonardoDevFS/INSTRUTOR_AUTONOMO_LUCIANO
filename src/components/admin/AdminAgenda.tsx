@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarPlus, ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
+import { AlertTriangle, CalendarPlus, ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { BlockDialog } from "@/components/admin/BlockDialog";
@@ -15,12 +15,26 @@ import {
   type CalendarView,
   viewDays,
 } from "@/components/admin/admin-date";
-import type { AdminCalendarEvent, CalendarEventKind } from "@/lib/calendar/types";
+import type {
+  AdminBookingSyncIssue,
+  AdminCalendarEvent,
+  CalendarEventKind,
+} from "@/lib/calendar/types";
 
 type Filter = "all" | CalendarEventKind;
 
 const viewLabels: Record<CalendarView, string> = { day: "Dia", week: "Semana", month: "Mês" };
 const filterLabels: Record<Filter, string> = { all: "Todos", siteBooking: "Reservas do site", participant: "Agenda Google", block: "Bloqueios", busy: "Ocupados", other: "Outros" };
+
+function syncIssueLabel(code: AdminBookingSyncIssue["code"]) {
+  return {
+    CANCELLATION_PENDING: "Cancelamento pendente no Google",
+    GOOGLE_EVENT_MISSING: "Reserva confirmada sem evento visível no Google",
+    GOOGLE_EVENT_NOT_LINKED: "Reserva sem vínculo com evento do Google",
+    SYNC_ERROR: "Falha de sincronização registrada",
+    DATABASE_RESERVATION_MISSING: "Evento do site sem reserva correspondente no banco",
+  }[code];
+}
 
 export function AdminAgenda() {
   const [anchor, setAnchor] = useState(() => new Date());
@@ -32,6 +46,8 @@ export function AdminAgenda() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [syncedAt, setSyncedAt] = useState("");
+  const [syncIssues, setSyncIssues] = useState<AdminBookingSyncIssue[]>([]);
+  const [diagnosticsUnavailable, setDiagnosticsUnavailable] = useState(false);
 
   const range = useMemo(() => getViewRange(anchor, view), [anchor, view]);
   const load = useCallback(async () => {
@@ -42,6 +58,8 @@ export function AdminAgenda() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Não foi possível carregar os eventos.");
       setEvents(payload.events ?? []);
+      setSyncIssues(payload.syncIssues ?? []);
+      setDiagnosticsUnavailable(Boolean(payload.diagnosticsUnavailable));
       setSyncedAt(payload.syncedAt ?? "");
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Falha de conexão com a agenda.");
@@ -76,6 +94,36 @@ export function AdminAgenda() {
           <button onClick={() => setEditing(null)} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-gold px-6 text-sm font-extrabold text-black hover:bg-gold-light"><CalendarPlus size={18} />Bloquear horário</button>
         </div>
       </div>
+
+      {(syncIssues.length > 0 || diagnosticsUnavailable) && (
+        <section className="mt-6 rounded-2xl border border-amber-300/25 bg-amber-300/[0.07] p-5" aria-labelledby="sync-alert-title">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 shrink-0 text-amber-200" size={20} aria-hidden="true" />
+            <div>
+              <h2 id="sync-alert-title" className="font-bold text-amber-100">
+                Verificação de sincronização
+              </h2>
+              {diagnosticsUnavailable && (
+                <p className="mt-2 text-sm leading-6 text-white/55">
+                  Os eventos do Google foram carregados, mas o estado das reservas do site não pôde ser consultado.
+                </p>
+              )}
+              {syncIssues.length > 0 && (
+                <ul className="mt-3 space-y-2 text-sm text-white/60">
+                  {syncIssues.map((issue) => (
+                    <li key={`${issue.bookingId}-${issue.code}`}>
+                      {syncIssueLabel(issue.code)} — {new Date(issue.startsAt).toLocaleString("pt-BR")}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <p className="mt-3 text-xs leading-5 text-white/40">
+                Atualize a agenda para tentar novamente. Nenhum compromisso é removido automaticamente por este aviso.
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="mt-8 rounded-3xl border border-white/10 bg-[#0d0d0d] p-4 sm:p-6">
         <div className="flex flex-col gap-4 border-b border-white/10 pb-5 xl:flex-row xl:items-center xl:justify-between">

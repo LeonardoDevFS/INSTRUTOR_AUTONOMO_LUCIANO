@@ -5,6 +5,7 @@ import { createHash } from "node:crypto";
 import { Pool, type PoolClient, type QueryResultRow } from "pg";
 
 import { createBookingDatabasePoolConfig } from "@/lib/booking/postgres-config";
+import { getCancellationPreparation } from "@/lib/booking/cancellation-policy";
 
 export type BookingRow = {
   id: string;
@@ -264,17 +265,13 @@ export async function recordBookingSyncError(bookingId: string, message: string)
 }
 
 function cancellationState(row: BookingRow) {
-  if (row.status === "cancelled") {
-    return { state: "completed" as const, row };
-  }
-  if (row.status !== "confirmed" || !row.google_event_id) {
-    return { state: "unavailable" as const, row };
-  }
   return {
-    state:
-      row.calendar_sync_status === "cancel_pending"
-        ? ("pending" as const)
-        : ("ready" as const),
+    state: getCancellationPreparation({
+      exists: true,
+      status: row.status,
+      googleEventId: row.google_event_id,
+      syncStatus: row.calendar_sync_status,
+    }),
     row,
   };
 }

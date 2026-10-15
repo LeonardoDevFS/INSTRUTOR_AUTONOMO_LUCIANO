@@ -1,11 +1,9 @@
 # Google Agenda — configuração do agendamento da Direção Segura
 
-> **Orientação legada:** estas etapas descrevem a antiga página externa de
-> agendamentos do Google. O site agora divulga somente um formulário automático
-> de reserva e oferece WhatsApp para contato manual. Não reative uma segunda
-> página pública de reservas sem verificar conflito bidirecional com a mesma
-> `GOOGLE_CALENDAR_ID`. A remoção do link no site não desativa uma página
-> já criada no Google. Consulte `BOOKING_SETUP.md`.
+> A página externa do Google voltou a ser uma alternativa ao formulário do
+> site. Ela só deve permanecer ativa depois de confirmar que sua programação de
+> horários consulta exatamente a mesma agenda definida em `GOOGLE_CALENDAR_ID`.
+> Consulte também `BOOKING_SETUP.md`.
 
 Este documento explica como configurar uma única página pública de agendamento para todos os serviços de Luciano Oliveira, usando uma conta Google pessoal e sem contratar uma assinatura.
 
@@ -158,7 +156,7 @@ O projeto valida protocolo, domínio e caminho antes de incorporar a URL. Uma UR
 ## 12. Testar uma reserva
 
 1. Acesse `/agendar` no site.
-2. Confirme que a página do Google aparece dentro do contêiner.
+2. Confirme que o botão **Agendar pelo Google** abre a página oficial esperada.
 3. Faça o teste em computador e celular.
 4. Escolha um horário livre.
 5. Preencha nome, sobrenome, e-mail, serviço e WhatsApp.
@@ -167,8 +165,27 @@ O projeto valida protocolo, domínio e caminho antes de incorporar a URL. Uma UR
 8. Verifique se o horário reservado desaparece da página pública.
 9. Crie um evento manual no mesmo calendário e confirme que esse intervalo também deixa de aparecer.
 10. Cancele a reserva de teste quando terminar.
+11. Confirme que uma reserva do formulário do site desaparece imediatamente da
+    disponibilidade externa do Google.
+12. Confirme que uma reserva feita na página do Google desaparece imediatamente
+    da disponibilidade do formulário do site.
 
 Não considere a integração validada de ponta a ponta antes de concluir esse teste com a URL real.
+
+O identificador contido em `NEXT_PUBLIC_GOOGLE_BOOKING_URL` não permite ao código
+provar qual calendário a programação consulta. Essa associação precisa ser
+conferida manualmente nas configurações da página do Google e com os testes nos
+dois sentidos acima.
+
+## Cancelamento das reservas feitas pelo Google
+
+Para uma reserva criada diretamente na página externa, o aluno deve usar o link
+do e-mail de confirmação do Google ou recusar o convite na própria agenda. O
+Luciano também pode abrir o compromisso e usar **Cancelar horário**. Segundo a
+documentação oficial, o cancelamento remove o evento, envia o e-mail ao convidado
+e devolve o horário à página pública.
+
+Fonte: [Cancelar horários na sua agenda — Ajuda do Google Agenda](https://support.google.com/calendar/answer/10737245?hl=pt-BR).
 
 ## 13. Administrar pelo celular
 

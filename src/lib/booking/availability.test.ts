@@ -126,3 +126,57 @@ test("margem de dez minutos impede eventos Google e retenções quase adjacentes
     assert.equal(slots.some((slot) => slot.time === "16:00"), false);
   }
 });
+
+test("evento criado pela página de agendamento do Google bloqueia o site", () => {
+  const events = [{
+    id: "google-appointment",
+    attendees: [{ email: "aluno@example.com" }],
+    transparency: "opaque" as const,
+    start: { dateTime: "2026-10-15T15:00:00-03:00" },
+    end: { dateTime: "2026-10-15T15:50:00-03:00" },
+  }];
+  const slots = buildSlotsForDate(
+    "2026-10-15",
+    service,
+    { ...runtime, bufferMinutes: 10 },
+    events,
+    [],
+    new Date("2026-10-10T12:00:00Z"),
+  );
+  assert.equal(slots.some((slot) => slot.time === "15:00"), false);
+  assert.equal(slots.some((slot) => slot.time === "16:00"), true);
+});
+
+test("evento manual ocupado e evento de dia inteiro bloqueiam, transparente não", () => {
+  const now = new Date("2026-10-10T12:00:00Z");
+  const occupied = [{
+    transparency: "opaque" as const,
+    start: { dateTime: "2026-10-15T09:00:00-03:00" },
+    end: { dateTime: "2026-10-15T10:00:00-03:00" },
+  }];
+  const allDay = [{
+    transparency: "opaque" as const,
+    start: { date: "2026-10-15" },
+    end: { date: "2026-10-16" },
+  }];
+  const transparent = [{
+    transparency: "transparent" as const,
+    start: { dateTime: "2026-10-15T09:00:00-03:00" },
+    end: { dateTime: "2026-10-15T10:00:00-03:00" },
+  }];
+
+  assert.equal(
+    buildSlotsForDate("2026-10-15", service, runtime, occupied, [], now)
+      .some((slot) => slot.time === "09:30"),
+    false,
+  );
+  assert.equal(
+    buildSlotsForDate("2026-10-15", service, runtime, allDay, [], now).length,
+    0,
+  );
+  assert.equal(
+    buildSlotsForDate("2026-10-15", service, runtime, transparent, [], now)
+      .some((slot) => slot.time === "09:30"),
+    true,
+  );
+});

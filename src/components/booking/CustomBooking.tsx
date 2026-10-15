@@ -473,24 +473,31 @@ export function CustomBooking({
           <div>
             <StepTitle number={3} title="Escolha o horário" />
             <p className="mt-3 text-sm capitalize text-white/50">{formatDate(selectedDate)}</p>
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              {(selectedDay?.slots ?? []).map((slot) => (
-                <button
-                  key={slot.start}
-                  type="button"
-                  onClick={() => {
-                    setSelectedSlot(slot);
-                    setIdempotencyKey("");
-                    setCancellationToken("");
-                  }}
-                  aria-pressed={selectedSlot?.start === slot.start}
-                  className={`min-h-14 rounded-2xl border text-base font-extrabold transition ${selectedSlot?.start === slot.start ? "border-gold bg-gold text-black" : "border-white/10 bg-black/25 text-white hover:border-gold/45"}`}
-                >
-                  {slot.time}
-                </button>
-              ))}
-            </div>
-            {!selectedDay?.slots.length && (
+            {loading ? (
+              <div className="mt-6 grid h-32 place-items-center text-gold" role="status">
+                <LoaderCircle className="animate-spin" aria-hidden="true" />
+                <span className="sr-only">Atualizando horários disponíveis</span>
+              </div>
+            ) : (
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                {(selectedDay?.slots ?? []).map((slot) => (
+                  <button
+                    key={slot.start}
+                    type="button"
+                    onClick={() => {
+                      setSelectedSlot(slot);
+                      setIdempotencyKey("");
+                      setCancellationToken("");
+                    }}
+                    aria-pressed={selectedSlot?.start === slot.start}
+                    className={`min-h-14 rounded-2xl border text-base font-extrabold transition ${selectedSlot?.start === slot.start ? "border-gold bg-gold text-black" : "border-white/10 bg-black/25 text-white hover:border-gold/45"}`}
+                  >
+                    {slot.time}
+                  </button>
+                ))}
+              </div>
+            )}
+            {!loading && !selectedDay?.slots.length && (
               <p className="mt-6 rounded-2xl border border-white/10 p-5 text-sm text-white/50">
                 Não restam horários nessa data. Volte e selecione outro dia.
               </p>

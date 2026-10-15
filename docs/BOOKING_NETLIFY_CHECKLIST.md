@@ -55,7 +55,9 @@ função no runtime e as rotas `/api/booking/*` também usam essas variáveis.
 - Use o Supabase Transaction Pooler na porta `6543`.
 - A `DATABASE_URL` deve terminar em `sslmode=verify-full`.
 - Não exponha a URI no navegador, em logs ou no repositório.
-- Confirme que `booking_reservations` e `booking_rate_limits` existem.
+- Confirme que `booking_reservations` e `booking_rate_limits` existem e que a
+  migração aditiva mais recente criou `cancellation_token_hash`,
+  `cancellation_requested_at` e `cancelled_at`.
 - Preserve RLS e a revogação de acesso de `anon` e `authenticated`.
 
 ## 3. Google OAuth
@@ -148,11 +150,16 @@ Somente após banco, Google e regras estarem validados:
     idempotência;
 11. se qualquer etapa falhar, volte `CUSTOM_BOOKING_ENABLED=false`, faça novo
     deploy e mantenha somente o WhatsApp como contingência manual;
-12. confirme que `/agendar` não anuncia uma segunda página pública de reservas;
-13. confira que os eventos são gravados no mesmo `GOOGLE_CALENDAR_ID` consultado
+12. confirme que `/agendar` oferece o formulário, o botão do Google e o WhatsApp;
+13. confira que a página apontada por `NEXT_PUBLIC_GOOGLE_BOOKING_URL` consulta
+    a mesma agenda definida em `GOOGLE_CALENDAR_ID`;
+14. confira que os eventos são gravados no mesmo `GOOGLE_CALENDAR_ID` consultado
     pelo site, incluindo eventos ocupados criados manualmente;
-14. suspenda no próprio Google a antiga programação pública se ela continuar
-    aceitando reservas em paralelo, até verificar bloqueios nos dois sentidos.
+15. teste o cancelamento pelo link seguro exibido após a reserva do site e
+    confirme que o horário só volta após a remoção no Google;
+16. para uma reserva criada diretamente pelo Google, teste o cancelamento nativo
+    disponibilizado pelo próprio Google;
+17. suspenda a programação pública se os bloqueios nos dois sentidos falharem.
 
 Não declare produção validada apenas porque a consulta de disponibilidade retorna
 horários. A confirmação controlada e a verificação do evento no Google são
