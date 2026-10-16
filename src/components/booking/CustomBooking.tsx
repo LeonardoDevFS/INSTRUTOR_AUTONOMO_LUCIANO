@@ -23,6 +23,7 @@ type BookingApiPayload = {
   error?: string;
   code?: string;
   days?: BookingDay[];
+  cancellationPath?: string;
 };
 type FormData = {
   name: string;
@@ -54,6 +55,15 @@ const icons = {
 function currentMonthKey() {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function createCancellationToken() {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
+  return btoa(binary)
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
+    .replace(/=+$/, "");
 }
 
 function moveMonth(month: string, amount: number) {
@@ -124,6 +134,9 @@ export function CustomBooking({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [idempotencyKey, setIdempotencyKey] = useState("");
+  const [cancellationToken, setCancellationToken] = useState("");
+  const [cancellationPath, setCancellationPath] = useState("");
+  const [availabilityVersion, setAvailabilityVersion] = useState(0);
   const service = services.find((item) => item.id === serviceId);
 
   useEffect(() => {
@@ -157,7 +170,7 @@ export function CustomBooking({
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [month, ready, serviceId, step]);
+  }, [availabilityVersion, month, ready, serviceId, step]);
 
   const selectedDay = days.find((day) => day.date === selectedDate);
   const calendarDays = useMemo(() => monthDays(month), [month]);
@@ -167,6 +180,8 @@ export function CustomBooking({
     setSelectedDate("");
     setSelectedSlot(null);
     setDays([]);
+    setIdempotencyKey("");
+    setCancellationToken("");
   }
 
   function goBack() {
@@ -193,7 +208,10 @@ export function CustomBooking({
   async function confirmBooking() {
     if (!service || !selectedSlot || !selectedDate) return;
     const attemptKey = idempotencyKey || crypto.randomUUID();
+    const attemptCancellationToken =
+      cancellationToken || createCancellationToken();
     setIdempotencyKey(attemptKey);
+    setCancellationToken(attemptCancellationToken);
     setSubmitting(true);
     setError("");
     try {
@@ -206,6 +224,7 @@ export function CustomBooking({
           time: selectedSlot.time,
           ...form,
           idempotencyKey: attemptKey,
+          cancellationToken: attemptCancellationToken,
         }),
       });
       const payload = await readBookingPayload(response);
@@ -215,6 +234,11 @@ export function CustomBooking({
           payload.code === "BOOKING_ALREADY_PROCESSED"
         ) {
           setIdempotencyKey("");
+          setCancellationToken("");
+          setSelectedSlot(null);
+          setStep(3);
+          setLoading(true);
+          setAvailabilityVersion((current) => current + 1);
         }
         throw new Error(
           bookingErrorMessage(
@@ -223,6 +247,7 @@ export function CustomBooking({
           ),
         );
       }
+      setCancellationPath(payload.cancellationPath ?? "");
       setSuccess(true);
     } catch (cause) {
       setError(
@@ -255,6 +280,20 @@ export function CustomBooking({
           Google recebeu o pedido de envio do convite; confira também sua caixa de
           spam.
         </p>
+        {cancellationPath && (
+          <div className="mx-auto mt-7 max-w-2xl rounded-2xl border border-white/10 bg-black/25 p-5">
+            <p className="text-sm leading-6 text-white/60">
+              Guarde este acesso para cancelar com segurança, caso precise. O
+              site não possui envio próprio de e-mail para recuperar esse link.
+            </p>
+            <Link
+              href={cancellationPath}
+              className="mt-4 inline-flex min-h-12 items-center justify-center rounded-full border border-red-300/35 px-6 text-sm font-extrabold text-red-100 hover:border-red-300/70"
+            >
+              Cancelar meu agendamento
+            </Link>
+          </div>
+        )}
       </section>
     );
   }
@@ -434,23 +473,31 @@ export function CustomBooking({
           <div>
             <StepTitle number={3} title="Escolha o horário" />
             <p className="mt-3 text-sm capitalize text-white/50">{formatDate(selectedDate)}</p>
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              {(selectedDay?.slots ?? []).map((slot) => (
-                <button
-                  key={slot.start}
-                  type="button"
-                  onClick={() => {
-                    setSelectedSlot(slot);
-                    setIdempotencyKey("");
-                  }}
-                  aria-pressed={selectedSlot?.start === slot.start}
-                  className={`min-h-14 rounded-2xl border text-base font-extrabold transition ${selectedSlot?.start === slot.start ? "border-gold bg-gold text-black" : "border-white/10 bg-black/25 text-white hover:border-gold/45"}`}
-                >
-                  {slot.time}
-                </button>
-              ))}
-            </div>
-            {!selectedDay?.slots.length && (
+            {loading ? (
+              <div className="mt-6 grid h-32 place-items-center text-gold" role="status">
+                <LoaderCircle className="animate-spin" aria-hidden="true" />
+                <span className="sr-only">Atualizando horários disponíveis</span>
+              </div>
+            ) : (
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                {(selectedDay?.slots ?? []).map((slot) => (
+                  <button
+                    key={slot.start}
+                    type="button"
+                    onClick={() => {
+                      setSelectedSlot(slot);
+                      setIdempotencyKey("");
+                      setCancellationToken("");
+                    }}
+                    aria-pressed={selectedSlot?.start === slot.start}
+                    className={`min-h-14 rounded-2xl border text-base font-extrabold transition ${selectedSlot?.start === slot.start ? "border-gold bg-gold text-black" : "border-white/10 bg-black/25 text-white hover:border-gold/45"}`}
+                  >
+                    {slot.time}
+                  </button>
+                ))}
+              </div>
+            )}
+            {!loading && !selectedDay?.slots.length && (
               <p className="mt-6 rounded-2xl border border-white/10 p-5 text-sm text-white/50">
                 Não restam horários nessa data. Volte e selecione outro dia.
               </p>

@@ -1,11 +1,12 @@
 import "server-only";
 
 import {
-  completeCancelBookingByGoogleEventId,
+  completeCancelBooking,
   confirmBooking,
   failBooking,
   listBookingsPendingReconciliation,
   recordBookingSyncError,
+  recordCancellationSyncError,
 } from "@/lib/booking/database";
 import { getReconciliationAction } from "@/lib/booking/reconciliation-policy";
 import { isSiteBooking } from "@/lib/calendar/business";
@@ -63,7 +64,7 @@ export async function reconcilePendingBookings(accessToken: string) {
     }
 
     if (
-      booking.status === "cancelled" &&
+      (booking.status === "confirmed" || booking.status === "cancelled") &&
       booking.calendar_sync_status === "cancel_pending" &&
       booking.google_event_id
     ) {
@@ -83,21 +84,24 @@ export async function reconcilePendingBookings(accessToken: string) {
           event.etag,
         );
         if (
-          getReconciliationAction("cancelled", "matching-event") ===
+            getReconciliationAction(booking.status, "matching-event") ===
           "cancel-event"
         ) {
-          await completeCancelBookingByGoogleEventId(booking.google_event_id);
+          await completeCancelBooking(booking.id, booking.google_event_id);
         }
       } catch (error) {
         if (isMissingGoogleEvent(error)) {
           if (
-            getReconciliationAction("cancelled", "missing-event") ===
+            getReconciliationAction(booking.status, "missing-event") ===
             "complete-cancellation"
           ) {
-            await completeCancelBookingByGoogleEventId(booking.google_event_id);
+            await completeCancelBooking(booking.id, booking.google_event_id);
           }
         } else {
-          await recordBookingSyncError(booking.id, "cancel-google-unavailable");
+          await recordCancellationSyncError(
+            booking.id,
+            "cancel-google-unavailable",
+          );
         }
       }
     }

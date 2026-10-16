@@ -1,10 +1,10 @@
 # Agendamento personalizado — Supabase Free
 
-O único fluxo público automático de reservas é o formulário em `/agendar`.
-O Google Agenda continua sendo a fonte de horários ocupados e o destino dos
-eventos do site. Se o agendamento personalizado estiver indisponível, a
-contingência é o atendimento manual pelo WhatsApp, não uma segunda página
-automática de agendamentos.
+O formulário em `/agendar` e a página oficial de agendamentos do Google podem
+ser oferecidos em paralelo. Ambos precisam usar a mesma agenda operacional
+definida por `GOOGLE_CALENDAR_ID`. O Google Agenda continua sendo a fonte de
+horários ocupados e o destino dos eventos do site; WhatsApp permanece como
+alternativa manual.
 
 Esta arquitetura utiliza somente o projeto Supabase existente **Luciano Direção
 Segura**, na região de São Paulo. Não é necessário criar Neon ou outro banco.
@@ -37,7 +37,8 @@ Segura**. Antes de executar SQL:
 
 Abra **SQL Editor > New query**, cole o conteúdo de `database/booking.sql`, revise e
 execute. A migração é aditiva: usa `IF NOT EXISTS`, adiciona os campos de
-sincronização quando faltarem e não remove dados.
+sincronização e os hashes dos acessos de cancelamento quando faltarem e não
+remove dados.
 
 Ela cria:
 
@@ -190,7 +191,28 @@ a consistência:
 - se o evento existir, a reserva é confirmada no banco;
 - se não existir, a retenção vira falha e o intervalo é liberado;
 - cancelamentos ficam como `cancel_pending` até a exclusão ser confirmada;
+- durante `cancel_pending`, a reserva continua confirmada e o intervalo não é
+  liberado;
 - as próximas consultas processam até dez pendências antigas por vez.
+
+A criação feita pelo site é revalidada no Google imediatamente antes de gravar o
+evento. Ainda existe uma janela mínima, inerente a dois sistemas sem transação
+distribuída, se uma confirmação externa ocorrer exatamente ao mesmo tempo. A
+página do Google precisa consultar a mesma agenda para reduzir essa janela pelos
+controles nativos. O painel sinaliza divergências para revisão; ele não apaga nem
+cancela automaticamente um evento externo.
+
+## 7. Cancelamento seguro pelo aluno
+
+Reservas novas feitas pelo formulário recebem um token aleatório de 256 bits. O
+navegador recebe um link `/agendamento/cancelar#token=...`; o fragmento não é
+enviado ao servidor em logs de URL. O PostgreSQL armazena somente o hash SHA-256.
+
+O aluno deve guardar o link exibido após a confirmação, pois não existe envio
+próprio de e-mail configurado. Reservas antigas, criadas antes da migração, não
+ganham tokens retroativamente e continuam sendo administradas pelo painel ou
+diretamente com Luciano. Reservas criadas na página externa do Google usam os
+controles nativos de cancelamento enviados pelo Google.
 
 A disponibilidade e a revalidação final incluem agora a margem de
 `BOOKING_BUFFER_MINUTES` antes e depois das aulas, inclusive contra eventos
@@ -208,7 +230,7 @@ Nenhuma alteração no GitHub desativa essa página externa. Os compromissos
 manuais precisam ficar no calendário apontado por `GOOGLE_CALENDAR_ID`
 e marcados como **Ocupado**.
 
-## 7. Ativar somente após validar
+## 8. Ativar somente após validar
 
 Use primeiro uma agenda e dados de teste. Depois de configurar banco, token e
 regras, teste com `CUSTOM_BOOKING_ENABLED=true` apenas em ambiente controlado.
@@ -232,7 +254,7 @@ Somente após todos os itens use `CUSTOM_BOOKING_ENABLED=true` em produção.
 Para a configuração e validação da Netlify, siga também
 [`docs/BOOKING_NETLIFY_CHECKLIST.md`](docs/BOOKING_NETLIFY_CHECKLIST.md).
 
-## 8. Plano gratuito e indisponibilidade
+## 9. Plano gratuito e indisponibilidade
 
 O projeto permanece em R$ 0 enquanto estiver nos planos gratuitos e dentro das
 franquias, sem habilitar add-ons ou upgrades:
@@ -253,7 +275,7 @@ Referências:
 - [Pausa de projetos gratuitos](https://supabase.com/docs/guides/platform/free-project-pausing)
 - [Plano Free da Netlify](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/credit-based-pricing-plans/)
 
-## 9. Backup manual
+## 10. Backup manual
 
 Não presuma backups automáticos no plano gratuito. A recomendação oficial é gerar
 exports regulares e mantê-los fora do Supabase.

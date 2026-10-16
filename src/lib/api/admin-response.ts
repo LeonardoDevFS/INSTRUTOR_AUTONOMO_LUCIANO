@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 
 import { AdminAuthError } from "@/lib/auth/require-admin";
 import { GoogleCalendarError } from "@/lib/calendar/google-calendar";
+import { BookingDatabaseError } from "@/lib/booking/database";
 import { StudentsDatabaseError } from "@/lib/students/database";
 
 const noStoreHeaders = {
@@ -22,6 +23,19 @@ export function adminError(error: unknown) {
     return adminJson(
       { error: error.message, code: error.code },
       { status: error.status },
+    );
+  }
+
+  if (error instanceof BookingDatabaseError) {
+    console.error("Booking database dependency failure", {
+      code: error.code,
+    });
+    return adminJson(
+      {
+        error: "A agenda está temporariamente indisponível.",
+        code: "BOOKING_DATABASE_UNAVAILABLE",
+      },
+      { status: 503 },
     );
   }
 

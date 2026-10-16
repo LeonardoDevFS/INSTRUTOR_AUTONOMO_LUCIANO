@@ -5,14 +5,18 @@ import { createHash } from "node:crypto";
 import { Pool, type PoolClient, type QueryResultRow } from "pg";
 
 import { createBookingDatabasePoolConfig } from "@/lib/booking/postgres-config";
+import { getCancellationPreparation } from "@/lib/booking/cancellation-policy";
 
 export type BookingRow = {
   id: string;
+  service_id: string;
   status: "holding" | "confirmed" | "failed" | "cancelled";
   google_event_id: string | null;
   starts_at: string;
   ends_at: string;
-  calendar_sync_status?: "pending" | "synced" | "cancel_pending" | "error";
+  calendar_sync_status: "pending" | "synced" | "cancel_pending" | "error";
+  cancellation_token_hash: string | null;
+  last_sync_error: string | null;
 };
 
 export class BookingDatabaseError extends Error {
@@ -90,8 +94,12 @@ async function transaction<T>(operation: (client: PoolClient) => Promise<T>) {
   }
 }
 
-export async function rateLimitBooking(ip: string) {
-  const key = createHash("sha256").update(ip).digest("hex");
+export async function rateLimitBooking(
+  ip: string,
+  scope = "reservation",
+  limit = 5,
+) {
+  const key = createHash("sha256").update(`${scope}:${ip}`).digest("hex");
   const result = await query<{ request_count: number }>(
     `
       INSERT INTO booking_rate_limits (key_hash, bucket_start, request_count)
@@ -102,7 +110,7 @@ export async function rateLimitBooking(ip: string) {
     `,
     [key],
   );
-  return Number(result.rows[0]?.request_count ?? 0) <= 5;
+  return Number(result.rows[0]?.request_count ?? 0) <= limit;
 }
 
 export async function listReservedRanges(from: Date, to: Date) {
@@ -110,7 +118,10 @@ export async function listReservedRanges(from: Date, to: Date) {
     `
       SELECT starts_at, ends_at
       FROM booking_reservations
-      WHERE status IN ('holding', 'confirmed')
+      WHERE (
+          status IN ('holding', 'confirmed')
+          OR calendar_sync_status = 'cancel_pending'
+        )
         AND starts_at < $1::timestamptz
         AND ends_at > $2::timestamptz
     `,
@@ -125,7 +136,8 @@ export async function listReservedRanges(from: Date, to: Date) {
 export async function findBookingByIdempotency(idempotencyKey: string) {
   const result = await query<BookingRow>(
     `
-      SELECT id, status, google_event_id, starts_at, ends_at, calendar_sync_status
+      SELECT id, service_id, status, google_event_id, starts_at, ends_at,
+             calendar_sync_status, cancellation_token_hash, last_sync_error
       FROM booking_reservations
       WHERE idempotency_key = $1::uuid
       LIMIT 1
@@ -138,13 +150,14 @@ export async function findBookingByIdempotency(idempotencyKey: string) {
 export async function listBookingsPendingReconciliation(limit = 10) {
   const result = await query<BookingRow>(
     `
-      SELECT id, status, google_event_id, starts_at, ends_at, calendar_sync_status
+      SELECT id, service_id, status, google_event_id, starts_at, ends_at,
+             calendar_sync_status, cancellation_token_hash, last_sync_error
       FROM booking_reservations
       WHERE (
         status = 'holding'
         AND hold_expires_at <= now()
       ) OR (
-        status = 'cancelled'
+        status IN ('confirmed', 'cancelled')
         AND calendar_sync_status = 'cancel_pending'
       )
       ORDER BY updated_at ASC
@@ -162,20 +175,24 @@ export async function acquireBooking(input: {
   serviceId: string;
   start: Date;
   end: Date;
+  cancellationTokenHash: string;
 }) {
   return transaction(async (client) => {
     const inserted = await client.query<BookingRow>(
       `
         INSERT INTO booking_reservations (
           id, idempotency_key, slot_key, service_id, starts_at, ends_at,
-          status, hold_expires_at, calendar_sync_status
+          status, hold_expires_at, calendar_sync_status,
+          cancellation_token_hash
         )
         VALUES (
           $1::uuid, $2::uuid, $3, $4, $5::timestamptz,
-          $6::timestamptz, 'holding', now() + interval '3 minutes', 'pending'
+          $6::timestamptz, 'holding', now() + interval '3 minutes', 'pending',
+          $7
         )
         ON CONFLICT DO NOTHING
-        RETURNING id, status, google_event_id, starts_at, ends_at, calendar_sync_status
+        RETURNING id, service_id, status, google_event_id, starts_at, ends_at,
+                  calendar_sync_status, cancellation_token_hash, last_sync_error
       `,
       [
         input.bookingId,
@@ -184,6 +201,7 @@ export async function acquireBooking(input: {
         input.serviceId,
         input.start.toISOString(),
         input.end.toISOString(),
+        input.cancellationTokenHash,
       ],
     );
     if (inserted.rows[0]) {
@@ -192,7 +210,8 @@ export async function acquireBooking(input: {
 
     const existing = await client.query<BookingRow>(
       `
-        SELECT id, status, google_event_id, starts_at, ends_at, calendar_sync_status
+        SELECT id, service_id, status, google_event_id, starts_at, ends_at,
+               calendar_sync_status, cancellation_token_hash, last_sync_error
         FROM booking_reservations
         WHERE idempotency_key = $1::uuid
         LIMIT 1
@@ -245,15 +264,93 @@ export async function recordBookingSyncError(bookingId: string, message: string)
   );
 }
 
-export async function beginCancelBookingByGoogleEventId(eventId: string) {
+function cancellationState(row: BookingRow) {
+  return {
+    state: getCancellationPreparation({
+      exists: true,
+      status: row.status,
+      googleEventId: row.google_event_id,
+      syncStatus: row.calendar_sync_status,
+    }),
+    row,
+  };
+}
+
+async function beginCancellation(
+  column: "google_event_id" | "cancellation_token_hash",
+  value: string,
+) {
+  return transaction(async (client) => {
+    const selected = await client.query<BookingRow>(
+      `
+        SELECT id, service_id, status, google_event_id, starts_at, ends_at,
+               calendar_sync_status, cancellation_token_hash, last_sync_error
+        FROM booking_reservations
+        WHERE ${column} = $1
+        LIMIT 1
+        FOR UPDATE
+      `,
+      [value],
+    );
+    const row = selected.rows[0];
+    if (!row) return { state: "not_found" as const };
+
+    const current = cancellationState(row);
+    if (current.state !== "ready") return current;
+
+    const updated = await client.query<BookingRow>(
+      `
+        UPDATE booking_reservations
+        SET calendar_sync_status = 'cancel_pending',
+            cancellation_requested_at = COALESCE(cancellation_requested_at, now()),
+            last_sync_error = NULL, updated_at = now()
+        WHERE id = $1::uuid AND status = 'confirmed'
+        RETURNING id, service_id, status, google_event_id, starts_at, ends_at,
+                  calendar_sync_status, cancellation_token_hash, last_sync_error
+      `,
+      [row.id],
+    );
+    return { state: "ready" as const, row: updated.rows[0] };
+  });
+}
+
+export function beginCancelBookingByGoogleEventId(eventId: string) {
+  return beginCancellation("google_event_id", eventId);
+}
+
+export function beginCancelBookingByTokenHash(tokenHash: string) {
+  return beginCancellation("cancellation_token_hash", tokenHash);
+}
+
+export async function findBookingByCancellationTokenHash(tokenHash: string) {
+  const result = await query<BookingRow>(
+    `
+      SELECT id, service_id, status, google_event_id, starts_at, ends_at,
+             calendar_sync_status, cancellation_token_hash, last_sync_error
+      FROM booking_reservations
+      WHERE cancellation_token_hash = $1
+      LIMIT 1
+    `,
+    [tokenHash],
+  );
+  return result.rows[0] ?? null;
+}
+
+export async function completeCancelBooking(
+  bookingId: string,
+  googleEventId: string,
+) {
   await query(
     `
       UPDATE booking_reservations
       SET status = 'cancelled', slot_key = NULL,
-          calendar_sync_status = 'cancel_pending', updated_at = now()
-      WHERE google_event_id = $1 AND status IN ('confirmed', 'cancelled')
+          calendar_sync_status = 'synced', last_sync_error = NULL,
+          cancelled_at = COALESCE(cancelled_at, now()),
+          sync_attempts = sync_attempts + 1, updated_at = now()
+      WHERE id = $1::uuid AND google_event_id = $2
+        AND status IN ('confirmed', 'cancelled')
     `,
-    [eventId],
+    [bookingId, googleEventId],
   );
 }
 
@@ -261,10 +358,43 @@ export async function completeCancelBookingByGoogleEventId(eventId: string) {
   await query(
     `
       UPDATE booking_reservations
-      SET calendar_sync_status = 'synced', last_sync_error = NULL,
+      SET status = 'cancelled', slot_key = NULL,
+          calendar_sync_status = 'synced', last_sync_error = NULL,
+          cancelled_at = COALESCE(cancelled_at, now()),
           sync_attempts = sync_attempts + 1, updated_at = now()
-      WHERE google_event_id = $1 AND status = 'cancelled'
+      WHERE google_event_id = $1 AND status IN ('confirmed', 'cancelled')
     `,
     [eventId],
   );
+}
+
+export async function recordCancellationSyncError(
+  bookingId: string,
+  message: string,
+) {
+  await query(
+    `
+      UPDATE booking_reservations
+      SET calendar_sync_status = 'cancel_pending', last_sync_error = $2,
+          sync_attempts = sync_attempts + 1, updated_at = now()
+      WHERE id = $1::uuid AND status IN ('confirmed', 'cancelled')
+    `,
+    [bookingId, message.slice(0, 160)],
+  );
+}
+
+export async function listBookingSyncRowsForRange(from: Date, to: Date) {
+  const result = await query<BookingRow>(
+    `
+      SELECT id, service_id, status, google_event_id, starts_at, ends_at,
+             calendar_sync_status, cancellation_token_hash, last_sync_error
+      FROM booking_reservations
+      WHERE starts_at < $1::timestamptz
+        AND ends_at > $2::timestamptz
+        AND status IN ('confirmed', 'cancelled')
+      ORDER BY starts_at ASC
+    `,
+    [to.toISOString(), from.toISOString()],
+  );
+  return result.rows;
 }

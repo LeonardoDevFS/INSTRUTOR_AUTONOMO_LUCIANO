@@ -12,6 +12,9 @@ loadEnvConfig(process.cwd());
 
 const requiredReservationColumns = [
   "calendar_sync_status",
+  "cancellation_requested_at",
+  "cancellation_token_hash",
+  "cancelled_at",
   "created_at",
   "ends_at",
   "google_event_id",
@@ -66,10 +69,11 @@ async function verifySchema(client: PoolClient) {
       AND conname IN (
         'booking_no_overlapping_active',
         'booking_calendar_sync_status_check',
+        'booking_cancellation_token_hash_check',
         'booking_sync_attempts_check'
       )
   `);
-  if (constraints.rows.length !== 3) {
+  if (constraints.rows.length !== 4) {
     throw new Error("as restrições esperadas não estão completas.");
   }
 }
@@ -215,6 +219,45 @@ async function verifyTransactionalRules(client: PoolClient) {
   }
   if (!duplicateBlocked) {
     throw new Error("a idempotência aceitou uma chave duplicada.");
+  }
+
+  const cancellationTokenHash = "a".repeat(64);
+  await client.query(
+    `
+      UPDATE public.booking_reservations
+      SET cancellation_token_hash = $2
+      WHERE id = $1::uuid
+    `,
+    [firstId, cancellationTokenHash],
+  );
+  await client.query("SAVEPOINT cancellation_token_test");
+  let duplicateCancellationTokenBlocked = false;
+  try {
+    const duplicateId = randomUUID();
+    await client.query(
+      `
+        INSERT INTO public.booking_reservations (
+          id, idempotency_key, slot_key, service_id, starts_at, ends_at,
+          status, hold_expires_at, cancellation_token_hash
+        ) VALUES (
+          $1::uuid, $2::uuid, $3, 'database-verification',
+          '2200-01-01T12:00:00Z'::timestamptz,
+          '2200-01-01T12:50:00Z'::timestamptz,
+          'holding', now() + interval '3 minutes', $4
+        )
+      `,
+      [duplicateId, randomUUID(), `verify-${duplicateId}`, cancellationTokenHash],
+    );
+  } catch (error) {
+    duplicateCancellationTokenBlocked =
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "23505";
+    await client.query("ROLLBACK TO SAVEPOINT cancellation_token_test");
+  }
+  if (!duplicateCancellationTokenBlocked) {
+    throw new Error("o token de cancelamento aceitou um hash duplicado.");
   }
 
   const firstRateLimit = await client.query<{ request_count: number }>(`

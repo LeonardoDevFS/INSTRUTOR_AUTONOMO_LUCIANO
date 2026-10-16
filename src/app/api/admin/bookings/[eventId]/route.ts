@@ -4,7 +4,8 @@ import { adminError, adminJson } from "@/lib/api/admin-response";
 import { assertSameOrigin, requireAdminApi } from "@/lib/auth/require-admin";
 import {
   beginCancelBookingByGoogleEventId,
-  completeCancelBookingByGoogleEventId,
+  completeCancelBooking,
+  recordCancellationSyncError,
 } from "@/lib/booking/database";
 import { isRecurringEvent, isSiteBooking } from "@/lib/calendar/business";
 import {
@@ -34,8 +35,43 @@ export async function DELETE(
       );
     }
 
-    const current = await getGoogleEvent(accessToken, eventId);
+    const prepared = await beginCancelBookingByGoogleEventId(eventId);
+    if (prepared.state === "not_found" || prepared.state === "unavailable") {
+      throw new GoogleCalendarError(
+        "A reserva correspondente não foi encontrada no controle do site.",
+        404,
+        "SITE_BOOKING_NOT_FOUND",
+      );
+    }
+    if (prepared.state === "completed") {
+      return adminJson({ deleted: true, eventId, idempotent: true });
+    }
+
+    const booking = prepared.row;
+    let current;
+    try {
+      current = await getGoogleEvent(accessToken, eventId);
+    } catch (error) {
+      if (
+        error instanceof GoogleCalendarError &&
+        (error.status === 404 || error.status === 410)
+      ) {
+        await completeCancelBooking(booking.id, eventId);
+        return adminJson({ deleted: true, eventId, idempotent: true });
+      }
+      await recordCancellationSyncError(
+        booking.id,
+        error instanceof GoogleCalendarError
+          ? error.code
+          : "google-calendar-unavailable",
+      );
+      throw error;
+    }
     if (!isSiteBooking(current)) {
+      await recordCancellationSyncError(
+        booking.id,
+        "cancel-marker-mismatch",
+      );
       throw new GoogleCalendarError(
         "Somente reservas criadas pelo site podem ser canceladas por esta ação.",
         403,
@@ -43,6 +79,10 @@ export async function DELETE(
       );
     }
     if (isRecurringEvent(current)) {
+      await recordCancellationSyncError(
+        booking.id,
+        "recurring-event-protected",
+      );
       throw new GoogleCalendarError(
         "Eventos recorrentes devem ser gerenciados diretamente no Google Agenda.",
         403,
@@ -50,9 +90,23 @@ export async function DELETE(
       );
     }
 
-    await beginCancelBookingByGoogleEventId(eventId);
-    await deleteGoogleSiteBooking(accessToken, eventId, current.etag);
-    await completeCancelBookingByGoogleEventId(eventId);
+    try {
+      await deleteGoogleSiteBooking(accessToken, eventId, current.etag);
+    } catch (error) {
+      if (
+        !(error instanceof GoogleCalendarError) ||
+        (error.status !== 404 && error.status !== 410)
+      ) {
+        await recordCancellationSyncError(
+          booking.id,
+          error instanceof GoogleCalendarError
+            ? error.code
+            : "google-calendar-unavailable",
+        );
+        throw error;
+      }
+    }
+    await completeCancelBooking(booking.id, eventId);
     return adminJson({ deleted: true, eventId });
   } catch (error) {
     return adminError(error);

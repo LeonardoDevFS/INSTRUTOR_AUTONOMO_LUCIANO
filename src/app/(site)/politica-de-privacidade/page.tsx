@@ -24,7 +24,7 @@ export default function PrivacyPolicyPage() {
             Política de Privacidade
           </h1>
           <p className="mt-6 text-sm text-white/40">
-            Última atualização: 11 de outubro de 2026.
+            Última atualização: 15 de outubro de 2026.
           </p>
         </div>
       </header>
@@ -45,6 +45,11 @@ export default function PrivacyPolicyPage() {
             Google, você pode informar nome, e-mail, telefone, serviço desejado,
             data, horário e observações opcionais. Esses dados são usados para
             registrar e administrar a reserva na agenda de Luciano.
+          </p>
+          <p>
+            Para reservas concluídas pelo formulário do site, é criado um acesso
+            aleatório de cancelamento. O banco conserva somente o hash desse
+            token; o acesso completo é exibido ao aluno após a confirmação.
           </p>
           <p>
             Quando você opta pelo contato via WhatsApp, as informações são
@@ -72,8 +77,9 @@ export default function PrivacyPolicyPage() {
             técnicos de intervalo, serviço, status e idempotência. O endereço IP
             usado no controle de frequência é armazenado somente como hash. O
             banco técnico da reserva pública não recebe nome, e-mail, telefone
-            ou observações. Um vínculo com a ficha privada somente pode ser feito
-            manualmente no painel administrativo.
+            ou observações. Ele conserva apenas o hash do acesso de cancelamento,
+            nunca o token completo. Um vínculo com a ficha privada somente pode
+            ser feito manualmente no painel administrativo.
           </p>
         </PolicySection>
 

@@ -9,6 +9,10 @@ import {
 import { BookingApiError, bookingError, bookingJson } from "@/lib/api/booking-response";
 import { buildSlotsForDate, getProtectedSlotRange } from "@/lib/booking/availability";
 import {
+  buildCancellationPath,
+  hashCancellationToken,
+} from "@/lib/booking/cancellation-token";
+import {
   acquireBooking,
   confirmBooking,
   failBooking,
@@ -60,6 +64,10 @@ export async function POST(request: NextRequest) {
       );
     }
     const input = publicBookingSchema.parse(await request.json());
+    const cancellationTokenHash = hashCancellationToken(
+      input.cancellationToken,
+    );
+    const cancellationPath = buildCancellationPath(input.cancellationToken);
     if (!(await rateLimitBooking(requestIp(request)))) {
       throw new BookingApiError(
         "Muitas tentativas em pouco tempo. Aguarde antes de tentar novamente.",
@@ -93,7 +101,14 @@ export async function POST(request: NextRequest) {
     if (existingAttempt) {
       bookingId = existingAttempt.id;
       if (existingAttempt.status === "confirmed" && existingAttempt.google_event_id) {
-        return bookingJson({ confirmed: true, bookingId, idempotent: true });
+        return bookingJson({
+          confirmed: true,
+          bookingId,
+          idempotent: true,
+          ...(existingAttempt.cancellation_token_hash === cancellationTokenHash
+            ? { cancellationPath }
+            : {}),
+        });
       }
       if (existingAttempt.status === "holding") {
         try {
@@ -107,7 +122,15 @@ export async function POST(request: NextRequest) {
             duplicate.id
           ) {
             await confirmBooking(bookingId, duplicate.id);
-            return bookingJson({ confirmed: true, bookingId, idempotent: true });
+            return bookingJson({
+              confirmed: true,
+              bookingId,
+              idempotent: true,
+              ...(existingAttempt.cancellation_token_hash ===
+              cancellationTokenHash
+                ? { cancellationPath }
+                : {}),
+            });
           }
         } catch (error) {
           if (!(error instanceof GoogleCalendarError) || error.status !== 404) throw error;
@@ -139,7 +162,7 @@ export async function POST(request: NextRequest) {
     ).find((slot) => slot.time === input.time);
     if (!validSlot) {
       throw new BookingApiError(
-        "Este horário não está mais disponível. Escolha outro horário.",
+        "Este horário não está mais disponível, pois já existe outro agendamento ou compromisso neste período. Selecione um novo horário para continuar.",
         409,
         "SLOT_UNAVAILABLE",
       );
@@ -153,10 +176,11 @@ export async function POST(request: NextRequest) {
       serviceId: service.id,
       start: new Date(validSlot.start),
       end: new Date(validSlot.end),
+      cancellationTokenHash,
     });
     if (acquired.state === "conflict") {
       throw new BookingApiError(
-        "Este horário acabou de ser reservado. Escolha outro horário.",
+        "Este horário não está mais disponível, pois já existe outro agendamento ou compromisso neste período. Selecione um novo horário para continuar.",
         409,
         "SLOT_UNAVAILABLE",
       );
@@ -164,7 +188,14 @@ export async function POST(request: NextRequest) {
     bookingId = acquired.row.id;
     if (acquired.state === "idempotent") {
       if (acquired.row.status === "confirmed" && acquired.row.google_event_id) {
-        return bookingJson({ confirmed: true, bookingId, idempotent: true });
+        return bookingJson({
+          confirmed: true,
+          bookingId,
+          idempotent: true,
+          ...(acquired.row.cancellation_token_hash === cancellationTokenHash
+            ? { cancellationPath }
+            : {}),
+        });
       }
       if (acquired.row.status === "holding") {
         try {
@@ -178,7 +209,15 @@ export async function POST(request: NextRequest) {
             duplicate.id
           ) {
             await confirmBooking(bookingId, duplicate.id);
-            return bookingJson({ confirmed: true, bookingId, idempotent: true });
+            return bookingJson({
+              confirmed: true,
+              bookingId,
+              idempotent: true,
+              ...(acquired.row.cancellation_token_hash ===
+              cancellationTokenHash
+                ? { cancellationPath }
+                : {}),
+            });
           }
         } catch (error) {
           if (!(error instanceof GoogleCalendarError) || error.status !== 404) throw error;
@@ -211,7 +250,7 @@ export async function POST(request: NextRequest) {
     ) {
       await failBooking(bookingId);
       throw new BookingApiError(
-        "Este horário acabou de ser ocupado. Escolha outro horário.",
+        "Este horário não está mais disponível, pois já existe outro agendamento ou compromisso neste período. Selecione um novo horário para continuar.",
         409,
         "SLOT_UNAVAILABLE",
       );
@@ -258,6 +297,7 @@ export async function POST(request: NextRequest) {
         confirmed: true,
         bookingId,
         event: { start: validSlot.start, end: validSlot.end },
+        cancellationPath,
       },
       { status: 201 },
     );

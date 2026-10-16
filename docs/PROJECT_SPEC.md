@@ -145,6 +145,8 @@ Não impor isso tecnicamente; mais de um horário pode ser combinado conforme ne
 │   └── medo-de-dirigir
 ├── resultados
 ├── agendar
+├── agendamento
+│   └── cancelar
 ├── blog
 │   └── [slug]
 ├── contato
@@ -440,6 +442,11 @@ Google Calendar como backend operacional da agenda.
 - aula padrão: 50 minutos;
 - horários baseados na disponibilidade;
 - evitar dupla reserva;
+- oferecer, como alternativa, a página oficial de agendamento do Google ligada
+  à mesma agenda operacional;
+- permitir cancelamento seguro das reservas do site por token, armazenando
+  somente seu hash e mantendo o horário bloqueado enquanto a sincronização
+  estiver pendente;
 - domingo: consulta manual pelo WhatsApp;
 - possibilidade futura de solicitar confirmação antes de efetivar;
 - mensagens WhatsApp podem ser pré-preenchidas.

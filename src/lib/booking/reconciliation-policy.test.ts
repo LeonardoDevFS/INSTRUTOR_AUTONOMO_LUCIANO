@@ -32,4 +32,12 @@ test("finaliza ou repete cancelamento conforme o estado do Google", () => {
     getReconciliationAction("cancelled", "google-unavailable"),
     "retry-later",
   );
+  assert.equal(
+    getReconciliationAction("confirmed", "matching-event"),
+    "cancel-event",
+  );
+  assert.equal(
+    getReconciliationAction("confirmed", "google-unavailable"),
+    "retry-later",
+  );
 });
