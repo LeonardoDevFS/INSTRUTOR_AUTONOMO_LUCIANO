@@ -1,18 +1,18 @@
-import type { Metadata } from "next";
 import { ArrowUpRight, BookOpenText } from "lucide-react";
 import Link from "next/link";
 
 import { PageHero } from "@/components/sections/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { guides } from "@/data/guides";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import { whatsappMessages } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Guias sobre CNH e Direção",
   description:
     "Guias da Direção Segura sobre primeira CNH em Minas Gerais, adição de categoria e retomada da direção para habilitados.",
-  alternates: { canonical: "/guias" },
-};
+  canonical: "/guias",
+});
 
 export default function GuidesPage() {
   return (

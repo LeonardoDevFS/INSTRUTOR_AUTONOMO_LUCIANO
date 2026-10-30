@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import type { LucideIcon } from "lucide-react";
 import { ArrowUpRight, Car, ClipboardCheck, Motorbike, RefreshCw } from "lucide-react";
 import Link from "next/link";
@@ -7,14 +6,15 @@ import { ContactCta } from "@/components/sections/ContactCta";
 import { PageHero } from "@/components/sections/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { services } from "@/data/services";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import { whatsappMessages } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Aulas de Direção em Itajubá",
   description:
     "Conheça as aulas de carro, moto, preparação para prova prática e treinamento para habilitados com Luciano Oliveira em Itajubá/MG.",
-  alternates: { canonical: "/aulas" },
-};
+  canonical: "/aulas",
+});
 
 const lessonServices = services.filter((service) =>
   ["carro", "moto", "habilitados", "prova-pratica"].includes(service.id),

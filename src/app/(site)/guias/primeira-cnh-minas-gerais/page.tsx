@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Bike, Car, Check, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -17,17 +16,16 @@ import {
   guideReviewDate,
   officialGuideSources,
 } from "@/data/guide-pages";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import { whatsappMessages } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Primeira Habilitação: Caminho até a CNH em MG",
   description: "Guia didático atualizado para tirar a primeira CNH em Minas Gerais: requisitos, curso gratuito, exames, aulas práticas, PPD e CNH definitiva.",
-  alternates: { canonical: "/guias/primeira-cnh-minas-gerais" },
-  openGraph: {
-    title: "Primeira Habilitação: seu caminho até a CNH",
-    description: "Entenda todas as etapas da primeira habilitação em Minas Gerais com linguagem simples e fontes oficiais.",
-  },
-};
+  canonical: "/guias/primeira-cnh-minas-gerais",
+  openGraphTitle: "Primeira Habilitação: seu caminho até a CNH",
+  openGraphDescription: "Entenda todas as etapas da primeira habilitação em Minas Gerais com linguagem simples e fontes oficiais.",
+});
 
 const requirements = ["18 anos completos", "Saber ler e escrever", "Documento oficial reconhecido", "Inscrição no CPF"] as const;
 

@@ -122,12 +122,17 @@ export function Footer() {
             © {new Date().getFullYear()} {siteConfig.name} — {siteConfig.brand}.
           </p>
 
-          <Link
-            href="/politica-de-privacidade"
-            className="hover:text-white"
-          >
-            Política de Privacidade
-          </Link>
+          <nav aria-label="Links complementares" className="flex flex-wrap gap-x-5 gap-y-2">
+            <Link href="/blog" className="hover:text-white">
+              Blog
+            </Link>
+            <Link href="/contato" className="hover:text-white">
+              Contato
+            </Link>
+            <Link href="/politica-de-privacidade" className="hover:text-white">
+              Política de Privacidade
+            </Link>
+          </nav>
         </div>
       </div>
     </footer>

@@ -1,18 +1,18 @@
-import type { Metadata } from "next";
 import { Check, MapPin, ShieldCheck } from "lucide-react";
 
 import { ContactCta } from "@/components/sections/ContactCta";
 import { PageHero } from "@/components/sections/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/config/site";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import { whatsappMessages } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Sobre Luciano Oliveira",
   description:
     "Conheça Luciano Oliveira, instrutor autônomo da Direção Segura, com 27 anos de experiência e atendimento em Itajubá/MG e região.",
-  alternates: { canonical: "/sobre" },
-};
+  canonical: "/sobre",
+});
 
 const principles = [
   "Atendimento individual e adaptado ao aluno",

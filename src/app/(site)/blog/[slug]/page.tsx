@@ -11,6 +11,7 @@ import {
   getBlogPost,
   getBlogPostReadingTime,
 } from "@/data/blog-posts";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import { getAbsoluteUrl } from "@/lib/seo/site-url";
 import { whatsappMessages } from "@/lib/whatsapp";
 
@@ -36,19 +37,14 @@ export async function generateMetadata({
 
   const canonical = `/blog/${post.slug}`;
 
-  return {
+  return createPageMetadata({
     title: post.title,
     description: post.description,
-    alternates: { canonical },
-    openGraph: {
-      type: "article",
-      title: post.title,
-      description: post.description,
-      url: canonical,
-      publishedTime: post.publishedAt,
-      modifiedTime: post.updatedAt,
-    },
-  };
+    canonical,
+    type: "article",
+    publishedTime: post.publishedAt,
+    modifiedTime: post.updatedAt,
+  });
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {

@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
 import { ExternalLink } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { siteConfig } from "@/config/site";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import { createWhatsAppUrl, whatsappMessages } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Política de Privacidade",
   description:
     "Saiba como o site Direção Segura trata informações enviadas durante contatos e solicitações de horário.",
-  alternates: { canonical: "/politica-de-privacidade" },
-};
+  canonical: "/politica-de-privacidade",
+});
 
 export default function PrivacyPolicyPage() {
   return (

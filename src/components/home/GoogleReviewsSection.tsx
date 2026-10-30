@@ -45,14 +45,14 @@ export function GoogleReviewsSection() {
                   external
                   variant="secondary"
                   icon={<MapPinned size={17} aria-hidden="true" />}
-                  ariaLabel="Ver perfil de Luciano no Google Maps (abre em nova guia)"
+                  ariaLabel="Ver perfil no Google Maps — Luciano Oliveira (abre em nova guia)"
                 >
                   Ver perfil no Google Maps
                 </ActionLink>
               </div>
 
               {!hasDirectReviewUrl && (
-                <p className="mt-4 max-w-2xl text-xs leading-6 text-white/45">
+                <p className="mt-4 max-w-2xl text-xs leading-6 text-white/55">
                   O perfil será aberto no Google Maps. Para compartilhar seu
                   relato, acesse a seção “Avaliações”.
                 </p>

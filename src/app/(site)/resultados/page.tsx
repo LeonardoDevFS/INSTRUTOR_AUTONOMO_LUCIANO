@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { BadgeCheck, ExternalLink, MessageSquareQuote, ShieldCheck } from "lucide-react";
 
 import { ContactCta } from "@/components/sections/ContactCta";
@@ -6,14 +5,15 @@ import { PageHero } from "@/components/sections/PageHero";
 import { ActionLink } from "@/components/ui/ActionLink";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/config/site";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import { whatsappMessages } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Resultados Reais",
   description:
     "Veja registros de conquistas e um depoimento compartilhado pela Direção Segura em Itajubá/MG.",
-  alternates: { canonical: "/resultados" },
-};
+  canonical: "/resultados",
+});
 
 const resultTypes = [
   {

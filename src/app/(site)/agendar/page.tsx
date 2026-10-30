@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-
 import { CustomBooking } from "@/components/booking/CustomBooking";
 import { BookingContact } from "@/components/booking/BookingContact";
 import { PageHero } from "@/components/sections/PageHero";
@@ -8,14 +6,15 @@ import {
   bookingServices,
   getPublicBookingRuntimeConfig,
 } from "@/config/public-booking";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import { whatsappMessages } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Agendar Aula",
   description:
     "Escolha um horário disponível e reserve sua aula com Luciano Oliveira. Aulas de carro, moto e treinamentos personalizados em Itajubá/MG.",
-  alternates: { canonical: "/agendar" },
-};
+  canonical: "/agendar",
+});
 
 // A liberação depende de variáveis disponíveis no runtime da Netlify. Não
 // congele `ready` durante o build, pois isso manteria a interface desativada

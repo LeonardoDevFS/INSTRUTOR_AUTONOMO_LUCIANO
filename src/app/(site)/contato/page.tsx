@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { AtSign, Clock3, CreditCard, MapPin, MapPinned, MessageCircle } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -6,15 +5,16 @@ import { PageHero } from "@/components/sections/PageHero";
 import { ActionLink } from "@/components/ui/ActionLink";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/config/site";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import { formatScheduleRange } from "@/lib/utils";
 import { createWhatsAppUrl, whatsappMessages } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Contato",
   description:
     "Fale com Luciano Oliveira pelo WhatsApp ou Instagram e consulte horários para aulas de direção em Itajubá/MG e região.",
-  alternates: { canonical: "/contato" },
-};
+  canonical: "/contato",
+});
 
 export default function ContactPage() {
   return (

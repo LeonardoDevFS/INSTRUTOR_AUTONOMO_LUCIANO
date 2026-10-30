@@ -84,7 +84,7 @@ function VehicleCard({
             </span>
           </div>
 
-          <p className="mt-8 text-xs font-bold uppercase tracking-[0.22em] text-white/40">
+          <p className="mt-8 text-xs font-bold uppercase tracking-[0.22em] text-white/55">
             Veículo utilizado nas aulas
           </p>
           <h3 className="mt-3 font-display text-5xl font-extrabold uppercase leading-[0.9] text-white sm:text-6xl">
@@ -100,7 +100,7 @@ function VehicleCard({
                 key={specification.label}
                 className="bg-[#0a0a0a] p-4 sm:p-5"
               >
-                <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/35">
+                <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/55">
                   {specification.label}
                 </dt>
                 <dd className="mt-2 text-sm font-extrabold text-white sm:text-base">

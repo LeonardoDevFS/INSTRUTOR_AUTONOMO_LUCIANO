@@ -32,6 +32,7 @@ export function Header() {
             alt=""
             width={84}
             height={66}
+            quality={50}
             sizes="(min-width: 640px) 84px, 72px"
             className="h-14 w-[72px] shrink-0 object-contain sm:h-[66px] sm:w-[84px]"
           />

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { ArrowRight, BookOpenCheck, Car, Motorbike, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -16,17 +15,16 @@ import {
   guideReviewDate,
   officialGuideSources,
 } from "@/data/guide-pages";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import { whatsappMessages } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Adição de Categoria A ou B em Itajubá e MG",
   description: "Guia atualizado para adicionar categoria A ou B em Minas Gerais: requisitos, exames, licença, aulas práticas e exame de direção.",
-  alternates: { canonical: "/guias/adicao-de-categoria-mg" },
-  openGraph: {
-    title: "Adição de Categoria: amplie suas possibilidades",
-    description: "Entenda como adicionar categoria A ou B à habilitação em Minas Gerais.",
-  },
-};
+  canonical: "/guias/adicao-de-categoria-mg",
+  openGraphTitle: "Adição de Categoria: amplie suas possibilidades",
+  openGraphDescription: "Entenda como adicionar categoria A ou B à habilitação em Minas Gerais.",
+});
 
 export default function CategoryAdditionGuidePage() {
   return (

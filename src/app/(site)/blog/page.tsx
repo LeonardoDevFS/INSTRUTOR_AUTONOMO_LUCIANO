@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { ArrowRight, BookOpenText, CalendarDays, Clock3 } from "lucide-react";
 import Link from "next/link";
 
@@ -6,14 +5,15 @@ import { PageHero } from "@/components/sections/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { blogPosts, getBlogPostReadingTime } from "@/data/blog-posts";
 import { guides } from "@/data/guides";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import { whatsappMessages } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Blog",
   description:
     "Conteúdos da Direção Segura sobre habilitação, aulas práticas e direção em Itajubá/MG.",
-  alternates: { canonical: "/blog" },
-};
+  canonical: "/blog",
+});
 
 export default function BlogPage() {
   return (

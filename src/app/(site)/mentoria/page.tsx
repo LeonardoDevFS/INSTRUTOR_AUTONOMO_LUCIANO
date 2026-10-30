@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Check, MonitorPlay, Users } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -6,14 +5,15 @@ import { ContactCta } from "@/components/sections/ContactCta";
 import { PageHero } from "@/components/sections/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { mentorshipTopics } from "@/data/home";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import { whatsappMessages } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Mentoria Teórica para CNH",
   description:
     "Mentoria teórica online com Luciano Oliveira para candidatos à habilitação. Atendimento atualmente gratuito e presencial sob disponibilidade.",
-  alternates: { canonical: "/mentoria" },
-};
+  canonical: "/mentoria",
+});
 
 export default function MentorshipPage() {
   return (

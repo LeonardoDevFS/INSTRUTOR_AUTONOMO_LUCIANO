@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Check, ExternalLink, HeartHandshake, MessageCircle, Route, ShieldCheck } from "lucide-react";
 
@@ -6,14 +5,15 @@ import { GuideHero } from "@/components/guides/GuideHero";
 import { ContactCta } from "@/components/sections/ContactCta";
 import { ActionLink } from "@/components/ui/ActionLink";
 import { guideReviewDate, fearOfDrivingSituations, officialGuideSources } from "@/data/guide-pages";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import { whatsappMessages } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Medo ou Insegurança para Dirigir",
   description:
     "Orientações para pessoas habilitadas que sentem insegurança para dirigir e desejam retomar a prática gradualmente em Itajubá/MG.",
-  alternates: { canonical: "/guias/medo-de-dirigir" },
-};
+  canonical: "/guias/medo-de-dirigir",
+});
 
 export default function FearOfDrivingGuidePage() {
   return (

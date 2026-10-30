@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-
 import { AuthoritySection } from "@/components/home/AuthoritySection";
 import { BookingTeaser } from "@/components/home/BookingTeaser";
 import { FaqSection } from "@/components/home/FaqSection";
@@ -13,16 +11,14 @@ import { MentorshipSection } from "@/components/home/MentorshipSection";
 import { ResultsTeaser } from "@/components/home/ResultsTeaser";
 import { VehicleTrainingSection } from "@/components/home/VehicleTrainingSection";
 import { siteConfig } from "@/config/site";
+import { createPageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
-  title: {
-    absolute: siteConfig.seo.defaultTitle,
-  },
+export const metadata = createPageMetadata({
+  title: siteConfig.seo.defaultTitle,
   description: siteConfig.description,
-  alternates: {
-    canonical: "/",
-  },
-};
+  canonical: "/",
+  absoluteTitle: true,
+});
 
 export default function HomePage() {
   return (

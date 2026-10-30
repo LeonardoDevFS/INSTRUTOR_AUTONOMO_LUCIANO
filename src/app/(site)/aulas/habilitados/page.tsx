@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Check, HeartHandshake, Route, ShieldCheck } from "lucide-react";
 
 import { GuideHero } from "@/components/guides/GuideHero";
@@ -11,17 +10,16 @@ import {
   licensedTrainingFaq,
   licensedTrainingSteps,
 } from "@/data/guide-pages";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import { whatsappMessages } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Treinamento para Habilitados em Itajubá",
   description: "Treinamento personalizado para habilitados em Itajubá/MG: retomada da prática, estacionamento, subidas, trânsito urbano e direção preventiva.",
-  alternates: { canonical: "/aulas/habilitados" },
-  openGraph: {
-    title: "Treinamento para Habilitados: volte a dirigir com confiança",
-    description: "Aperfeiçoamento prático e progressivo para pessoas já habilitadas em Itajubá e região.",
-  },
-};
+  canonical: "/aulas/habilitados",
+  openGraphTitle: "Treinamento para Habilitados: volte a dirigir com confiança",
+  openGraphDescription: "Aperfeiçoamento prático e progressivo para pessoas já habilitadas em Itajubá e região.",
+});
 
 export default function LicensedDriversPage() {
   return (

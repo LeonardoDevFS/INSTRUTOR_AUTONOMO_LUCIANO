@@ -1,11 +1,13 @@
 type JsonLdPrimitive = string | number | boolean | null;
-type JsonLdValue =
+export type JsonLdValue =
   | JsonLdPrimitive
   | JsonLdValue[]
   | { [key: string]: JsonLdValue };
 
+export type JsonLdObject = { [key: string]: JsonLdValue };
+
 type JsonLdProps = {
-  data: { [key: string]: JsonLdValue };
+  data: JsonLdObject;
 };
 
 export function JsonLd({ data }: JsonLdProps) {
