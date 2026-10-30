@@ -5,7 +5,6 @@ import {
   Check,
   Motorbike,
 } from "lucide-react";
-import Image from "next/image";
 
 import { ActionLink } from "@/components/ui/ActionLink";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -13,7 +12,6 @@ import {
   trainingVehicles,
   type TrainingVehicle,
 } from "@/data/vehicles";
-import { cn } from "@/lib/utils";
 
 export function VehicleTrainingSection() {
   return (
@@ -34,7 +32,7 @@ export function VehicleTrainingSection() {
             <VehicleCard
               key={vehicle.id}
               vehicle={vehicle}
-              reverse={index % 2 === 1}
+              index={index}
             />
           ))}
         </div>
@@ -63,27 +61,20 @@ export function VehicleTrainingSection() {
 
 function VehicleCard({
   vehicle,
-  reverse,
+  index,
 }: {
   vehicle: TrainingVehicle;
-  reverse: boolean;
+  index: number;
 }) {
   const Icon = vehicle.id === "car" ? Car : Motorbike;
 
   return (
-    <article className="overflow-hidden rounded-[2rem] border border-white/10 bg-black/40 shadow-[0_28px_90px_rgba(0,0,0,0.24)]">
-      <div className="grid lg:grid-cols-[1.15fr_0.85fr] lg:items-stretch">
-        <VehicleGallery
-          vehicle={vehicle}
-          className={cn(reverse && "lg:order-2")}
-        />
-
-        <div
-          className={cn(
-            "flex flex-col p-6 sm:p-8 lg:p-10",
-            reverse && "lg:order-1",
-          )}
-        >
+    <article className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-black/35 p-6 sm:p-8 lg:p-10">
+      <span className="pointer-events-none absolute -right-2 -top-9 font-display text-[10rem] font-extrabold leading-none text-white/[0.025]" aria-hidden="true">
+        0{index + 1}
+      </span>
+      <div className="relative grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(19rem,0.72fr)] lg:gap-16">
+        <div className="min-w-0">
           <div className="flex items-center justify-between gap-4">
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">
               <Icon size={24} aria-hidden="true" />
@@ -96,18 +87,18 @@ function VehicleCard({
           <p className="mt-8 text-xs font-bold uppercase tracking-[0.22em] text-white/40">
             Veículo utilizado nas aulas
           </p>
-          <h3 className="mt-3 font-display text-4xl font-extrabold uppercase leading-none text-white sm:text-5xl">
+          <h3 className="mt-3 font-display text-5xl font-extrabold uppercase leading-[0.9] text-white sm:text-6xl">
             {vehicle.name}
           </h3>
-          <p className="mt-5 text-sm leading-7 text-white/55 sm:text-base">
+          <p className="mt-5 max-w-2xl text-sm leading-7 text-white/55 sm:text-base">
             {vehicle.description}
           </p>
 
-          <dl className="mt-7 grid grid-cols-3 gap-2">
+          <dl className="mt-8 grid gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-3">
             {vehicle.specifications.map((specification) => (
               <div
                 key={specification.label}
-                className="rounded-2xl border border-white/10 bg-white/[0.025] p-3 sm:p-4"
+                className="bg-[#0a0a0a] p-4 sm:p-5"
               >
                 <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/35">
                   {specification.label}
@@ -118,16 +109,17 @@ function VehicleCard({
               </div>
             ))}
           </dl>
+        </div>
 
-          <div className="mt-7 border-t border-white/10 pt-6">
+        <div className="flex min-w-0 flex-col border-t border-white/10 pt-8 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
             <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-gold">
               Durante o treinamento
             </p>
-            <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+            <ul className="mt-5 grid gap-4">
               {vehicle.learningGoals.map((goal) => (
                 <li
                   key={goal}
-                  className="flex items-start gap-2.5 text-sm leading-6 text-white/55"
+                  className="flex items-start gap-3 border-b border-white/10 pb-4 text-sm leading-6 text-white/60 last:border-0"
                 >
                   <Check
                     size={16}
@@ -138,7 +130,6 @@ function VehicleCard({
                 </li>
               ))}
             </ul>
-          </div>
 
           <ActionLink
             href={vehicle.href}
@@ -151,40 +142,5 @@ function VehicleCard({
         </div>
       </div>
     </article>
-  );
-}
-
-function VehicleGallery({
-  vehicle,
-  className,
-}: {
-  vehicle: TrainingVehicle;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "grid grid-cols-2 gap-px bg-white/10 p-px lg:grid-rows-2 lg:self-stretch",
-        className,
-      )}
-      role="group"
-      aria-label={`Quatro imagens do ${vehicle.name}`}
-    >
-      {vehicle.images.map((image) => (
-        <figure
-          key={image.src}
-          className="group relative aspect-[4/3] overflow-hidden bg-black lg:aspect-auto lg:min-h-0"
-        >
-          <Image
-            src={image.src}
-            alt={image.alt}
-            fill
-            sizes="(min-width: 1024px) 29vw, 50vw"
-            className="object-cover transition duration-500 group-hover:scale-[1.025]"
-            style={{ objectPosition: image.objectPosition }}
-          />
-        </figure>
-      ))}
-    </div>
   );
 }

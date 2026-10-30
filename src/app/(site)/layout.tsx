@@ -21,7 +21,7 @@ export default function SiteLayout({ children }: SiteLayoutProps) {
     alternateName: siteConfig.brand,
     url: getAbsoluteUrl(),
     logo: getAbsoluteUrl(siteMedia.branding.logo),
-    image: getAbsoluteUrl(siteMedia.hero.src),
+    image: getAbsoluteUrl(siteMedia.branding.logo),
     description: siteConfig.description,
     telephone: `+${siteConfig.contact.phoneE164}`,
     brand: {

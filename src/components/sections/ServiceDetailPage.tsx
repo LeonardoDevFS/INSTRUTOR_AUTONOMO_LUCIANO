@@ -28,13 +28,6 @@ export function ServiceDetailPage({ content }: ServiceDetailPageProps) {
         backHref="/aulas"
         backLabel="Todas as aulas"
         whatsappMessage={content.whatsappMessage}
-        placeholderTitle={content.placeholderTitle}
-        placeholderDescription={content.placeholderDescription}
-        imageSrc={content.imageSrc}
-        imageAlt={content.imageAlt}
-        imagePosition={content.imagePosition}
-        imageFit={content.imageFit}
-        photoEffect="card"
         badge={content.category ? `Categoria ${content.category}` : undefined}
       />
 

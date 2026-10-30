@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
-import { Camera, ExternalLink, MessageSquareQuote, ShieldCheck } from "lucide-react";
-import Image from "next/image";
+import { BadgeCheck, ExternalLink, MessageSquareQuote, ShieldCheck } from "lucide-react";
 
 import { ContactCta } from "@/components/sections/ContactCta";
 import { PageHero } from "@/components/sections/PageHero";
-import { PhotoEffects } from "@/components/ui/PhotoEffects";
 import { ActionLink } from "@/components/ui/ActionLink";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/config/site";
-import { siteMedia } from "@/data/media";
 import { whatsappMessages } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -20,9 +17,9 @@ export const metadata: Metadata = {
 
 const resultTypes = [
   {
-    icon: Camera,
-    title: "Fotos autorizadas",
-    description: "A galeria utiliza os registros que foram enviados para publicação no projeto.",
+    icon: BadgeCheck,
+    title: "Conquistas autorizadas",
+    description: "Resultados só entram na comunicação quando existe material real e autorização para publicação.",
   },
   {
     icon: MessageSquareQuote,
@@ -46,44 +43,22 @@ export default function ResultsPage() {
         backHref="/"
         backLabel="Voltar ao início"
         whatsappMessage={whatsappMessages.general}
-        placeholderTitle="Conquistas reais"
-        placeholderDescription="Registros de alunos compartilhados pela Direção Segura."
-        imageSrc={siteMedia.results[0].src}
-        imageAlt={siteMedia.results[0].alt}
-        imagePosition="center center"
-        imageFit="contain"
       />
 
       <section className="py-20 sm:py-24 lg:py-28">
-        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-end lg:gap-20 lg:px-8">
           <SectionHeading
-            eyebrow="Galeria de conquistas"
-            title="Pessoas diferentes. Objetivos conquistados com dedicação."
-            description="Os materiais abaixo foram adicionados ao projeto para apresentar momentos da trajetória da Direção Segura."
-            align="center"
+            eyebrow="Conquistas com contexto"
+            title="Cada evolução pertence primeiro ao aluno."
+            description="A Direção Segura trata resultados com respeito: sem transformar histórias individuais em garantia de aprovação e sem usar números que não possam ser comprovados."
           />
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3">
-            {siteMedia.results.map((result, index) => (
-              <figure
-                key={result.src}
-                className="relative aspect-[4/5] rounded-[2rem]"
-              >
-                <PhotoEffects
-                  variant="card"
-                  reveal
-                  revealDelay={index * 75}
-                  className="h-full rounded-[2rem] bg-black"
-                >
-                  <Image
-                    src={result.src}
-                    alt={result.alt}
-                    fill
-                    sizes="(min-width: 1024px) 30vw, (min-width: 640px) 48vw, 100vw"
-                    className="photo-effects__media object-contain"
-                  />
-                </PhotoEffects>
-              </figure>
-            ))}
+          <div className="border-l-2 border-gold pl-6 sm:pl-8">
+            <p className="font-display text-4xl font-extrabold uppercase leading-[0.95] text-white sm:text-5xl">
+              Trabalho sério, acompanhamento individual e comunicação responsável.
+            </p>
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-white/50 sm:text-base">
+              Avaliações públicas e relatos autorizados ajudam a conhecer o trabalho sem substituir uma conversa sobre o seu próprio objetivo.
+            </p>
           </div>
         </div>
       </section>

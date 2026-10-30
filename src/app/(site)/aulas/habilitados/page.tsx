@@ -11,7 +11,6 @@ import {
   licensedTrainingFaq,
   licensedTrainingSteps,
 } from "@/data/guide-pages";
-import { siteMedia } from "@/data/media";
 import { whatsappMessages } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -32,9 +31,6 @@ export default function LicensedDriversPage() {
         title="Treinamento para Habilitados: volte a dirigir com confiança"
         description="Aperfeiçoe sua direção e desenvolva habilidades práticas com acompanhamento individual, sem transformar sua dificuldade em julgamento ou promessa de resultado rápido."
         reviewedAt={guideReviewDate}
-        imageSrc={siteMedia.licensedTraining.src}
-        imageAlt={siteMedia.licensedTraining.alt}
-        imagePosition={siteMedia.licensedTraining.objectPosition}
         parentHref="/aulas"
         parentLabel="Aulas"
       />
