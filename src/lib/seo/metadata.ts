@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 
-import { siteConfig } from "@/config/site";
-
 type PageMetadataOptions = {
   title: string;
   description: string;
@@ -35,8 +33,6 @@ export function createPageMetadata({
           title: socialTitle,
           description: socialDescription,
           url: canonical,
-          locale: "pt_BR",
-          siteName: `${siteConfig.name} - ${siteConfig.brand}`,
           publishedTime,
           modifiedTime,
         }
@@ -45,8 +41,6 @@ export function createPageMetadata({
           title: socialTitle,
           description: socialDescription,
           url: canonical,
-          locale: "pt_BR",
-          siteName: `${siteConfig.name} - ${siteConfig.brand}`,
         };
 
   return {

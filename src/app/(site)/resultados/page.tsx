@@ -1,10 +1,12 @@
 import { BadgeCheck, ExternalLink, MessageSquareQuote, ShieldCheck } from "lucide-react";
+import Image from "next/image";
 
 import { ContactCta } from "@/components/sections/ContactCta";
 import { PageHero } from "@/components/sections/PageHero";
 import { ActionLink } from "@/components/ui/ActionLink";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { siteConfig } from "@/config/site";
+import { siteMedia } from "@/data/media";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { whatsappMessages } from "@/lib/whatsapp";
 
@@ -63,7 +65,34 @@ export default function ResultsPage() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 bg-surface py-20 sm:py-24 lg:py-28">
+      <section className="border-y border-white/10 bg-surface py-20 sm:py-24 lg:py-28">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <SectionHeading
+            eyebrow="Galeria de conquistas"
+            title="Pessoas diferentes. Objetivos conquistados com dedicação."
+            description="Registros reais compartilhados pela Direção Segura e autorizados para apresentação no projeto."
+            align="center"
+          />
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3">
+            {siteMedia.results.map((result) => (
+              <figure
+                key={result.src}
+                className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 bg-black"
+              >
+                <Image
+                  src={result.src}
+                  alt={result.alt}
+                  fill
+                  sizes="(min-width: 1024px) 30vw, (min-width: 640px) 48vw, 100vw"
+                  className="object-contain transition duration-500 hover:scale-[1.015]"
+                />
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 sm:py-24 lg:py-28">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <SectionHeading
             eyebrow="Compromisso editorial"

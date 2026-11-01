@@ -1,3 +1,5 @@
+import { siteMedia, type SiteMediaAsset } from "@/data/media";
+
 export type VehicleSpecification = {
   label: string;
   value: string;
@@ -11,6 +13,7 @@ export type TrainingVehicle = {
   description: string;
   specifications: readonly VehicleSpecification[];
   learningGoals: readonly string[];
+  images: readonly SiteMediaAsset[];
   href: string;
   linkLabel: string;
 };
@@ -34,6 +37,7 @@ export const trainingVehicles: readonly TrainingVehicle[] = [
       "Manobras e estacionamento",
       "Percepção de espaço e posicionamento",
     ],
+    images: siteMedia.carGallery,
     href: "/aulas/carro",
     linkLabel: "Conhecer aulas de carro",
   },
@@ -55,6 +59,7 @@ export const trainingVehicles: readonly TrainingVehicle[] = [
       "Troca de marchas",
       "Curvas, manobras e direção defensiva",
     ],
+    images: siteMedia.motorcycleGallery,
     href: "/aulas/moto",
     linkLabel: "Conhecer aulas de moto",
   },
